@@ -127,7 +127,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
 
     # Hitung posisi titik dua yang konsisten untuk kiri (berdasarkan label terpanjang)
     label_left = [
-        "Nomor Order", "Nama Alat", "Merk / Buatan",
+        "Nomor Order", "Nama Alat", "Merek / Buatan",
         "Model / Tipe", "Nomor Seri",
         "Pemilik", "Alamat", "Penera", "Hasil",
         "Berlaku sampai", "Catatan"
@@ -172,12 +172,12 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     c.drawString(colon_special + 0.3*cm, y, "Timbangan Jembatan Elektronik")
     y -= 1.0*cm
 
-    # --------------------- BARIS 3: MERK / BUATAN (KIRI) & KAPASITAS (KANAN) ---------------------
+        # --------------------- BARIS 3: MERK / BUATAN (KIRI) & KAPASITAS (KANAN) ---------------------
     y_row = y
     # --- KIRI ---
     c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y_row, "Merk / Buatan")
-    bold_width_left = c.stringWidth("Merk / Buatan", "Helvetica", 12)
+    c.drawString(left_col_x, y_row, "Merek / Buatan")
+    bold_width_left = c.stringWidth("Merek / Buatan", "Helvetica", 12)
     c.line(left_col_x, y_row - 0.08*cm, left_col_x + bold_width_left, y_row - 0.08*cm)
     line_spacing1 = 0.45*cm
     c.setFont("Helvetica-Oblique", 12)
@@ -189,9 +189,14 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     c.setFont("Helvetica", 12)
     c.drawString(colon_x_fixed, y_row, ":")
     start_x_val = colon_x_fixed + 0.3*cm
-    max_val_width = right_limit_content - start_x_val - 0.2*cm
-    char_width_val = c.stringWidth("a", "Helvetica", 12)
-    chars_per_line_val = int(max_val_width / char_width_val) if char_width_val > 0 else 30
+    # Batas sebelum kolom kanan
+    safe_right = right_col_x - 0.5*cm
+    max_val_width = safe_right - start_x_val
+    char_width_val = c.stringWidth("A", "Helvetica", 12)
+    chars_per_line_val = max(
+        10,
+        int(max_val_width / char_width_val)
+    )
     merek = data.get('merek', '')
     wrapped_merek = textwrap.wrap(merek, width=chars_per_line_val)
     if wrapped_merek:
@@ -201,6 +206,22 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         y_row_kiri = y_row - (0.45*cm * (len(wrapped_merek)-1))
     else:
         y_row_kiri = y_row
+
+    # ---------- KOLOM KANAN: Kapasitas / Daya baca ----------
+    c.setFont("Helvetica", 12)
+    c.drawString(right_col_x, y_row, "Kapasitas / Daya baca")
+    bold_width_right = c.stringWidth("Kapasitas / Daya baca", "Helvetica", 12)
+    c.line(right_col_x, y_row - 0.08*cm, right_col_x + bold_width_right, y_row - 0.08*cm)
+    c.setFont("Helvetica-Oblique", 12)
+    c.drawString(right_col_x, y_row - line_spacing1, "Capacity / Accuracy")
+    c.setFont("Helvetica", 12)
+    c.drawString(colon_right_fixed, y_row, ":")
+    c.drawString(colon_right_fixed + 0.3*cm, y_row,
+                 f"{data.get('kapasitas_max', '')} kg / {data.get('daya_baca', '')} kg")
+
+    # Update y berdasarkan posisi terendah (kiri bisa wrap)
+    # Turun minimal 1.3 cm agar tidak menabrak baris berikutnya
+    y = min(y_row_kiri - 0.5*cm, y_row - 1.3*cm)
 
         # ---------- KOLOM KANAN: Kapasitas / Daya baca ----------
     c.setFont("Helvetica", 12)
@@ -229,7 +250,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     c.drawString(colon_x_fixed, y_row, ":")
     start_x_val = colon_x_fixed + 0.3*cm
     model = data.get('model', '')
-    wrapped_model = textwrap.wrap(model, width=chars_per_line_val)  # chars_per_line_val sudah dihitung di atas
+    wrapped_model = textwrap.wrap(model, width=chars_per_line_val)
     if wrapped_model:
         c.drawString(start_x_val, y_row, wrapped_model[0])
         for i, line in enumerate(wrapped_model[1:], start=1):
@@ -238,7 +259,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     else:
         y_row_kiri = y_row
 
-        # ---------- KOLOM KANAN: Interval Skala Verifikasi ----------
+    # ---------- KOLOM KANAN: Interval Skala Verifikasi ----------
     c.setFont("Helvetica", 12)
     c.drawString(right_col_x, y_row, "Interval Skala Verifikasi")
     bold_width_right = c.stringWidth("Interval Skala Verifikasi", "Helvetica", 12)
@@ -248,7 +269,9 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     c.setFont("Helvetica", 12)
     c.drawString(colon_right_fixed, y_row, ":")
     c.drawString(colon_right_fixed + 0.3*cm, y_row, f"{data.get('interval_skala', '')} kg")
-    y = y_row - 1.0*cm
+
+    # Turun minimal 1.3 cm agar baris berikutnya tetap stabil
+    y = min(y_row_kiri - 0.5*cm, y_row - 1.3*cm)
 
     # --------------------- BARIS 5: NOMOR SERI (KIRI) & KELAS (KANAN) ---------------------
     y_row = y
@@ -271,6 +294,19 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         y_row_kiri = y_row - (0.45*cm * (len(wrapped_seri)-1))
     else:
         y_row_kiri = y_row
+
+    # ---------- KOLOM KANAN: Kelas ----------
+    c.setFont("Helvetica", 12)
+    c.drawString(right_col_x, y_row, "Kelas")
+    bold_width_right = c.stringWidth("Kelas", "Helvetica", 12)
+    c.line(right_col_x, y_row - 0.08*cm, right_col_x + bold_width_right, y_row - 0.08*cm)
+    c.setFont("Helvetica-Oblique", 12)
+    c.drawString(right_col_x, y_row - 0.45*cm, "Class")
+    c.setFont("Helvetica", 12)
+    c.drawString(colon_right_fixed, y_row, ":")
+    c.drawString(colon_right_fixed + 0.3*cm, y_row, data.get('kelas', ''))
+
+    y = y_row_kiri - 0.5*cm
 
         # ---------- KOLOM KANAN: Kelas ----------
     c.setFont("Helvetica", 12)
@@ -350,9 +386,14 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     c.setFont("Helvetica", 12)
     c.drawString(colon_fixed_shifted, y, ":")
     start_x = colon_fixed_shifted + 0.3*cm
-    c.drawString(start_x, y, "Disahkan untuk Tera Ulang Tahun 2026")
+    jenis_pengujian = data.get('keterangan', 'Tera Ulang')
+    tahun_tera = datetime.now().year
+    # Teks hasil dibuat bold
+    c.setFont("Helvetica-Bold", 12)
+    c.drawString(start_x, y, f"Disahkan untuk {jenis_pengujian} Tahun {tahun_tera}")
+    # Kembali ke font normal
+    c.setFont("Helvetica", 12)
     y -= 0.45*cm
-    # Teks bawah hasil menggunakan posisi start yang sama
     c.drawString(start_x, y, "Berdasarkan Undang - Undang RI No. 2 Tahun 1981")
     y -= 0.45*cm
     c.drawString(start_x, y, "Tentang Metrologi Legal")
@@ -368,7 +409,11 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     berlaku_str = format_tanggal_indonesia(data.get('berlaku_sampai', ''))
     c.setFont("Helvetica", 12)
     c.drawString(colon_fixed_shifted, y, ":")
+    # Nilai tanggal dibuat bold
+    c.setFont("Helvetica-Bold", 12)
     c.drawString(colon_fixed_shifted + 0.3*cm, y, berlaku_str)
+    # Kembali ke font normal
+    c.setFont("Helvetica", 12)
     y -= 1.0*cm
 
     # Catatan
@@ -376,27 +421,62 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     c.drawString(left_col_x, y, "Catatan")
     bold_width = c.stringWidth("Catatan", "Helvetica", 12)
     c.line(left_col_x, y - 0.08*cm, left_col_x + bold_width, y - 0.08*cm)
+
     c.setFont("Helvetica-Oblique", 12)
     c.drawString(left_col_x, y - line_spacing, "Note")
+
     c.setFont("Helvetica", 12)
     c.drawString(colon_fixed_shifted, y, ":")
-    c.drawString(colon_fixed_shifted + 0.3*cm, y, "Pembubuhan Tanda Tera Ulang :")
-    y -= 0.45*cm
+
+    start_x = colon_fixed_shifted + 0.3*cm
     bullet = "•"
-    # bullet dan teks di bawah menggunakan indentasi dari colon_fixed_shifted
-    c.drawString(colon_fixed_shifted + 0.3*cm, y, f"{bullet} Tanda Tera SAH SP6 \"26\" dan JP8 pada Alat Justir")
-    y -= 0.45*cm
-    c.drawString(colon_fixed_shifted + 0.3*cm, y, f"{bullet} Tanda Jaminan JP8 pada bagian yang dapat menjadi")
-    y -= 0.45*cm
-    c.drawString(colon_fixed_shifted + 0.3*cm, y, f"  potensi di lakukan perubahan yang mempengaruhi")
-    y -= 0.45*cm
-    c.drawString(colon_fixed_shifted + 0.3*cm, y, f"  karakteristik kemetrologiannya")
+
+    jenis_pengujian = data.get("keterangan", "Tera Ulang")
+    tahun = datetime.now().strftime("%y")
+
+    if jenis_pengujian == "Tera":
+        c.drawString(start_x, y, "Pembubuhan Tanda Tera :")
+        y -= 0.45*cm
+
+        c.drawString(start_x, y, f"{bullet} Tanda Daerah D4, Tanda Pegawai Berhak H dan Tanda")
+        y -= 0.45*cm
+
+        c.drawString(start_x, y, f"  Tera Sah SL4 \"{tahun}\" pada lemping yang dililit dengan kawat")
+        y -= 0.45*cm
+
+        c.drawString(start_x, y, f"  yang disegel dengan Tanda Jaminan JP8")
+        y -= 0.45*cm
+
+        c.drawString(start_x, y, f"{bullet} Tanda Jaminan JP8 pada bagian yang dapat menjadi")
+        y -= 0.45*cm
+
+        c.drawString(start_x, y, "  potensi di lakukan perubahan yang mempengaruhi")
+        y -= 0.45*cm
+
+        c.drawString(start_x, y, "  karakteristik kemetrologiannya")
+
+    else:
+        c.drawString(start_x, y, "Pembubuhan Tanda Tera Ulang :")
+        y -= 0.45*cm
+
+        c.drawString(start_x, y, f"{bullet} Tanda Tera SAH SP6 \"{tahun}\" dan JP8 pada Alat Justir")
+        y -= 0.45*cm
+
+        c.drawString(start_x, y, f"{bullet} Tanda Jaminan JP8 pada bagian yang dapat menjadi")
+        y -= 0.45*cm
+
+        c.drawString(start_x, y, "  potensi di lakukan perubahan yang mempengaruhi")
+        y -= 0.45*cm
+
+        c.drawString(start_x, y, "  karakteristik kemetrologiannya")
+
     y -= 0.9*cm
-    # Dilarang memutus segel (menggunakan indentasi yang sama)
+
+    # Dilarang memutus segel
     c.setFont("Helvetica-Bold", 12)
-    c.drawString(colon_fixed_shifted + 0.3*cm, y, "Dilarang Memutus Segel Tera tanpa sepengetahuan")
+    c.drawString(start_x, y, "Dilarang Memutus Segel Tera tanpa sepengetahuan")
     y -= 0.45*cm
-    c.drawString(colon_fixed_shifted + 0.3*cm, y, "Unit Metrologi Legal")
+    c.drawString(start_x, y, "Unit Metrologi Legal")
     y -= 0.9*cm
 
     # ======================== TANDA TANGAN (HALAMAN 1) ========================
@@ -433,8 +513,12 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
 
     # ======================== HEADER HALAMAN 2 ========================
     c.setFillGray(0)
-    c.setFont("Helvetica", 10)
-    c.drawRightString(right_limit_old, y, f"Lampiran Sertifikat Nomor : {nomor_sertifikat}")
+    c.setFont("Helvetica-Oblique", 10)
+    c.drawRightString(
+        right_limit_old,
+        y,
+        f"Lampiran Sertifikat Nomor : {nomor_sertifikat}"
+    )
     c.setFillGray(0)
     y -= 1.8*cm
 
@@ -496,7 +580,11 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     y -= 0.45*cm
     c.drawString(x_bullet, y, "- Lokasi")
     c.drawString(x_colon_cond, y, ":")
-    c.drawString(x_value_cond, y, f"{data.get('lokasi', 'Perusahaan')}")
+    c.drawString(
+        x_value_cond,
+        y,
+        data.get('pemilik') or data.get('lokasi', '')
+    )
     y -= 0.45*cm
     c.drawString(x_bullet, y, "- Suhu ruangan")
     c.drawString(x_colon_cond, y, ":")

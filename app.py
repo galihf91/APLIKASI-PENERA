@@ -341,13 +341,12 @@ if mode == "📝 Input Data Pengujian":
     # ======================== KELAS & JENIS PENGUJIAN ========================
     col_extra1, col_extra2, col_extra3 = st.columns(3)
     with col_extra1:
-        kelas = st.selectbox(
+        st.text_input(
             "Kelas Timbangan",
-            ["I", "II", "III", "IIII"],
-            index=2 if 'kelas' not in st.session_state.saved_data else ["I", "II", "III", "IIII"].index(
-                st.session_state.saved_data.get('kelas', 'III'))
+            value="III",
+            disabled=True
         )
-        st.session_state.kelas = kelas
+        st.session_state.kelas = "III"
 
     with col_extra2:
         keterangan = st.selectbox(

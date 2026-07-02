@@ -1,702 +1,811 @@
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
-from reportlab.lib.colors import black, gray
-from datetime import datetime
-import textwrap
-import os
-from reportlab.lib.utils import ImageReader
 
-def format_tanggal_indonesia(tanggal_str):
-    if not tanggal_str:
+def hitung_bkd(muatan, interval_skala, kelas, keterangan):
+    if interval_skala == 0:
+        return 0, 0
+
+    m = muatan / interval_skala
+
+    batas = {
+        'I'   : [(50000, 0.5), (200000, 1.0), (float('inf'), 1.5)],
+        'II'  : [(5000,  0.5), (20000,  1.0), (100000, 1.5)],
+        'III' : [(500,   0.5), (2000,   1.0), (10000,  1.5)],
+        'IIII': [(50,    0.5), (200,    1.0), (1000,   1.5)],
+    }
+
+    koef_dasar = 1.5
+    for batas_m, koef in batas.get(kelas, batas['III']):
+        if m <= batas_m:
+            koef_dasar = koef
+            break
+
+    multiplier = 2.0 if keterangan == "Tera Ulang" else 1.0
+    koef_final = koef_dasar * multiplier
+    bkd_kg = koef_final * interval_skala
+    return koef_final, bkd_kg
+
+def safe_str(value):
+    """Konversi nilai ke string dengan aman."""
+    if value is None:
         return ""
+    if isinstance(value, bool):
+        return "SAH" if value else "TIDAK SAH"
+    if isinstance(value, float):
+        # Jika float adalah bilangan bulat, tampilkan sebagai int tanpa desimal
+        if value.is_integer():
+            return str(int(value))
+        else:
+            return str(value)
+    if isinstance(value, (int, float)):
+        return str(value)
+    if isinstance(value, bytes):
+        return value.decode('utf-8', errors='ignore')
+    return str(value)
+
+def format_tanggal_indo(tanggal_str):
     bulan_map = {
         "January": "Januari", "February": "Februari", "March": "Maret",
         "April": "April", "May": "Mei", "June": "Juni",
         "July": "Juli", "August": "Agustus", "September": "September",
         "October": "Oktober", "November": "November", "December": "Desember"
     }
-    # Coba parse format YYYY-MM-DD
-    try:
-        t = datetime.strptime(tanggal_str, '%Y-%m-%d')
-        bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
-                 "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
-        return f"{t.day} {bulan[t.month-1]} {t.year}"
-    except:
-        pass
-    # Coba format DD Month YYYY (misal: 30 June 2026)
-    try:
-        parts = tanggal_str.split()
-        if len(parts) == 3:
-            day = parts[0]
-            month_en = parts[1]
-            year = parts[2]
-            month_id = bulan_map.get(month_en, month_en)
-            return f"{day} {month_id} {year}"
-    except:
-        pass
-    # Jika gagal, kembalikan string asli
+    for en, id in bulan_map.items():
+        tanggal_str = tanggal_str.replace(en, id)
     return tanggal_str
-        
-def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
+
+def generate_cerapan_pdf(data, filename):
     width, height = A4
     c = canvas.Canvas(filename, pagesize=A4)
-    
-    # ===== MARGIN =====
-    margin_old = 1.5*cm                     # margin untuk kop, footer, header halaman 2, tanda tangan
-    margin_left_content = 3.0*cm            # margin kiri untuk isi
-    # margin kanan untuk isi tetap 1.5 cm (sama seperti sebelumnya)
-    right_limit_content = width - margin_old   # batas kanan untuk isi (1.5 cm dari kanan)
-    right_limit_old = width - margin_old       # untuk elemen lama
-    
+    margin = 1.5*cm
     y = height - 1.2*cm
 
-    # ======================== WATERMARK LOGO METROLOGI ========================
-    watermark_path = "logo_metrologi.png"
-    if os.path.exists(watermark_path):
-        try:
-            wm = ImageReader(watermark_path)
-            wm_width = 12*cm
-            wm_height = 12*cm
-            c.saveState()
-            c.setFillAlpha(0.15)
-            c.drawImage(wm, (width - wm_width)/2, (height - wm_height)/2,
-                        width=wm_width, height=wm_height, mask='auto')
-            c.restoreState()
-        except:
-            pass
-
-    # ======================== LOGO KOP SURAT ========================
-    logo_path = "logo.png"
-    if os.path.exists(logo_path):
-        try:
-            logo = ImageReader(logo_path)
-            logo_width = 1.9*cm
-            logo_height = 2.2*cm
-            logo_y = y - logo_height + 0.45*cm
-            c.drawImage(logo, margin_old, logo_y, width=logo_width, height=logo_height, mask='auto')
-        except:
-            pass
-
-    # ======================== TEKS KOP SURAT ========================
+    # Offset untuk menggeser teks ke kanan (sesuaikan nilai)
     offset = 0.4*cm
     center_x = width/2 + offset
 
-    c.setFont("Helvetica", 14)
-    c.drawCentredString(center_x, y, "PEMERINTAH KABUPATEN TANGERANG")
+    # Title
+    c.setFont("Helvetica-Bold", 12)
+    c.drawCentredString(center_x, y, "CERAPAN PENERAAN TIMBANGAN JEMBATAN ELEKTRONIK")
     y -= 0.8*cm
 
-    c.setFont("Helvetica-Bold", 18)
-    c.drawCentredString(center_x, y, "DINAS PERINDUSTRIAN DAN PERDAGANGAN")
-    y -= 0.45*cm
-
-    c.setFont("Helvetica", 10)
-    alamat_kop = "Jl. Atik Soewardi, Gedung Usaha-Usaha Daerah Lt. 3 Tigaraksa, Tangerang, Banten 15720"
-    c.drawCentredString(center_x, y, alamat_kop)
-    y -= 0.45*cm
-
-    c.drawCentredString(center_x, y, "Laman: disperindag.tangerangkab.go.id  Pos-el: disperindag@tangerangkab.go.id")
-    y -= 0.35*cm
-
-    # ===== GARIS GANDA (menggunakan margin lama) =====
+    # Garis ganda
     c.setLineWidth(2)
-    c.line(margin_old, y, right_limit_old, y)
+    c.line(margin, y, width - margin, y)
     y -= 0.1*cm
     c.setLineWidth(0.8)
-    c.line(margin_old, y, right_limit_old, y)
-    y -= 0.8*cm
-
-    # ======================== JUDUL & NOMOR ========================
-    # Untuk judul, tetap di tengah halaman, tidak terpengaruh margin
-    c.setFont("Helvetica-Bold", 12)
-    c.drawCentredString(width/2, y, "SURAT KETERANGAN HASIL PENGUJIAN")
+    c.line(margin, y, width - margin, y)
     y -= 0.45*cm
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawCentredString(width/2, y, "Verification Report")
-    y -= 0.45*cm
-    c.setFont("Helvetica", 12)
-    c.drawCentredString(width/2, y, f"Nomor : {nomor_sertifikat}")
-    y -= 0.9*cm
 
     # ======================== TABEL INFO UTAMA ========================
-    # Gunakan margin kiri content (3 cm) untuk semua isi
-    left_col_x = margin_left_content
-    right_col_x = margin_left_content + 7.5*cm   # posisi kolom kanan (relatif)
-    colon_x = margin_left_content + 3.2*cm
-    colon_right_x = right_col_x + 0.5*cm
-
-    # Hitung posisi titik dua yang konsisten untuk kiri (berdasarkan label terpanjang)
-    label_left = [
-        "Nomor Order", "Nama Alat", "Merek / Buatan",
-        "Model / Tipe", "Nomor Seri",
-        "Pemilik", "Alamat", "Penera", "Hasil",
-        "Berlaku sampai", "Catatan"
-    ]
-    max_width_left = max(c.stringWidth(lbl, "Helvetica", 12) for lbl in label_left)
-    colon_x_fixed = left_col_x + max_width_left + 0.5*cm
-
-    # Untuk kanan
-    label_right = [
-        "Kapasitas / Daya baca",
-        "Interval Skala Verifikasi",
-        "Kelas"
-    ]
-    max_width_right = max(c.stringWidth(lbl, "Helvetica", 12) for lbl in label_right)
-    colon_right_fixed = right_col_x + max_width_right + 0.5*cm
-
-    # ===== BARIS 1: NOMOR ORDER (dengan offset ekstra) =====
-    special_offset = 1.2*cm               # tambahan offset (sesuaikan)
-    colon_special = colon_x_fixed + special_offset
-
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y, "Nomor Order")
-    bold_width = c.stringWidth("Nomor Order", "Helvetica-Bold", 12)
-    c.line(left_col_x, y - 0.08*cm, left_col_x + bold_width, y - 0.08*cm)
-    line_spacing = 0.45*cm
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y - line_spacing, "Order Number")
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_special, y, ":")
-    c.drawString(colon_special + 0.3*cm, y, data.get('nomor_order', ''))
-    y -= 0.9*cm
-
-    # ===== BARIS 2: NAMA ALAT (dengan offset ekstra) =====
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(left_col_x, y, "Nama Alat")
-    bold_width = c.stringWidth("Nama Alat", "Helvetica-Bold", 12)
-    c.line(left_col_x, y - 0.08*cm, left_col_x + bold_width, y - 0.08*cm)
-    c.setFont("Helvetica-BoldOblique", 12)
-    c.drawString(left_col_x, y - line_spacing, "Measuring Instrument")
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(colon_special, y, ":")                 # titik dua di posisi khusus
-    c.drawString(colon_special + 0.3*cm, y, "Timbangan Jembatan Elektronik")
-    y -= 1.0*cm
-
-        # --------------------- BARIS 3: MERK / BUATAN (KIRI) & KAPASITAS (KANAN) ---------------------
-    y_row = y
-    # --- KIRI ---
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y_row, "Merek / Buatan")
-    bold_width_left = c.stringWidth("Merek / Buatan", "Helvetica", 12)
-    c.line(left_col_x, y_row - 0.08*cm, left_col_x + bold_width_left, y_row - 0.08*cm)
-    line_spacing1 = 0.45*cm
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y_row - line_spacing1, "Trade Mark /")
-    line_spacing2 = 0.45*cm
-    c.drawString(left_col_x, y_row - line_spacing1 - line_spacing2, "Manufactured by")
-
-    # Titik dua dan nilai (wrap)
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_x_fixed, y_row, ":")
-    start_x_val = colon_x_fixed + 0.3*cm
-    # Batas sebelum kolom kanan
-    safe_right = right_col_x - 0.5*cm
-    max_val_width = safe_right - start_x_val
-    char_width_val = c.stringWidth("A", "Helvetica", 12)
-    chars_per_line_val = max(
-        10,
-        int(max_val_width / char_width_val)
-    )
-    merek = data.get('merek', '')
-    wrapped_merek = textwrap.wrap(merek, width=chars_per_line_val)
-    if wrapped_merek:
-        c.drawString(start_x_val, y_row, wrapped_merek[0])
-        for i, line in enumerate(wrapped_merek[1:], start=1):
-            c.drawString(start_x_val, y_row - i*0.45*cm, line)
-        y_row_kiri = y_row - (0.45*cm * (len(wrapped_merek)-1))
-    else:
-        y_row_kiri = y_row
-
-    # ---------- KOLOM KANAN: Kapasitas / Daya baca ----------
-    c.setFont("Helvetica", 12)
-    c.drawString(right_col_x, y_row, "Kapasitas / Daya baca")
-    bold_width_right = c.stringWidth("Kapasitas / Daya baca", "Helvetica", 12)
-    c.line(right_col_x, y_row - 0.08*cm, right_col_x + bold_width_right, y_row - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(right_col_x, y_row - line_spacing1, "Capacity / Accuracy")
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_right_fixed, y_row, ":")
-    c.drawString(colon_right_fixed + 0.3*cm, y_row,
-                 f"{data.get('kapasitas_max', '')} kg / {data.get('daya_baca', '')} kg")
-
-    # Update y berdasarkan posisi terendah (kiri bisa wrap)
-    # Turun minimal 1.3 cm agar tidak menabrak baris berikutnya
-    y = min(y_row_kiri - 0.5*cm, y_row - 1.3*cm)
-
-        # ---------- KOLOM KANAN: Kapasitas / Daya baca ----------
-    c.setFont("Helvetica", 12)
-    c.drawString(right_col_x, y_row, "Kapasitas / Daya baca")
-    bold_width_right = c.stringWidth("Kapasitas / Daya baca", "Helvetica", 12)
-    c.line(right_col_x, y_row - 0.08*cm, right_col_x + bold_width_right, y_row - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(right_col_x, y_row - line_spacing1, "Capacity / Accuracy")
-    # Titik dua dan nilai menggunakan colon_right_fixed
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_right_fixed, y_row, ":")
-    c.drawString(colon_right_fixed + 0.3*cm, y_row,
-                 f"{data.get('kapasitas_max', '')} kg / {data.get('daya_baca', '')} kg")
-    y = y_row - 1.5*cm
-
-    # --------------------- BARIS 4: MODEL / TIPE (KIRI) & INTERVAL SKALA (KANAN) ---------------------
-    y_row = y
-    # --- KIRI ---
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y_row, "Model / Tipe")
-    bold_width_left = c.stringWidth("Model / Tipe", "Helvetica", 12)
-    c.line(left_col_x, y_row - 0.08*cm, left_col_x + bold_width_left, y_row - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y_row - 0.45*cm, "Model / Type")
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_x_fixed, y_row, ":")
-    start_x_val = colon_x_fixed + 0.3*cm
-    model = data.get('model', '')
-    wrapped_model = textwrap.wrap(model, width=chars_per_line_val)
-    if wrapped_model:
-        c.drawString(start_x_val, y_row, wrapped_model[0])
-        for i, line in enumerate(wrapped_model[1:], start=1):
-            c.drawString(start_x_val, y_row - i*0.45*cm, line)
-        y_row_kiri = y_row - (0.45*cm * (len(wrapped_model)-1))
-    else:
-        y_row_kiri = y_row
-
-    # ---------- KOLOM KANAN: Interval Skala Verifikasi ----------
-    c.setFont("Helvetica", 12)
-    c.drawString(right_col_x, y_row, "Interval Skala Verifikasi")
-    bold_width_right = c.stringWidth("Interval Skala Verifikasi", "Helvetica", 12)
-    c.line(right_col_x, y_row - 0.08*cm, right_col_x + bold_width_right, y_row - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(right_col_x, y_row - 0.45*cm, "Verification Scale Interval")
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_right_fixed, y_row, ":")
-    c.drawString(colon_right_fixed + 0.3*cm, y_row, f"{data.get('interval_skala', '')} kg")
-
-    # Turun minimal 1.3 cm agar baris berikutnya tetap stabil
-    y = min(y_row_kiri - 0.5*cm, y_row - 1.3*cm)
-
-    # --------------------- BARIS 5: NOMOR SERI (KIRI) & KELAS (KANAN) ---------------------
-    y_row = y
-    # --- KIRI ---
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y_row, "Nomor Seri")
-    bold_width_left = c.stringWidth("Nomor Seri", "Helvetica", 12)
-    c.line(left_col_x, y_row - 0.08*cm, left_col_x + bold_width_left, y_row - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y_row - 0.45*cm, "Serial Number")
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_x_fixed, y_row, ":")
-    start_x_val = colon_x_fixed + 0.3*cm
-    no_seri = data.get('no_seri', '')
-    wrapped_seri = textwrap.wrap(no_seri, width=chars_per_line_val)
-    if wrapped_seri:
-        c.drawString(start_x_val, y_row, wrapped_seri[0])
-        for i, line in enumerate(wrapped_seri[1:], start=1):
-            c.drawString(start_x_val, y_row - i*0.45*cm, line)
-        y_row_kiri = y_row - (0.45*cm * (len(wrapped_seri)-1))
-    else:
-        y_row_kiri = y_row
-
-    # ---------- KOLOM KANAN: Kelas ----------
-    c.setFont("Helvetica", 12)
-    c.drawString(right_col_x, y_row, "Kelas")
-    bold_width_right = c.stringWidth("Kelas", "Helvetica", 12)
-    c.line(right_col_x, y_row - 0.08*cm, right_col_x + bold_width_right, y_row - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(right_col_x, y_row - 0.45*cm, "Class")
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_right_fixed, y_row, ":")
-    c.drawString(colon_right_fixed + 0.3*cm, y_row, data.get('kelas', ''))
-
-    y = y_row_kiri - 0.5*cm
-
-        # ---------- KOLOM KANAN: Kelas ----------
-    c.setFont("Helvetica", 12)
-    c.drawString(right_col_x, y_row, "Kelas")
-    bold_width_right = c.stringWidth("Kelas", "Helvetica", 12)
-    c.line(right_col_x, y_row - 0.08*cm, right_col_x + bold_width_right, y_row - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(right_col_x, y_row - 0.45*cm, "Class")
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_right_fixed, y_row, ":")
-    c.drawString(colon_right_fixed + 0.3*cm, y_row, data.get('kelas', ''))
-    y = y_row - 1.3*cm
-
-        # ======================== PEMILIK, ALAMAT, PENERA, DLL ========================
-    # Semua menggunakan margin kiri content
-    # Tentukan posisi titik dua yang digeser untuk bagian ini (sama dengan baris 1&2)
-    special_offset = 1.2*cm   # sesuaikan
-    colon_fixed_shifted = colon_x_fixed + special_offset
+    label_x = margin
+    colon_x = margin + 1.2*cm   # titik dua di sini, jarak cukup dekat
 
     # Pemilik
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(left_col_x, y, "Pemilik")
-    bold_width = c.stringWidth("Pemilik", "Helvetica-Bold", 12)
-    c.line(left_col_x, y - 0.08*cm, left_col_x + bold_width, y - 0.08*cm)
-    c.setFont("Helvetica-BoldOblique", 12)
-    c.drawString(left_col_x, y - line_spacing, "User")
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(colon_fixed_shifted, y, ":")
-    c.drawString(colon_fixed_shifted + 0.3*cm, y, data.get('pemilik', ''))
-    y -= 1.0*cm
+    c.setFont("Helvetica", 9)
+    c.drawString(label_x, y, "Pemilik")
+    c.drawString(colon_x, y, ":")
+    c.drawString(colon_x + 0.3*cm, y, safe_str(data.get('pemilik', '')))
+    y -= 0.45*cm
 
     # Alamat
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y, "Alamat")
-    bold_width = c.stringWidth("Alamat", "Helvetica", 12)
-    c.line(left_col_x, y - 0.08*cm, left_col_x + bold_width, y - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y - line_spacing, "Address")
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_fixed_shifted, y, ":")
-    # Wrap alamat
-    max_width_alamat = right_limit_content - colon_fixed_shifted - 0.3*cm
-    char_width = c.stringWidth("a", "Helvetica", 12)
-    chars_per_line = int(max_width_alamat / char_width) if char_width > 0 else 40
-    alamat = data.get('alamat', '')
-    wrapped_lines = textwrap.wrap(alamat, width=chars_per_line)
-    if wrapped_lines:
-        start_x = colon_fixed_shifted + 0.3*cm
-        line_height = 0.45*cm
-        c.drawString(start_x, y, wrapped_lines[0])
-        for i, line in enumerate(wrapped_lines[1:], start=1):
-            c.drawString(start_x, y - i*line_height, line)
-        y -= (line_height * (len(wrapped_lines) - 1)) + 0.9*cm
-    else:
-        y -= 0.6*cm
+    c.drawString(label_x, y, "Alamat")
+    c.drawString(colon_x, y, ":")
+    c.drawString(colon_x + 0.3*cm, y, safe_str(data.get('alamat', '')))
+    y -= 0.2*cm
 
-    # Penera
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y, "Penera")
-    bold_width_penera = c.stringWidth("Penera", "Helvetica", 12)
-    c.line(left_col_x, y - 0.08*cm, left_col_x + bold_width_penera, y - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y - line_spacing, "Calibration Technician")
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_fixed_shifted, y, ":")
-    penera_text = f"{data.get('nama_penera', '')} / NIP. {data.get('nip_penera', '')}"
-    c.drawString(colon_fixed_shifted + 0.3*cm, y, penera_text)
-    y -= 1.0*cm
-
-    # Hasil
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y, "Hasil")
-    bold_width = c.stringWidth("Hasil", "Helvetica", 12)
-    c.line(left_col_x, y - 0.08*cm, left_col_x + bold_width, y - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y - line_spacing, "Results")
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_fixed_shifted, y, ":")
-    start_x = colon_fixed_shifted + 0.3*cm
-    jenis_pengujian = data.get('keterangan', 'Tera Ulang')
-    tahun_tera = datetime.now().year
-    # Teks hasil dibuat bold
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(start_x, y, f"Disahkan untuk {jenis_pengujian} Tahun {tahun_tera}")
-    # Kembali ke font normal
-    c.setFont("Helvetica", 12)
-    y -= 0.45*cm
-    c.drawString(start_x, y, "Berdasarkan Undang - Undang RI No. 2 Tahun 1981")
-    y -= 0.45*cm
-    c.drawString(start_x, y, "Tentang Metrologi Legal")
-    y -= 0.6*cm
-
-    # Berlaku sampai
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y, "Berlaku sampai")
-    bold_width = c.stringWidth("Berlaku sampai", "Helvetica", 12)
-    c.line(left_col_x, y - 0.08*cm, left_col_x + bold_width, y - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y - line_spacing, "This report due to")
-    berlaku_str = format_tanggal_indonesia(data.get('berlaku_sampai', ''))
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_fixed_shifted, y, ":")
-    # Nilai tanggal dibuat bold
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(colon_fixed_shifted + 0.3*cm, y, berlaku_str)
-    # Kembali ke font normal
-    c.setFont("Helvetica", 12)
-    y -= 1.0*cm
-
-    # Catatan
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y, "Catatan")
-    bold_width = c.stringWidth("Catatan", "Helvetica", 12)
-    c.line(left_col_x, y - 0.08*cm, left_col_x + bold_width, y - 0.08*cm)
-
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y - line_spacing, "Note")
-
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_fixed_shifted, y, ":")
-
-    start_x = colon_fixed_shifted + 0.3*cm
-    bullet = "•"
-
-    jenis_pengujian = data.get("keterangan", "Tera Ulang")
-    tahun = datetime.now().strftime("%y")
-
-    if jenis_pengujian == "Tera":
-        c.drawString(start_x, y, "Pembubuhan Tanda Tera :")
-        y -= 0.45*cm
-
-        c.drawString(start_x, y, f"{bullet} Tanda Daerah D4, Tanda Pegawai Berhak H dan Tanda")
-        y -= 0.45*cm
-
-        c.drawString(start_x, y, f"  Tera Sah SL4 \"{tahun}\" pada lemping yang dililit dengan kawat")
-        y -= 0.45*cm
-
-        c.drawString(start_x, y, f"  yang disegel dengan Tanda Jaminan JP8")
-        y -= 0.45*cm
-
-        c.drawString(start_x, y, f"{bullet} Tanda Jaminan JP8 pada bagian yang dapat menjadi")
-        y -= 0.45*cm
-
-        c.drawString(start_x, y, "  potensi di lakukan perubahan yang mempengaruhi")
-        y -= 0.45*cm
-
-        c.drawString(start_x, y, "  karakteristik kemetrologiannya")
-
-    else:
-        c.drawString(start_x, y, "Pembubuhan Tanda Tera Ulang :")
-        y -= 0.45*cm
-
-        c.drawString(start_x, y, f"{bullet} Tanda Tera SAH SP6 \"{tahun}\" dan JP8 pada Alat Justir")
-        y -= 0.45*cm
-
-        c.drawString(start_x, y, f"{bullet} Tanda Jaminan JP8 pada bagian yang dapat menjadi")
-        y -= 0.45*cm
-
-        c.drawString(start_x, y, "  potensi di lakukan perubahan yang mempengaruhi")
-        y -= 0.45*cm
-
-        c.drawString(start_x, y, "  karakteristik kemetrologiannya")
-
-    y -= 0.9*cm
-
-    # Dilarang memutus segel
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(start_x, y, "Dilarang Memutus Segel Tera tanpa sepengetahuan")
-    y -= 0.45*cm
-    c.drawString(start_x, y, "Unit Metrologi Legal")
-    y -= 0.9*cm
-
-    # ======================== TANDA TANGAN (HALAMAN 1) ========================
-    # Gunakan margin lama agar posisi tidak berubah
-    x_right_align = width - margin_old - 10*cm   # posisi seperti sebelumnya
-    c.setFont("Helvetica", 12)
-    c.drawString(x_right_align, y, f"Tangerang, {format_tanggal_indonesia(data.get('tanggal_sertifikat', ''))}")
-    y -= 0.9*cm
-    c.drawString(x_right_align, y, "A.n Kepala Dinas Perindustrian dan Perdagangan")
-    y -= 0.45*cm
-    c.drawString(x_right_align, y, "Kabupaten Tangerang")
-    y -= 0.45*cm
-    c.drawString(x_right_align, y, "Kepala Bidang Kemetrologian")
-    y -= 2.0*cm
-    c.drawString(x_right_align, y, "Priatin Saputra, S.Kom.,M.Si")
-    y -= 0.45*cm
-    c.drawString(x_right_align, y, "Penata Tk.I (III/d)")
-    y -= 0.45*cm
-    c.drawString(x_right_align, y, "NIP. 198505152011011004")
+    # Garis single
+    c.setLineWidth(1)
+    c.line(margin, y, width - margin, y)
     y -= 0.45*cm
 
-    # ======================== FOOTER HALAMAN 1 ========================
+    # ======================== SPESIFIKASI ALAT (KIRI) ========================
+    x0_spec = margin
+    x1_spec = margin + 5.0*cm
+    x2_spec = margin + 9.0*cm
+    y_start_spec = y
+    tinggi_judul = 0.5*cm
+    tinggi_baris = 0.55*cm
+    baris_data = 8
+    y_end_spec = y_start_spec - (tinggi_judul + baris_data * tinggi_baris)
+
     c.setLineWidth(0.5)
-    c.line(margin_old, 1.8*cm, right_limit_old, 1.8*cm)
-    c.setFillGray(0)
-    c.setFont("Helvetica-Oblique", 10)
-    c.drawString(margin_old, 1.5*cm, "Dilarang menggandakan sebagian dan atau seluruh isi Surat Keterangan Hasil Pengujian ini tanpa seizin dari")
-    c.drawString(margin_old, 1.2*cm, "Bidang Kemetrologian Kabupaten Tangerang")
-    c.drawRightString(right_limit_old, 0.9*cm, "Halaman 1 dari 2")
+    c.line(x0_spec, y_start_spec, x0_spec, y_end_spec)
+    c.line(x2_spec, y_start_spec, x2_spec, y_end_spec)
+    c.line(x0_spec, y_start_spec, x2_spec, y_start_spec)
+    y_line_bawah_judul = y_start_spec - tinggi_judul
+    c.line(x0_spec, y_line_bawah_judul, x2_spec, y_line_bawah_judul)
+    c.line(x1_spec, y_line_bawah_judul, x1_spec, y_end_spec)
+    y_line = y_line_bawah_judul
+    for _ in range(baris_data):
+        y_line -= tinggi_baris
+        c.line(x0_spec, y_line, x2_spec, y_line)
+    c.line(x0_spec, y_end_spec, x2_spec, y_end_spec)
 
-    # ======================== HALAMAN BARU (2) ========================
-    c.showPage()
-    y = height - margin_old   # gunakan margin lama untuk header
+    c.setFont("Helvetica-Bold", 9)
+    c.drawCentredString(x0_spec + (x2_spec - x0_spec)/2, y_start_spec - 0.40*cm, "SPESIFIKASI ALAT")
 
-    # ======================== HEADER HALAMAN 2 ========================
-    c.setFillGray(0)
-    c.setFont("Helvetica-Oblique", 10)
-    c.drawRightString(
-        right_limit_old,
-        y,
-        f"Lampiran Sertifikat Nomor : {nomor_sertifikat}"
-    )
-    c.setFillGray(0)
-    y -= 1.8*cm
+    c.setFont("Helvetica", 9)
+    y_text = y_line_bawah_judul - 0.40*cm
+    specs = [
+        ("Merek / buatan", data.get('merek', '')),
+        ("Model / tipe", data.get('model', '')),
+        ("No. Seri", data.get('no_seri', '')),
+        ("Kapasitas Maksimum", f"{data.get('kapasitas_max', '')} kg"),
+        ("Kapasitas Minimum", f"{data.get('kapasitas_min', '')} kg"),
+        ("Daya Baca", f"{data.get('daya_baca', '')} kg"),
+        ("Interval Skala Verifikasi", f"{data.get('interval_skala', '')} kg"),
+        ("Kelas", data.get('kelas', '')),
+    ]
+    for label, value in specs:
+        c.drawString(x0_spec + 0.2*cm, y_text, label)
+        c.drawString(x1_spec + 0.2*cm, y_text, safe_str(value))
+        y_text -= tinggi_baris
 
-    # ======================== SPESIFIKASI TEKNIS STANDAR ========================
-    # Gunakan margin kiri content (3 cm)
-    left_col_x = margin_left_content
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(left_col_x, y, "SPESIFIKASI TEKNIS STANDAR")
-    y -= 0.45*cm
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y, "Standard Technical Specification")
-    y -= 0.9*cm
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y, "Metode, Standar, dan Telusuran")
-    y -= 0.45*cm
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y, "Metode")
-    c.drawString(colon_x_fixed, y, ":")
-    normal_text = "Membandingkan langsung dengan standar ("
-    italic_text = "Direct Comparison"
-    closing_text = ")"
-    c.drawString(colon_x_fixed + 0.3*cm, y, normal_text)
-    normal_width = c.stringWidth(normal_text, "Helvetica", 12)
-    x_italic = colon_x_fixed + 0.3*cm + normal_width
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(x_italic, y, italic_text)
-    italic_width = c.stringWidth(italic_text, "Helvetica-Oblique", 12)
-    x_closing = x_italic + italic_width
-    c.setFont("Helvetica", 12)
-    c.drawString(x_closing, y, closing_text)
-    y -= 0.45*cm
+    y = y_end_spec - 0.3*cm
 
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y, "Standar")
-    c.drawString(colon_x_fixed, y, ":")
-    c.drawString(colon_x_fixed + 0.3*cm, y, "Anak Timbangan Standar Kelas M2")
-    y -= 0.45*cm
-    c.drawString(left_col_x, y, "Telusuran")
-    c.drawString(colon_x_fixed, y, ":")
-    c.drawString(colon_x_fixed + 0.3*cm, y, "Direktorat Metrologi")
-    y -= 0.9*cm
+    # ======================== DATA PENGUJIAN (KANAN) ========================
+    x0_data = margin + 9.3*cm
+    x1_data = x0_data + 3.5*cm
+    x2_data = width - margin
+    y_start_data = y_start_spec
+    baris_data_kanan = 6
+    y_end_data = y_start_data - (tinggi_judul + baris_data_kanan * tinggi_baris)
 
-    # ======================== KONDISI PENGUJIAN ========================
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(left_col_x, y, "KONDISI PENGUJIAN")
-    y -= 0.45*cm
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y, "Condition of Verification")
-    y -= 0.9*cm
+    c.line(x0_data, y_start_data, x0_data, y_end_data)
+    c.line(x2_data, y_start_data, x2_data, y_end_data)
+    c.line(x0_data, y_start_data, x2_data, y_start_data)
+    y_line_bawah_judul_data = y_start_data - tinggi_judul
+    c.line(x0_data, y_line_bawah_judul_data, x2_data, y_line_bawah_judul_data)
+    c.line(x1_data, y_line_bawah_judul_data, x1_data, y_end_data)
+    y_line = y_line_bawah_judul_data
+    for _ in range(baris_data_kanan):
+        y_line -= tinggi_baris
+        c.line(x0_data, y_line, x2_data, y_line)
+    c.line(x0_data, y_end_data, x2_data, y_end_data)
 
-    labels = ["- Lokasi", "- Suhu ruangan", "- Kelembaban relatif", "- Tanggal"]
-    max_label_width = max(c.stringWidth(label, "Helvetica", 12) for label in labels)
-    x_bullet = left_col_x + 0.6*cm
-    x_colon_cond = x_bullet + max_label_width + 0.2*cm
-    x_value_cond = x_colon_cond + 0.3*cm
+    c.setFont("Helvetica-Bold", 9)
+    c.drawCentredString(x0_data + (x2_data - x0_data)/2, y_start_data - 0.4*cm, "DATA PENGUJIAN")
 
-    c.setFont("Helvetica", 12)
-    c.drawString(left_col_x + 0.3*cm, y, "1. Pengujian dilakukan dalam ruangan dengan kondisi sebagai berikut :")
-    y -= 0.45*cm
-    c.drawString(x_bullet, y, "- Lokasi")
-    c.drawString(x_colon_cond, y, ":")
-    c.drawString(
-        x_value_cond,
-        y,
-        data.get('pemilik') or data.get('lokasi', '')
-    )
-    y -= 0.45*cm
-    c.drawString(x_bullet, y, "- Suhu ruangan")
-    c.drawString(x_colon_cond, y, ":")
-    c.drawString(x_value_cond, y, f"{data.get('suhu', 'Ambient')}")
-    y -= 0.45*cm
-    c.drawString(x_bullet, y, "- Kelembaban relatif")
-    c.drawString(x_colon_cond, y, ":")
-    c.drawString(x_value_cond, y, f"{data.get('kelembaban', 'Ambient')}")
-    y -= 0.45*cm
-    # Tanggal
-    c.drawString(x_bullet, y, "- Tanggal")
-    c.drawString(x_colon_cond, y, ":")
-    tanggal_nilai = format_tanggal_indonesia(data.get('tanggal_penera', ''))
-    c.drawString(x_value_cond, y, tanggal_nilai)
-    y -= 0.45*cm
-    c.drawString(left_col_x + 0.3*cm, y, f"2. Metode yang digunakan menggunakan metode {data.get('metode', 'Beban Substitusi Tunggal')}.")
-    y -= 1.3*cm
+    c.setFont("Helvetica", 9)
+    y_text = y_line_bawah_judul_data - 0.4*cm
+    test_items = [
+        ("Tanggal", format_tanggal_indo(data.get('tanggal_penera', ''))),  # gunakan tanggal_penera
+        ("Lokasi", data.get('lokasi', 'Perusahaan')),
+        ("Suhu ruangan", data.get('suhu', 'Ambient')),
+        ("Kelembaban", data.get('kelembaban', 'Ambient')),
+        ("Metode", data.get('metode', 'Beban Substitusi Tunggal')),
+        ("Keterangan", data.get('keterangan', 'Tera')),
+    ]
+    for label, value in test_items:
+        c.drawString(x0_data + 0.2*cm, y_text, label)
+        c.drawString(x1_data + 0.2*cm, y_text, safe_str(value))
+        y_text -= tinggi_baris
 
-    # ======================== TABEL HASIL PENGUJIAN ========================
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(left_col_x, y, "HASIL PENGUJIAN")
-    y -= 0.45*cm
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y, "Verification Results")
-    y -= 0.45*cm
+    y = min(y_end_spec, y_end_data) - 0.5*cm
+    y -= 0.01*cm
 
-    x_kiri = left_col_x
-    x_no_kanan = left_col_x + 1.5*cm
-    x_penunjukan_kiri = x_no_kanan + 0.2*cm
-    x_penunjukan_kanan = x_penunjukan_kiri + 4.0*cm
-    x_kesalahan_kiri = x_penunjukan_kanan + 0.3*cm
+        # ======================== PEMERIKSAAN VISUAL (TABEL) ========================
+    y_judul_visual = y
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(margin, y_judul_visual, "PEMERIKSAAN VISUAL")
+    y = y_judul_visual - 0.15*cm
 
-    c.setFont("Helvetica-Bold", 12)
-    lebar_kesalahan = c.stringWidth("Kesalahan (kg)", "Helvetica-Bold", 12)
-    x_kesalahan_kanan = x_kesalahan_kiri + lebar_kesalahan + 0.5*cm
-    x_akhir = x_kesalahan_kanan
+    visual_data = data.get('visual', {})
+    visual_items = ["Tanda Tera", "Alat Penunjuk Kedataran", "Bersih dan Siap Uji", "Sesuai Persetujuan Tipe"]
 
-    y_header = y
-    c.line(x_kiri, y_header, x_akhir, y_header)
-    c.setFont("Helvetica-Bold", 12)
-    y_center_no = y_header - 0.6*cm
-    c.drawCentredString(x_kiri + (x_no_kanan - x_kiri)/2, y_center_no, "No.")
-    y_line1 = y_header - 0.4*cm
-    y_line2 = y_header - 0.8*cm
-    x_pen_tengah = x_penunjukan_kiri + (x_penunjukan_kanan - x_penunjukan_kiri)/2
-    c.drawCentredString(x_pen_tengah, y_line1, "Penunjukan")
-    c.drawCentredString(x_pen_tengah, y_line2, "(kg)")
-    x_kes_tengah = x_kesalahan_kiri + (x_kesalahan_kanan - x_kesalahan_kiri)/2
-    c.drawCentredString(x_kes_tengah, y_line1, "Kesalahan")
-    c.drawCentredString(x_kes_tengah, y_line2, "(kg)")
-    y_line_bawah_header = y_header - 1.0*cm
-    c.line(x_kiri, y_line_bawah_header, x_akhir, y_line_bawah_header)
-    test_results = data.get('hasil_pengujian', [])
-    c.setFont("Helvetica", 12)
-
-    indeks_yang_ditampilkan = [0, 1, 3, 5, 7]
-    jumlah_baris = len(indeks_yang_ditampilkan)
+    x0 = margin
+    x1 = margin + 0.7*cm      # No.
+    x2 = margin + 5.0*cm      # Uraian
+    x3 = margin + 5.7*cm      # Ya (centang)
+    x4 = margin + 6.8*cm      # Tidak (centang)
+    x5 = margin + 9.0*cm      # Keterangan
+    baris_data = len(visual_items)
     tinggi_baris = 0.45*cm
-    padding_vertikal = 0.1*cm  # jarak sama di atas baris pertama & di bawah baris terakhir
+    tinggi_header = 0.45*cm
+    y_start = y
+    y_end = y_start - (tinggi_header + baris_data * tinggi_baris)
 
-    y_data = y_line_bawah_header - padding_vertikal - tinggi_baris
-    for i, idx in enumerate(indeks_yang_ditampilkan, 1):
-        if idx < len(test_results):
-            res = test_results[idx]
-            penunjukan = str(res.get('timbangan', ''))
-            kesalahan = str(res.get('kesalahan', '0'))
-        else:
-            penunjukan = ""
-            kesalahan = ""
-        c.drawCentredString(x_kiri + (x_no_kanan - x_kiri)/2, y_data, f"{i}.")
-        c.drawCentredString(x_pen_tengah, y_data, penunjukan)
-        c.drawCentredString(x_kes_tengah, y_data, kesalahan)
-        y_data -= tinggi_baris
-
-    y_bottom = y_line_bawah_header - padding_vertikal - (jumlah_baris * tinggi_baris) - padding_vertikal
-    c.line(x_kiri, y_bottom, x_akhir, y_bottom)
-    y_top = y_header
-    c.line(x_kiri, y_top, x_kiri, y_bottom)
-    c.line(x_no_kanan, y_top, x_no_kanan, y_bottom)
-    c.line(x_penunjukan_kanan, y_top, x_penunjukan_kanan, y_bottom)
-    c.line(x_akhir, y_top, x_akhir, y_bottom)
-    y = y_bottom - 1.8*cm
-
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(left_col_x, y, "Keterangan :")
-    y -= 0.45*cm
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(left_col_x, y, "Penunjukan sebenarnya : Penunjukan – Kesalahan")
-    y -= 1.8*cm
-
-    # ======================== TANDA TANGAN PENERA (HALAMAN 2) ========================
-    # Gunakan margin lama agar posisi tidak berubah
-    x_right_align = width - margin_old - 10*cm
-    c.setFont("Helvetica", 12)
-    c.drawString(x_right_align, y, "Pegawai Berhak,")
-    y -= 2.0*cm
-    c.drawString(x_right_align, y, data.get('nama_penera', ''))
-    y -= 0.45*cm
-    golongan = data.get('golongan_penera', '')
-    c.drawString(x_right_align, y, golongan if golongan else "Penata Muda Tk. I (III/b)")
-    y -= 0.45*cm
-    c.drawString(x_right_align, y, f"NIP. {data.get('nip_penera', '')}")
-    y -= 0.8*cm
-
-    # ======================== FOOTER HALAMAN 2 ========================
     c.setLineWidth(0.5)
-    c.line(margin_old, 1.8*cm, right_limit_old, 1.8*cm)
-    c.setFillGray(0)
-    c.setFont("Helvetica-Oblique", 10)
-    c.drawString(margin_old, 1.5*cm, "Dilarang menggandakan sebagian dan atau seluruh isi Surat Keterangan Hasil Pengujian ini tanpa seizin dari")
-    c.drawString(margin_old, 1.2*cm, "Bidang Kemetrologian Kabupaten Tangerang")
-    c.drawRightString(right_limit_old, 0.9*cm, "Halaman 2 dari 2")
+    for x in (x0, x1, x2, x3, x4, x5):
+        c.line(x, y_start, x, y_end)
+    c.line(x0, y_start, x5, y_start)
+    y_header_bottom = y_start - tinggi_header
+    c.line(x0, y_header_bottom, x5, y_header_bottom)
+    y_line = y_header_bottom
+    for _ in range(baris_data):
+        y_line -= tinggi_baris
+        c.line(x0, y_line, x5, y_line)
+    c.line(x0, y_end, x5, y_end)
 
+    c.setFont("Helvetica-Bold", 9)
+    y_header_center = y_start - tinggi_header/2 - 0.1*cm
+    c.drawCentredString(x0 + (x1-x0)/2, y_header_center, "No.")
+    c.drawCentredString(x1 + (x2-x1)/2, y_header_center, "Uraian")
+    c.drawCentredString(x2 + (x3-x2)/2, y_header_center, "Ya")
+    c.drawCentredString(x3 + (x4-x3)/2, y_header_center, "Tidak")
+    c.drawCentredString(x4 + (x5-x4)/2, y_header_center, "Keterangan")
+
+    # Data – gunakan centang (✓) di kolom Ya / Tidak
+    c.setFont("Helvetica", 9)
+    y_text_start = y_header_bottom - tinggi_baris/2 - 0.1*cm
+    y_text = y_text_start
+    for i, check in enumerate(visual_items, 1):
+        is_ok = visual_data.get(check, False)
+        c.drawCentredString(x0 + (x1-x0)/2, y_text, str(i))
+        c.drawCentredString(x1 + (x2-x1)/2, y_text, check)
+        c.drawCentredString(x2 + (x3-x2)/2, y_text, "✓" if is_ok else "")
+        c.drawCentredString(x3 + (x4-x3)/2, y_text, "✓" if not is_ok else "")
+        c.drawCentredString(x4 + (x5-x4)/2, y_text, "")
+        y_text -= tinggi_baris
+
+    y = y_end - 0.4*cm
+    y_start_visual = y_start
+    y_end_visual = y_end
+    # ======================== REPETABILITY (TABEL DI KANAN) ========================
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(margin + 9.5*cm, y_judul_visual, "1. REPETABILITY")
+    c.setFont("Helvetica", 9)
+    c.drawString(margin + 9.5*cm + 3.5*cm, y_judul_visual, "Sekitar 50 % Maks")
+
+    y_start_repet = y_start_visual
+    tinggi_baris = 0.45*cm
+    tinggi_header = 0.45*cm
+
+    repet_data = data.get('repetability', [])
+    rows_repet = []
+    for idx, item in enumerate(repet_data[:3], 1):
+        rows_repet.append([
+            str(idx),
+            safe_str(item.get('penunjukan', '')),
+            safe_str(item.get('delta_l', '')),
+            safe_str(item.get('p_value', '')),
+            safe_str(item.get('hasil', True))
+        ])
+    while len(rows_repet) < 3:
+        rows_repet.append(["", "", "", "", ""])
+
+    baris_data = 3
+    baris_total = 1 + baris_data + 1
+
+    x0_r = margin + 9.5*cm
+    x1_r = x0_r + 0.8*cm
+    x2_r = x1_r + 2.5*cm
+    x3_r = x2_r + 1.0*cm
+    x4_r = x3_r + 2.8*cm
+    x5_r = x4_r + 1.5*cm
+
+    y_end_repet = y_start_repet - (tinggi_header + (baris_data + 1) * tinggi_baris)
+    y_before_BKD = y_start_repet - (tinggi_header + 3 * tinggi_baris)
+
+    c.setLineWidth(0.5)
+    for x in (x0_r, x2_r, x3_r, x4_r, x5_r):
+        c.line(x, y_start_repet, x, y_end_repet)
+    c.line(x1_r, y_start_repet, x1_r, y_before_BKD)
+    c.line(x0_r, y_start_repet, x5_r, y_start_repet)
+    y_header_bottom = y_start_repet - tinggi_header
+    c.line(x0_r, y_header_bottom, x5_r, y_header_bottom)
+    y_line = y_header_bottom
+    for _ in range(3):
+        y_line -= tinggi_baris
+        c.line(x0_r, y_line, x5_r, y_line)
+    c.line(x0_r, y_end_repet, x5_r, y_end_repet)
+
+    c.setFont("Helvetica-Bold", 9)
+    y_header_center = y_start_repet - tinggi_header/2 - 0.1*cm
+    c.drawCentredString(x0_r + (x1_r-x0_r)/2, y_header_center, "No")
+    c.drawCentredString(x1_r + (x2_r-x1_r)/2, y_header_center, "Penunjukan (I)")
+    c.drawCentredString(x2_r + (x3_r-x2_r)/2, y_header_center, "ΔL")
+    c.drawCentredString(x3_r + (x4_r-x3_r)/2, y_header_center, "P = I + 0,5e - ΔL")
+    c.drawCentredString(x4_r + (x5_r-x4_r)/2, y_header_center, "HASIL")
+
+    # Data baris (dengan satuan kg)
+    c.setFont("Helvetica", 9)
+    for idx in range(baris_data):
+        y_text = y_start_repet - tinggi_header - (idx + 0.5) * tinggi_baris - 0.1*cm
+        row = rows_repet[idx]
+        # No
+        c.drawCentredString(x0_r + (x1_r-x0_r)/2, y_text, safe_str(row[0]))
+        # Penunjukan (I) + kg
+        val1 = safe_str(row[1])
+        if val1:
+            val1 += " kg"
+        c.drawCentredString(x1_r + (x2_r-x1_r)/2, y_text, val1)
+        # ΔL + kg
+        val2 = safe_str(row[2])
+        if val2:
+            val2 += " kg"
+        c.drawCentredString(x2_r + (x3_r-x2_r)/2, y_text, val2)
+        # P = I + 0,5e - ΔL + kg
+        val3 = safe_str(row[3])
+        if val3:
+            val3 += " kg"
+        c.drawCentredString(x3_r + (x4_r-x3_r)/2, y_text, val3)
+        # HASIL
+        c.drawCentredString(x4_r + (x5_r-x4_r)/2, y_text, safe_str(row[4]))
+
+        # ===== BARIS BKD (MERGED CELL) – DINAMIS BERDASARKAN PENUNJUKAN =====
+    # Ambil nilai penunjukan dari data repetability (baris pertama)
+    if repet_data and len(repet_data) > 0:
+        penunjukan_str = repet_data[0].get('penunjukan', 0)
+        # Konversi ke float/int
+        try:
+            penunjukan = float(penunjukan_str) if penunjukan_str else 0
+        except:
+            penunjukan = 0
+    else:
+        penunjukan = 0
+
+    interval_skala = data.get('interval_skala', 20)
+    kelas = data.get('kelas', 'III')
+    keterangan = data.get('keterangan', 'Tera')
+
+    # Hitung BKD berdasarkan penunjukan (bukan 50% kapasitas)
+    _, bkd_kg = hitung_bkd(penunjukan, interval_skala, kelas, keterangan)
+    bkd_kg_str = safe_str(bkd_kg)
+
+    y_text_bkd = y_start_repet - tinggi_header - (3 + 0.5) * tinggi_baris - 0.1*cm
+    x_center_merged = x0_r + (x2_r - x0_r)/2
+    c.drawCentredString(x_center_merged, y_text_bkd, "BKD")
+    c.drawCentredString(x2_r + (x3_r-x2_r)/2, y_text_bkd, f"{bkd_kg_str} kg")
+    c.drawCentredString(x3_r + (x4_r-x3_r)/2, y_text_bkd, "Status")
+    c.drawCentredString(x4_r + (x5_r-x4_r)/2, y_text_bkd, "SAH")
+
+    y = y_end_repet - 0.5*cm
+
+
+    # ======================== EKSENTRISITAS ========================
+    y_judul_eks = y_end_visual - 0.5*cm
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(margin, y_judul_eks, "2. EKSENTRISITAS")
+    c.setFont("Helvetica", 9)
+    c.drawString(margin + 3.5*cm, y_judul_eks, "Sekitar 1/3 Maks")
+    y_start_eks = y_judul_eks - 0.15*cm
+
+    eksen_data = data.get('eksentrisitas', [])
+    rows_eks = []
+    for idx, item in enumerate(eksen_data[:3], 1):
+        rows_eks.append([
+            str(idx),
+            safe_str(item.get('penunjukan', '')),
+            safe_str(item.get('delta_l', '')),
+            safe_str(item.get('p_value', '')),
+            safe_str(item.get('selisih', '')),
+            "0",  # nilai selisih (default)
+            safe_str(item.get('bkd_text', '')),  # BKD per baris
+            safe_str(item.get('hasil', True))
+        ])
+    while len(rows_eks) < 3:
+        rows_eks.append(["", "", "", "", "", "", "", ""])
+
+    kotak_width = 2.5*cm
+    x0 = margin + kotak_width + 0.2*cm
+    x1 = x0 + 0.7*cm
+    x2 = x1 + 2.8*cm
+    x3 = x2 + 1.5*cm
+    x4 = x3 + 2.8*cm
+    x4_5 = x4 + 1.2*cm
+    x5 = x4_5 + 1.0*cm
+    x6 = x5 + 0.8*cm
+    x7 = x6 + 1.5*cm
+
+    tinggi_baris = 0.45*cm
+    tinggi_header = 0.45*cm
+    baris_data = len(rows_eks)
+    y_end_eks = y_start_eks - (tinggi_header + baris_data * tinggi_baris)
+    y_header_bottom = y_start_eks - tinggi_header
+
+    c.setLineWidth(0.5)
+    for x in (x0, x1, x2, x3, x4, x5, x6, x7):
+        c.line(x, y_start_eks, x, y_end_eks)
+    c.line(x4_5, y_header_bottom, x4_5, y_end_eks)
+    c.line(x0, y_start_eks, x7, y_start_eks)
+    c.line(x0, y_header_bottom, x7, y_header_bottom)
+    y_line = y_header_bottom
+    for _ in range(baris_data):
+        y_line -= tinggi_baris
+        c.line(x0, y_line, x7, y_line)
+    c.line(x0, y_end_eks, x7, y_end_eks)
+
+    c.setFont("Helvetica-Bold", 9)
+    y_header_center = y_start_eks - tinggi_header/2 - 0.1*cm
+    c.drawCentredString(x0 + (x1-x0)/2, y_header_center, "No")
+    c.drawCentredString(x1 + (x2-x1)/2, y_header_center, "Penunjukan (I)")
+    c.drawCentredString(x2 + (x3-x2)/2, y_header_center, "ΔL")
+    c.drawCentredString(x3 + (x4-x3)/2, y_header_center, "P = I + 0,5e - ΔL")
+    c.drawCentredString(x4 + (x5-x4)/2, y_header_center, "Selisih")
+    c.drawCentredString(x5 + (x6-x5)/2, y_header_center, "BKD")
+    c.drawCentredString(x6 + (x7-x6)/2, y_header_center, "HASIL")
+
+    c.setFont("Helvetica", 9)
+    for idx, row in enumerate(rows_eks):
+        y_text = y_start_eks - tinggi_header - (idx + 0.5) * tinggi_baris - 0.1*cm
+        # No
+        c.drawCentredString(x0 + (x1-x0)/2, y_text, safe_str(row[0]))
+        # Penunjukan (I) + kg
+        val1 = safe_str(row[1])
+        if val1:
+            val1 += " kg"
+        c.drawCentredString(x1 + (x2-x1)/2, y_text, val1)
+        # ΔL + kg
+        val2 = safe_str(row[2])
+        if val2:
+            val2 += " kg"
+        c.drawCentredString(x2 + (x3-x2)/2, y_text, val2)
+        # P = I + 0,5e - ΔL + kg
+        val3 = safe_str(row[3])
+        if val3:
+            val3 += " kg"
+        c.drawCentredString(x3 + (x4-x3)/2, y_text, val3)
+        # Selisih (label)
+        c.drawCentredString(x4 + (x4_5-x4)/2, y_text, safe_str(row[4]))
+        # Selisih (nilai)
+        c.drawCentredString(x4_5 + (x5-x4_5)/2, y_text, safe_str(row[5]))
+        # BKD
+        c.drawCentredString(x5 + (x6-x5)/2, y_text, safe_str(row[6]))
+        # HASIL
+        c.drawCentredString(x6 + (x7-x6)/2, y_text, safe_str(row[7]))
+
+    kotak_x = margin
+    kotak_y = y_end_eks
+    kotak_height = y_start_eks - y_end_eks
+    c.rect(kotak_x, kotak_y, kotak_width, kotak_height, stroke=1, fill=0)
+    cell_width = kotak_width / 3.0
+    c.setFont("Helvetica-Bold", 9)
+    for i, angka in enumerate(['1', '2', '3']):
+        x_center = kotak_x + (i + 0.5) * cell_width
+        y_center = kotak_y + kotak_height/2
+        c.drawCentredString(x_center, y_center, angka)
+
+    y = y_end_eks - 0.55*cm
+
+    # ======================== PENGUJIAN KEBENARAN ========================
+    y_judul = y
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(margin, y_judul, "3. PENGUJIAN KEBENARAN")
+    y_tbl_top = y_judul - 0.3 * cm
+
+    TH1 = 0.50 * cm
+    TH2 = 0.65 * cm
+    TDR = 0.45 * cm
+
+    W_eff = width - 2 * margin
+    w = {
+        'no'      : 0.60,
+        'std_v'   : 1.10,  'std_kg'  : 0.50,
+        'bal_v'   : 1.10,  'bal_kg'  : 0.50,
+        'muat_v'  : 1.30,  'muat_kg' : 0.50,
+        'timb_v'  : 1.30,  'timb_kg' : 0.50,
+        'imbuh'   : 0.65,
+        'pakt_v'  : 1.20,  'pakt_kg' : 0.50,
+        'kes_v'   : 1.30,  'kes_kg'  : 0.00,
+        'bkd_pm'  : 0.45,  'bkd_n'   : 0.55,  'bkd_e': 0.45,
+        'hasil'   : 0.90,
+    }
+    _total_raw = sum(w.values()) * cm
+    _scale = W_eff / _total_raw
+    for k in w:
+        w[k] = w[k] * cm * _scale
+
+    order = ['no',
+             'std_v', 'std_kg',
+             'bal_v', 'bal_kg',
+             'muat_v', 'muat_kg',
+             'timb_v', 'timb_kg',
+             'imbuh',
+             'pakt_v', 'pakt_kg',
+             'kes_v', 'kes_kg',
+             'bkd_pm', 'bkd_n', 'bkd_e',
+             'hasil']
+
+    x = {}
+    cur = margin
+    for k in order:
+        x[k] = cur
+        cur += w[k]
+    x['end'] = cur
+
+    test_results = data.get('hasil_pengujian', [])
+    n_data = len(test_results)
+
+    y_h1_top = y_tbl_top
+    y_h1_bot = y_h1_top - TH1
+    y_h2_bot = y_h1_bot - TH2
+    y_tbl_bot = y_h2_bot - n_data * TDR
+
+    def ctext(text, xl_key, xr_key, yc, bold=False, size=7.5):
+        c.setFont("Helvetica-Bold" if bold else "Helvetica", size)
+        xm = (x[xl_key] + x[xr_key]) / 2
+        c.drawCentredString(xm, yc - size * 0.38, safe_str(text))
+
+    def hline(y_pos, x_from_key='no', x_to_key='end'):
+        c.line(x[x_from_key], y_pos, x[x_to_key], y_pos)
+
+    def vline(x_key, y_top, y_bot):
+        c.line(x[x_key], y_top, x[x_key], y_bot)
+
+    c.setLineWidth(0.5)
+    hline(y_h1_top)
+    c.line(x['std_v'], y_h1_bot, x['bkd_pm'], y_h1_bot)
+    hline(y_h2_bot)
+    for i in range(1, n_data):
+        hline(y_h2_bot - i * TDR)
+    hline(y_tbl_bot)
+
+    full_vlines = ['no', 'std_v', 'timb_v', 'bkd_pm', 'hasil', 'end']
+    for k in full_vlines:
+        vline(k, y_h1_top, y_tbl_bot)
+
+    partial_vlines = ['std_kg', 'bal_v', 'bal_kg', 'muat_v', 'muat_kg',
+                      'timb_kg', 'imbuh', 'pakt_v', 'pakt_kg',
+                      'kes_v']
+    for k in partial_vlines:
+        vline(k, y_h1_bot, y_tbl_bot)
+
+    for k in ['bkd_n', 'bkd_e']:
+        vline(k, y_h2_bot, y_tbl_bot)
+
+    yc1 = y_h1_top - TH1 / 2
+    ctext("Muatan ( L )", 'std_v', 'timb_v', yc1, bold=True)
+    ctext("Penunjukan",  'timb_v', 'bkd_pm', yc1, bold=True)
+    yc_merged = (y_h1_top + y_h2_bot) / 2
+    ctext("BKD",         'bkd_pm', 'hasil', yc_merged, bold=True)
+    ctext("HASIL",       'hasil', 'end',   yc_merged, bold=True)
+
+    def header2(line1, line2, xl_key, xr_key):
+        """Header 2 baris: line1 di atas, line2 di bawah."""
+        xm = (x[xl_key] + x[xr_key]) / 2
+        c.setFont("Helvetica-Bold", 6.5)
+        c.drawCentredString(xm, y_h1_bot - TH2 * 0.38, line1)   # lebih turun
+        c.setFont("Helvetica", 6.0)
+        c.drawCentredString(xm, y_h1_bot - TH2 * 0.72, line2)   # lebih turun
+
+    c.setFont("Helvetica-Bold", 7.5)
+    c.drawCentredString(
+        (x['no'] + x['std_v']) / 2,
+        (y_h1_top + y_h2_bot) / 2 - 7.5 * 0.38,
+        "No"
+    )
+
+    header2("Standar",        "S",             'std_v',  'std_kg')
+    header2("Balas (B)",      "( Pi-E )",      'bal_v',  'bal_kg')
+    header2("Muatan",         "( S+B )",       'muat_v', 'muat_kg')
+    header2("Timbangan",      "( I )",         'timb_v', 'timb_kg')
+    header2("Imbuh",          "(\u0394L)",     'imbuh',  'pakt_v')
+    header2("P.Aktual (Pi)",  "I+0,5e-\u0394L",'pakt_v', 'pakt_kg')
+    header2("Kesalahan (E)",  "Pi - L",        'kes_v',  'bkd_pm')
+
+    for idx, res in enumerate(test_results):
+        y_row_top = y_h2_bot - idx * TDR
+        yc = y_row_top - TDR / 2
+
+        standar   = safe_str(res.get('standar', ''))
+        balas     = safe_str(res.get('balas', ''))
+        muatan_sb = safe_str(res.get('muatan_sb', ''))
+        timbangan = safe_str(res.get('timbangan', ''))
+        imbuh     = safe_str(res.get('imbuh', ''))
+        p_aktual  = safe_str(res.get('p_aktual', ''))
+        kesalahan = safe_str(res.get('kesalahan', '0'))
+        bkd_koef  = res.get('bkd_koef', 0)
+        hasil_ok  = res.get('hasil', True)
+
+        def td(text, xl, xr, sz=7.5, bold=False):
+            c.setFont("Helvetica-Bold" if bold else "Helvetica", sz)
+            c.drawCentredString((x[xl] + x[xr]) / 2, yc - sz * 0.38, safe_str(text))
+
+        td(str(idx + 1), 'no', 'std_v')
+        td(standar,    'std_v',  'std_kg')
+        if standar: td("kg", 'std_kg', 'bal_v', sz=7.0)
+        td(balas,      'bal_v',  'bal_kg')
+        if balas:   td("kg", 'bal_kg', 'muat_v', sz=7.0)
+        td(muatan_sb,  'muat_v', 'muat_kg')
+        if muatan_sb: td("kg", 'muat_kg', 'timb_v', sz=7.0)
+        td(timbangan,  'timb_v', 'timb_kg')
+        if timbangan: td("kg", 'timb_kg', 'imbuh', sz=7.0)
+        td(imbuh,      'imbuh',  'pakt_v')
+        td(p_aktual,   'pakt_v', 'pakt_kg')
+        if p_aktual: td("kg", 'pakt_kg', 'kes_v', sz=7.0)
+        td(kesalahan,  'kes_v',  'bkd_pm')
+
+        if bkd_koef:
+            if bkd_koef == int(bkd_koef):
+                bkd_display = str(int(bkd_koef))
+            else:
+                bkd_display = f"{bkd_koef:g}"
+        else:
+            bkd_display = ""
+        td("\u00b1",            'bkd_pm', 'bkd_n')
+        td(bkd_display,         'bkd_n',  'bkd_e')
+        td("e" if bkd_koef else "", 'bkd_e', 'hasil')
+        td("SAH" if hasil_ok else "TIDAK", 'hasil', 'end', bold=hasil_ok)
+
+    y = y_tbl_bot - 0.3 * cm
+
+    # ======================== PENGUJIAN PENYETELAN NOL ========================
+    y_judul_nol = y - 0.3*cm
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(margin, y_judul_nol, "4. PENGUJIAN PENYETELAN NOL")
+    y_start_nol = y_judul_nol - 0.15*cm
+
+    nol_data = data.get('penyetelan_nol', {})
+    setel_nol = safe_str(nol_data.get('setel_nol', '0'))
+    muatan_10e = safe_str(nol_data.get('muatan_10e', '100'))
+    awal = safe_str(nol_data.get('awal', '100'))
+    plus025e = safe_str(nol_data.get('plus025e', '100'))
+    plus05e = safe_str(nol_data.get('plus05e', '110'))
+
+    rows_nol = [[setel_nol, muatan_10e, awal, plus025e, plus05e]]
+    baris_data = len(rows_nol)
+    baris_total = 1 + baris_data
+
+    x0 = margin
+    x1 = x0 + 2.0*cm
+    x2 = x1 + 3.3*cm
+    x3 = x2 + 1.8*cm
+    x4 = x3 + 1.8*cm
+    x5 = x4 + 1.8*cm
+
+    tinggi_baris = 0.45*cm
+    tinggi_header = 0.45*cm
+    y_end_nol = y_start_nol - (tinggi_header + baris_data * tinggi_baris)
+
+    c.setLineWidth(0.5)
+    for x in (x0, x1, x2, x3, x4, x5):
+        c.line(x, y_start_nol, x, y_end_nol)
+    c.line(x0, y_start_nol, x5, y_start_nol)
+    y_header_bottom = y_start_nol - tinggi_header
+    c.line(x0, y_header_bottom, x5, y_header_bottom)
+    y_line = y_header_bottom
+    for _ in range(baris_data):
+        y_line -= tinggi_baris
+        c.line(x0, y_line, x5, y_line)
+    c.line(x0, y_end_nol, x5, y_end_nol)
+
+    c.setFont("Helvetica-Bold", 9)
+    y_header_center = y_start_nol - tinggi_header/2 - 0.1*cm
+    c.drawCentredString(x0 + (x1-x0)/2, y_header_center, "SETEL NOL")
+    c.drawCentredString(x1 + (x2-x1)/2, y_header_center, "MUATAN 10e (kg)")
+    c.drawCentredString(x2 + (x3-x2)/2, y_header_center, "AWAL (kg)")
+    c.drawCentredString(x3 + (x4-x3)/2, y_header_center, "+0,25e (kg)")
+    c.drawCentredString(x4 + (x5-x4)/2, y_header_center, "+0,5e (kg)")
+
+    c.setFont("Helvetica", 9)
+    for idx, row in enumerate(rows_nol):
+        y_text = y_start_nol - tinggi_header - (idx + 0.5) * tinggi_baris - 0.1*cm
+        c.drawCentredString(x0 + (x1-x0)/2, y_text, safe_str(row[0]))
+        c.drawCentredString(x1 + (x2-x1)/2, y_text, safe_str(row[1]))
+        c.drawCentredString(x2 + (x3-x2)/2, y_text, safe_str(row[2]))
+        c.drawCentredString(x3 + (x4-x3)/2, y_text, safe_str(row[3]))
+        c.drawCentredString(x4 + (x5-x4)/2, y_text, safe_str(row[4]))
+
+    y = y_end_nol - 0.5*cm
+
+    # ======================== PENGUJIAN PENYETEL TARA (TERA) ========================
+    keterangan = data.get('keterangan', '')
+    if keterangan == "Tera":
+        y_judul_tara = y_judul_nol
+        c.setFont("Helvetica-Bold", 9)
+        c.drawString(x5 + 0.5*cm, y_judul_tara, "5. PENGUJIAN PENYETEL TARA (TERA)")
+        y_start_tara = y_start_nol
+
+        kapasitas_max = data.get('kapasitas_max', 60000)
+        interval_skala = data.get('interval_skala', 20)
+        muatan_tara = int(0.2 * kapasitas_max)
+        muatan_10e = 10 * interval_skala
+        imbuh_025e = muatan_10e
+        imbuh_05e = 11 * interval_skala
+
+        rows_tara = [
+            ["SETEL NOL", "0"],
+            ["MUATAN TARA (20% MAKS)", f"{muatan_tara}"],
+            ["AKTIFKAN TARA", "0"],
+            ["+ muatan 10e", f"{muatan_10e}"],
+            ["+ imbuh 0,25e", f"{imbuh_025e}"],
+            ["+ imbuh 0,5e", f"{imbuh_05e}"]
+        ]
+        baris_data = len(rows_tara)
+        baris_total = 1 + baris_data
+
+        x0_t = x5 + 0.5*cm
+        x1_t = x0_t + 4.5*cm
+        x2_t = x1_t + 2.9*cm
+
+        tinggi_baris = 0.45*cm
+        tinggi_header = 0.45*cm
+        y_end_tara = y_start_tara - (tinggi_header + baris_data * tinggi_baris)
+
+        c.setLineWidth(0.5)
+        for x in (x0_t, x1_t, x2_t):
+            c.line(x, y_start_tara, x, y_end_tara)
+        c.line(x0_t, y_start_tara, x2_t, y_start_tara)
+        y_header_bottom = y_start_tara - tinggi_header
+        c.line(x0_t, y_header_bottom, x2_t, y_header_bottom)
+        y_line = y_header_bottom
+        for _ in range(baris_data):
+            y_line -= tinggi_baris
+            c.line(x0_t, y_line, x2_t, y_line)
+        c.line(x0_t, y_end_tara, x2_t, y_end_tara)
+
+        c.setFont("Helvetica-Bold", 9)
+        y_header_center = y_start_tara - tinggi_header/2 - 0.1*cm
+        c.drawCentredString(x0_t + (x1_t-x0_t)/2, y_header_center, "KEGIATAN")
+        c.drawCentredString(x1_t + (x2_t-x1_t)/2, y_header_center, "PENUNJUKKAN")
+
+        c.setFont("Helvetica", 9)
+        for idx, row in enumerate(rows_tara):
+            y_text = y_start_tara - tinggi_header - (idx + 0.5) * tinggi_baris - 0.1*cm
+            c.drawString(x0_t + 0.2*cm, y_text, safe_str(row[0]))
+            c.drawCentredString(x1_t + (x2_t-x1_t)/2, y_text, safe_str(row[1]))
+
+        y = min(y_end_nol, y_end_tara) - 0.5*cm
+    else:
+        y = y_end_nol - 0.5*cm
+
+    # ======================== PENERA ========================
+    y_start_penera = y - 0.3*cm
+
+    rows_penera = [[
+        "1.",
+        safe_str(data.get('nama_penera', '')),
+        "",
+        format_tanggal_indo(data.get('tanggal_penera', '')),
+        "SAH"
+    ]]
+    baris_data = len(rows_penera)
+    tinggi_baris = 0.45*cm
+    tinggi_header1 = 0.45*cm
+    tinggi_header2 = 0.45*cm
+
+    x0 = margin
+    x1 = x0 + 0.8*cm
+    x2 = x1 + 4.5*cm
+    x3 = x2 + 1.5*cm
+    x4 = x3 + 2.5*cm
+    x5 = x4 + 4.0*cm
+
+    y_header1_bottom = y_start_penera - tinggi_header1
+    y_header2_bottom = y_header1_bottom - tinggi_header2
+    y_end_penera = y_header2_bottom - (baris_data * tinggi_baris)
+
+    c.setLineWidth(0.5)
+    c.rect(x0, y_end_penera, x5 - x0, y_start_penera - y_end_penera, stroke=1, fill=0)
+
+    c.line(x4, y_start_penera, x4, y_end_penera)
+    for x in (x1, x2, x3):
+        c.line(x, y_header1_bottom, x, y_end_penera)
+
+    c.line(x0, y_header1_bottom, x5, y_header1_bottom)
+    c.line(x0, y_header2_bottom, x4, y_header2_bottom)
+    y_line = y_header2_bottom
+    for _ in range(baris_data):
+        y_line -= tinggi_baris
+        c.line(x0, y_line, x5, y_line)
+
+    c.setFont("Helvetica-Bold", 9)
+    y_h1_center = y_start_penera - tinggi_header1 / 2 - 0.1*cm
+    c.drawCentredString((x0 + x4) / 2, y_h1_center, "PENERA")
+    c.drawCentredString((x4 + x5) / 2, y_h1_center, "KETERANGAN")
+
+    c.setFont("Helvetica-Bold", 9)
+    y_h2_center = y_header1_bottom - tinggi_header2 / 2 - 0.1*cm
+    c.drawCentredString((x0 + x1) / 2, y_h2_center, "No.")
+    c.drawCentredString((x1 + x2) / 2, y_h2_center, "Nama")
+    c.drawCentredString((x2 + x3) / 2, y_h2_center, "Paraf")
+    c.drawCentredString((x3 + x4) / 2, y_h2_center, "TANGGAL")
+
+    y_sah_center = y_header1_bottom - (tinggi_header2 + baris_data * tinggi_baris) / 2 - 0.1*cm
+    c.setFont("Helvetica-Bold", 9)
+    c.drawCentredString((x4 + x5) / 2, y_sah_center, "SAH")
+
+    for idx, row in enumerate(rows_penera):
+        y_text = y_header2_bottom - (idx + 0.5) * tinggi_baris - 0.1*cm
+        c.setFont("Helvetica", 9)
+        c.drawCentredString((x0 + x1) / 2, y_text, safe_str(row[0]))
+        c.drawString(x1 + 0.2*cm, y_text, safe_str(row[1]))
+        c.drawCentredString((x2 + x3) / 2, y_text, safe_str(row[2]))
+        c.drawCentredString((x3 + x4) / 2, y_text, safe_str(row[3]))
+
+    y = y_end_penera - 0.5*cm
     c.save()
     return filename

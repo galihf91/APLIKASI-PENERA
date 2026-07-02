@@ -332,6 +332,7 @@ if mode == "📝 Input Data Pengujian":
             value=20 * current_e,
             min_value=1,
             step=1,
+            disabled=True,
             key=f"kapasitas_min_{current_e}",   # 🔥 key dinamis
             help="Nilai ini otomatis = 20 × Interval Skala Verifikasi, namun dapat diubah."
         )
@@ -512,19 +513,7 @@ if mode == "📝 Input Data Pengujian":
 
         # --- Standar ---
         with cols[1]:
-            if i in [2, 4, 6]:
-                standar_val = 0
-                st.number_input(
-                    f"Standar {i+1}",
-                    value=0,
-                    step=1,
-                    format="%d",
-                    key=f"standar_{i}_{e}",
-                    disabled=True,
-                    label_visibility="collapsed"
-                )
-            elif i == 1:
-                # Baris ke-2 (indeks 1): editable, on_change menyalin ke baris 4,6,8
+            if i == 1:
                 standar_val = st.number_input(
                     f"Standar {i+1}",
                     value=st.session_state.get(f"standar_{i}_{e}", default_s),
@@ -535,29 +524,26 @@ if mode == "📝 Input Data Pengujian":
                     label_visibility="collapsed"
                 )
             else:
-                standar_val = st.number_input(
+                if i in [2, 4, 6]:
+                    standar_val = 0
+                elif i in [3, 5, 7]:
+                    standar_val = st.session_state.get(f"standar_1_{e}", default_s)
+                else:
+                    standar_val = default_s
+
+                st.number_input(
                     f"Standar {i+1}",
-                    value=default_s,
+                    value=standar_val,
                     step=1,
                     format="%d",
                     key=f"standar_{i}_{e}",
+                    disabled=True,
                     label_visibility="collapsed"
                 )
 
         # --- Balas ---
         with cols[2]:
-            if i == 0 or i == 1:
-                balas_val = 0
-                st.number_input(
-                    f"Balas {i+1}",
-                    value=0,
-                    step=1,
-                    format="%d",
-                    key=f"balas_{i}",
-                    disabled=True,
-                    label_visibility="collapsed"
-                )
-            elif i in [2, 4, 6]:
+            if i in [2, 4, 6]:
                 balas_val = st.number_input(
                     f"Balas {i+1}",
                     value=st.session_state.get(f"balas_{i}", 0),
@@ -570,11 +556,11 @@ if mode == "📝 Input Data Pengujian":
                 )
             elif i in [3, 5, 7]:
                 prev_idx = i - 1
-                prev_val = st.session_state.get(f"balas_{prev_idx}", 0)
-                balas_val = prev_val
+                balas_val = st.session_state.get(f"balas_{prev_idx}", 0)
+
                 st.number_input(
                     f"Balas {i+1}",
-                    value=prev_val,
+                    value=balas_val,
                     step=1,
                     format="%d",
                     key=f"balas_{i}",
@@ -584,6 +570,16 @@ if mode == "📝 Input Data Pengujian":
             else:
                 balas_val = 0
 
+                st.number_input(
+                    f"Balas {i+1}",
+                    value=0,
+                    step=1,
+                    format="%d",
+                    key=f"balas_{i}",
+                    disabled=True,
+                    label_visibility="collapsed"
+                )
+
         # --- ΔL ---
         with cols[3]:
             delta_l_val = st.number_input(
@@ -592,6 +588,7 @@ if mode == "📝 Input Data Pengujian":
                 step=0.1,
                 format="%g",
                 key=f"delta_l_{i}_{e}",
+                disabled=True,
                 label_visibility="collapsed"
             )
 
@@ -602,6 +599,7 @@ if mode == "📝 Input Data Pengujian":
                 value=default_kes,
                 step=1,
                 format="%d",
+                disabled=True,
                 key=f"kesalahan_{i}_{e}",
                 label_visibility="collapsed"
             )
@@ -614,6 +612,7 @@ if mode == "📝 Input Data Pengujian":
                 value=penunjukan_default,
                 step=1,
                 format="%d",
+                disabled=True,
                 key=f"penunjukan_{i}_{e}_{penunjukan_default}",
                 label_visibility="collapsed"
             )
@@ -643,6 +642,7 @@ if mode == "📝 Input Data Pengujian":
                 ["SAH", "TIDAK SAH"],
                 index=0 if default_hasil == "SAH" else 1,
                 key=f"hasil_{i}_{e}",
+                disabled=True,
                 label_visibility="collapsed"
             )
 
@@ -777,7 +777,9 @@ if mode == "📝 Input Data Pengujian":
             hasil = st.selectbox(
                 f"Hasil {i}",
                 ["SAH", "TIDAK SAH"],
+                 index=0,
                 key=f"repet_hasil_{i}",
+                disabled=True,
                 label_visibility="collapsed"
             )
 
@@ -889,7 +891,9 @@ if mode == "📝 Input Data Pengujian":
             hasil = st.selectbox(
                 f"Hasil {i}",
                 ["SAH", "TIDAK SAH"],
+                 index=0,
                 key=f"eksen_hasil_{i}",
+                disabled=True,
                 label_visibility="collapsed"
             )
 
@@ -917,35 +921,40 @@ if mode == "📝 Input Data Pengujian":
             "SETEL NOL",
             value=0,
             step=1,
-            key=f"nol_setel_{e}"  # key dinamis
+            key=f"nol_setel_{e}",  # key dinamis
+            disabled=True,
         )
     with col_nol2:
         muatan_10e = st.number_input(
             "MUATAN 10e (kg)",
             value=10 * e,
             step=1,
-            key=f"nol_muatan_{e}"  # key dinamis
+            key=f"nol_muatan_{e}",  # key dinamis
+            disabled=True,
         )
     with col_nol3:
         awal = st.number_input(
             "AWAL",
             value=10 * e,
             step=1,
-            key=f"nol_awal_{e}"  # key dinamis
+            key=f"nol_awal_{e}",  # key dinamis
+            disabled=True,
         )
     with col_nol4:
         plus025e = st.number_input(
             "+0,25e",
             value=10 * e,
             step=1,
-            key=f"nol_plus025_{e}"  # key dinamis
+            key=f"nol_plus025_{e}",  # key dinamis
+            disabled=True,
         )
     with col_nol5:
         plus05e = st.number_input(
             "+0,5e",
             value=10 * e + e,
             step=1,
-            key=f"nol_plus05_{e}"  # key dinamis
+            key=f"nol_plus05_{e}",  # key dinamis
+            disabled=True,
         )
 
     nol_data = {

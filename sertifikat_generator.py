@@ -296,7 +296,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     c.drawString(colon_right_fixed, y_row, ":")
     c.drawString(colon_right_fixed + 0.3*cm, y_row, data.get('kelas', ''))
 
-    y = y_row_kiri - 0.5*cm
+    y = min(y_row_kiri - 0.5*cm, y_row - 1.3*cm)
 
         # ======================== PEMILIK, ALAMAT, PENERA, DLL ========================
     # Semua menggunakan margin kiri content

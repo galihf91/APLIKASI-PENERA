@@ -233,8 +233,14 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     # Titik dua dan nilai menggunakan colon_right_fixed
     c.setFont("Helvetica", 12)
     c.drawString(colon_right_fixed, y_row, ":")
-    c.drawString(colon_right_fixed + 0.3*cm, y_row,
-                 f"{data.get('kapasitas_max', '')} kg / {data.get('daya_baca', '')} kg")
+    kapasitas = f"{int(data.get('kapasitas_max', 0)):,}".replace(",", ".")
+    daya_baca = f"{int(data.get('daya_baca', 0)):,}".replace(",", ".")
+    
+    c.drawString(
+        colon_right_fixed + 0.3*cm,
+        y_row,
+        f"{kapasitas} kg / {daya_baca} kg"
+    )
     y = y_row - 1.5*cm
 
     # --------------------- BARIS 4: MODEL / TIPE (KIRI) & INTERVAL SKALA (KANAN) ---------------------

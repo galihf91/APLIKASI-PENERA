@@ -216,23 +216,6 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     c.drawString(right_col_x, y_row - line_spacing1, "Capacity / Accuracy")
     c.setFont("Helvetica", 12)
     c.drawString(colon_right_fixed, y_row, ":")
-    c.drawString(colon_right_fixed + 0.3*cm, y_row,
-                 f"{data.get('kapasitas_max', '')} kg / {data.get('daya_baca', '')} kg")
-
-    # Update y berdasarkan posisi terendah (kiri bisa wrap)
-    # Turun minimal 1.3 cm agar tidak menabrak baris berikutnya
-    y = min(y_row_kiri - 0.5*cm, y_row - 1.3*cm)
-
-        # ---------- KOLOM KANAN: Kapasitas / Daya baca ----------
-    c.setFont("Helvetica", 12)
-    c.drawString(right_col_x, y_row, "Kapasitas / Daya baca")
-    bold_width_right = c.stringWidth("Kapasitas / Daya baca", "Helvetica", 12)
-    c.line(right_col_x, y_row - 0.08*cm, right_col_x + bold_width_right, y_row - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(right_col_x, y_row - line_spacing1, "Capacity / Accuracy")
-    # Titik dua dan nilai menggunakan colon_right_fixed
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_right_fixed, y_row, ":")
     kapasitas = f"{int(data.get('kapasitas_max', 0)):,}".replace(",", ".")
     daya_baca = f"{int(data.get('daya_baca', 0)):,}".replace(",", ".")
     
@@ -241,8 +224,9 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         y_row,
         f"{kapasitas} kg / {daya_baca} kg"
     )
-    y = y_row - 1.5*cm
-
+    # Update y berdasarkan posisi terendah (kiri bisa wrap)
+    # Turun minimal 1.3 cm agar tidak menabrak baris berikutnya
+    y = min(y_row_kiri - 0.5*cm, y_row - 1.3*cm)
     # --------------------- BARIS 4: MODEL / TIPE (KIRI) & INTERVAL SKALA (KANAN) ---------------------
     y_row = y
     # --- KIRI ---
@@ -313,18 +297,6 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     c.drawString(colon_right_fixed + 0.3*cm, y_row, data.get('kelas', ''))
 
     y = y_row_kiri - 0.5*cm
-
-        # ---------- KOLOM KANAN: Kelas ----------
-    c.setFont("Helvetica", 12)
-    c.drawString(right_col_x, y_row, "Kelas")
-    bold_width_right = c.stringWidth("Kelas", "Helvetica", 12)
-    c.line(right_col_x, y_row - 0.08*cm, right_col_x + bold_width_right, y_row - 0.08*cm)
-    c.setFont("Helvetica-Oblique", 12)
-    c.drawString(right_col_x, y_row - 0.45*cm, "Class")
-    c.setFont("Helvetica", 12)
-    c.drawString(colon_right_fixed, y_row, ":")
-    c.drawString(colon_right_fixed + 0.3*cm, y_row, data.get('kelas', ''))
-    y = y_row - 1.3*cm
 
         # ======================== PEMILIK, ALAMAT, PENERA, DLL ========================
     # Semua menggunakan margin kiri content

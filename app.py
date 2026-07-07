@@ -7,8 +7,9 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
 # =========================
-# HAPUS / SEMBUNYIKAN SIDEBAR
+# SEMBUNYIKAN SIDEBAR
 # =========================
 st.markdown(
     """
@@ -20,62 +21,76 @@ st.markdown(
         [data-testid="collapsedControl"] {
             display: none;
         }
-
-        section[data-testid="stSidebar"] {
-            display: none;
-        }
-
-        .stApp {
-            margin-left: 0;
-        }
     </style>
     """,
     unsafe_allow_html=True
 )
-logo_path = Path("assets/logo.png")
 
-col_logo, col_title = st.columns([1, 5])
+# =========================
+# SESSION HALAMAN
+# =========================
+if "halaman" not in st.session_state:
+    st.session_state.halaman = "home"
 
-with col_logo:
-    if logo_path.exists():
-        st.markdown("<div style='margin-top:-8px;'>", unsafe_allow_html=True)
-        st.image(str(logo_path), width=130)
-        st.markdown("</div>", unsafe_allow_html=True)
 
-with col_title:
-    st.title("PENERA")
-    st.markdown("### Pelayanan Elektronik Tera dan Tera Ulang")
-    st.write("Aplikasi Pengujian UTTP")
+# =========================
+# HOME
+# =========================
+def tampilkan_home():
+    logo_path = Path("assets/logo.png")
 
-st.divider()
+    col_logo, col_title = st.columns([1, 5])
 
-st.subheader("Pengujian UTTP")
-st.write("Silakan pilih jenis UTTP yang akan diuji:")
+    with col_logo:
+        if logo_path.exists():
+            st.markdown("<div style='margin-top:-18px;'>", unsafe_allow_html=True)
+            st.image(str(logo_path), width=130)
+            st.markdown("</div>", unsafe_allow_html=True)
 
-col1, col2 = st.columns(2)
+    with col_title:
+        st.title("PENERA")
+        st.markdown("### Pelayanan Elektronik Tera dan Tera Ulang")
+        st.write("Aplikasi Pengujian UTTP")
 
-with col1:
-    with st.container(border=True):
-        st.markdown("## ⚖️ Timbangan Jembatan")
-        st.write(
-            "Aplikasi pengujian Timbangan Jembatan "
-            "dengan output Cerapan PDF dan Sertifikat PDF."
-        )
+    st.divider()
 
-        if st.button("Masuk ke Timbangan Jembatan", use_container_width=True):
-            st.session_state.halaman = "tj"
-            st.rerun()
-with col2:
-    with st.container(border=True):
-        st.markdown("## ⛽ PUBBM")
-        st.write(
-            "Aplikasi pengujian Pompa Ukur BBM "
-            "dengan output Sertifikat PDF."
-        )
+    st.subheader("Pengujian UTTP")
+    st.write("Silakan pilih jenis UTTP yang akan diuji:")
 
-        if st.button("Masuk ke PUBBM", use_container_width=True):
-            st.session_state.halaman = "pubbm"
-            st.rerun()
-st.divider()
+    col1, col2 = st.columns(2)
 
-st.caption("PENERA - Pengujian UTTP")
+    with col1:
+        with st.container(border=True):
+            st.markdown("## ⚖️ Timbangan Jembatan")
+            st.write("Output: Cerapan PDF dan Sertifikat PDF")
+
+            if st.button("Masuk ke Timbangan Jembatan", use_container_width=True):
+                st.session_state.halaman = "tj"
+                st.rerun()
+
+    with col2:
+        with st.container(border=True):
+            st.markdown("## ⛽ PUBBM")
+            st.write("Output: Sertifikat PDF")
+
+            if st.button("Masuk ke PUBBM", use_container_width=True):
+                st.session_state.halaman = "pubbm"
+                st.rerun()
+
+    st.divider()
+    st.caption("PENERA - Pengujian UTTP")
+
+
+# =========================
+# ROUTING HALAMAN
+# =========================
+if st.session_state.halaman == "home":
+    tampilkan_home()
+
+elif st.session_state.halaman == "tj":
+    from pages.timbangan_jembatan import run
+    run()
+
+elif st.session_state.halaman == "pubbm":
+    from pages.pubbm import run
+    run()

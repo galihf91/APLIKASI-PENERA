@@ -264,81 +264,10 @@ def draw_halaman_1_pubbm(c, width, height, data):
 
     y = height - 1.2 * cm
 
-    # ======================== WATERMARK LOGO METROLOGI ========================
-    watermark_path = "logo_metrologi.png"
-    if os.path.exists(watermark_path):
-        try:
-            wm = ImageReader(watermark_path)
-            wm_width = 12 * cm
-            wm_height = 12 * cm
-            c.saveState()
-            c.setFillAlpha(0.15)
-            c.drawImage(
-                wm,
-                (width - wm_width) / 2,
-                (height - wm_height) / 2,
-                width=wm_width,
-                height=wm_height,
-                mask="auto"
-            )
-            c.restoreState()
-        except Exception:
-            pass
-
-    # ======================== LOGO KOP SURAT ========================
-    logo_path = "logo.png"
-    if os.path.exists(logo_path):
-        try:
-            logo = ImageReader(logo_path)
-            logo_width = 1.9 * cm
-            logo_height = 2.2 * cm
-            logo_y = y - logo_height + 0.45 * cm
-            c.drawImage(
-                logo,
-                margin_old,
-                logo_y,
-                width=logo_width,
-                height=logo_height,
-                mask="auto"
-            )
-        except Exception:
-            pass
-
-    # ======================== TEKS KOP SURAT ========================
-    offset = 0.4 * cm
-    center_x = width / 2 + offset
-
-    c.setFont("Helvetica", 14)
-    c.drawCentredString(center_x, y, "PEMERINTAH KABUPATEN TANGERANG")
+    # ======================== WATERMARK + HEADER ========================
+    draw_watermark(c, width, height)
+    y = draw_header(c, width, height)
     y -= 0.8 * cm
-
-    c.setFont("Helvetica-Bold", 18)
-    c.drawCentredString(center_x, y, "DINAS PERINDUSTRIAN DAN PERDAGANGAN")
-    y -= 0.45 * cm
-
-    c.setFont("Helvetica", 10)
-    c.drawCentredString(
-        center_x,
-        y,
-        "Jl. Atik Soewardi, Gedung Usaha-Usaha Daerah Lt. 3 Tigaraksa, Tangerang, Banten 15720"
-    )
-    y -= 0.45 * cm
-
-    c.drawCentredString(
-        center_x,
-        y,
-        "Laman: disperindag.tangerangkab.go.id  Pos-el: disperindag@tangerangkab.go.id"
-    )
-    y -= 0.35 * cm
-
-    # ======================== GARIS GANDA ========================
-    c.setLineWidth(2)
-    c.line(margin_old, y, right_limit_old, y)
-    y -= 0.1 * cm
-    c.setLineWidth(0.8)
-    c.line(margin_old, y, right_limit_old, y)
-    y -= 0.8 * cm
-
     # ======================== JUDUL & NOMOR ========================
     c.setFont("Helvetica-Bold", 12)
     c.drawCentredString(width / 2, y, "SURAT KETERANGAN HASIL PENGUJIAN")

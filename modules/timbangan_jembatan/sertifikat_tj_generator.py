@@ -3,9 +3,16 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
 from reportlab.lib.colors import black, gray
 from datetime import datetime
+from pathlib import Path
 import textwrap
 import os
 from reportlab.lib.utils import ImageReader
+
+BASE_DIR = Path(__file__).resolve().parents[2]
+ASSETS_DIR = BASE_DIR / "assets"
+
+watermark_path = ASSETS_DIR / "logo_metrologi.png"
+logo_path = ASSETS_DIR / "logo.png"
 
 def format_tanggal_indonesia(tanggal_str):
     if not tanggal_str:
@@ -71,9 +78,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
             c.restoreState()
         except Exception as e:
             print(f"Error watermark: {e}")
-    else:
-        print(f"Watermark tidak ditemukan: {watermark_path}")
-   # ======================== LOGO KOP SURAT ========================
+      # ======================== LOGO KOP SURAT ========================
     if logo_path.exists():
         try:
             logo = ImageReader(str(logo_path))
@@ -91,9 +96,6 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
             )
         except Exception as e:
             print(f"Error logo kop surat: {e}")
-    else:
-        print(f"Logo kop tidak ditemukan: {logo_path}")
-
     # ======================== TEKS KOP SURAT ========================
     offset = 0.4*cm
     center_x = width/2 + offset

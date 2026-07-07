@@ -52,31 +52,47 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     y = height - 1.2*cm
 
     # ======================== WATERMARK LOGO METROLOGI ========================
-    watermark_path = "assets/logo_metrologi.png"
-    if os.path.exists(watermark_path):
+    if watermark_path.exists():
         try:
-            wm = ImageReader(watermark_path)
-            wm_width = 12*cm
-            wm_height = 12*cm
+            wm = ImageReader(str(watermark_path))
+            wm_width = 12 * cm
+            wm_height = 12 * cm
+    
             c.saveState()
             c.setFillAlpha(0.15)
-            c.drawImage(wm, (width - wm_width)/2, (height - wm_height)/2,
-                        width=wm_width, height=wm_height, mask='auto')
+            c.drawImage(
+                wm,
+                (width - wm_width) / 2,
+                (height - wm_height) / 2,
+                width=wm_width,
+                height=wm_height,
+                mask="auto"
+            )
             c.restoreState()
-        except:
-            pass
-
-    # ======================== LOGO KOP SURAT ========================
-    logo_path = "assets/logo.png"
-    if os.path.exists(logo_path):
+        except Exception as e:
+            print(f"Error watermark: {e}")
+    else:
+        print(f"Watermark tidak ditemukan: {watermark_path}")
+   # ======================== LOGO KOP SURAT ========================
+    if logo_path.exists():
         try:
-            logo = ImageReader(logo_path)
-            logo_width = 1.9*cm
-            logo_height = 2.2*cm
-            logo_y = y - logo_height + 0.45*cm
-            c.drawImage(logo, margin_old, logo_y, width=logo_width, height=logo_height, mask='auto')
-        except:
-            pass
+            logo = ImageReader(str(logo_path))
+            logo_width = 1.9 * cm
+            logo_height = 2.2 * cm
+            logo_y = y - logo_height + 0.45 * cm
+    
+            c.drawImage(
+                logo,
+                margin_old,
+                logo_y,
+                width=logo_width,
+                height=logo_height,
+                mask="auto"
+            )
+        except Exception as e:
+            print(f"Error logo kop surat: {e}")
+    else:
+        print(f"Logo kop tidak ditemukan: {logo_path}")
 
     # ======================== TEKS KOP SURAT ========================
     offset = 0.4*cm

@@ -5,38 +5,30 @@ st.set_page_config(
     page_title="PENERA - Pengujian UTTP",
     page_icon="⚖️",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
-# =========================
-# SEMBUNYIKAN SIDEBAR
-# =========================
-st.markdown(
-    """
-    <style>
-        [data-testid="stSidebar"] {
-            display: none;
-        }
-
-        [data-testid="collapsedControl"] {
-            display: none;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# =========================
-# SESSION HALAMAN
-# =========================
 if "halaman" not in st.session_state:
     st.session_state.halaman = "home"
 
 
-# =========================
-# HOME
-# =========================
-def tampilkan_home():
+def home():
+    # Sidebar disembunyikan hanya di halaman Home
+    st.markdown(
+        """
+        <style>
+            [data-testid="stSidebar"] {
+                display: none;
+            }
+
+            [data-testid="collapsedControl"] {
+                display: none;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
     logo_path = Path("assets/logo.png")
 
     col_logo, col_title = st.columns([1, 5])
@@ -81,11 +73,8 @@ def tampilkan_home():
     st.caption("PENERA - Pengujian UTTP")
 
 
-# =========================
-# ROUTING HALAMAN
-# =========================
 if st.session_state.halaman == "home":
-    tampilkan_home()
+    home()
 
 elif st.session_state.halaman == "tj":
     from pages.timbangan_jembatan import run

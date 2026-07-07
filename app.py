@@ -63,7 +63,7 @@ with col1:
         )
 
         if st.button("Masuk ke Timbangan Jembatan", use_container_width=True):
-            st.page_link("pages/1_timbangan_jembatan.py")
+            st.page_link("pages/timbangan_jembatan.py")
 
 with col2:
     with st.container(border=True):
@@ -74,7 +74,7 @@ with col2:
         )
 
         if st.button("Masuk ke PUBBM", use_container_width=True):
-            st.page_link("pages/2_pubbm.py")
+            st.page_link("pages/pubbm.py")
 
 st.divider()
 

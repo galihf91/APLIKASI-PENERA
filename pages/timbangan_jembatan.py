@@ -6,6 +6,13 @@ from modules.timbangan_jembatan.sertifikat_tj_generator import generate_sertifik
 import os
 from pathlib import Path
 
+def run():
+    st.title("Pengujian Timbangan Jembatan")
+
+    if st.button("← Kembali ke Home"):
+        st.session_state.halaman = "home"
+        st.rerun()
+
 def bulan_ke_romawi(bulan):
     romawi = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
     return romawi[bulan-1]

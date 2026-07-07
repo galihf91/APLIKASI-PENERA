@@ -5,10 +5,16 @@ from reportlab.lib import colors
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib.utils import ImageReader
 from datetime import datetime
+from pathlib import Path
 import pandas as pd
 import os
 import textwrap
 
+BASE_DIR = Path(__file__).resolve().parents[2]
+ASSETS_DIR = BASE_DIR / "assets"
+
+WATERMARK_PATH = ASSETS_DIR / "logo_metrologi.png"
+LOGO_PATH = ASSETS_DIR / "logo.png"
 
 def tambah_satu_tahun(tanggal):
     """
@@ -44,11 +50,9 @@ def format_tanggal(tanggal):
     except Exception:
         return str(tanggal)
 def draw_watermark(c, width, height):
-    watermark_path = "assets/logo_metrologi.png"
-
-    if os.path.exists(watermark_path):
+    if WATERMARK_PATH.exists():
         try:
-            wm = ImageReader(watermark_path)
+            wm = ImageReader(str(WATERMARK_PATH))
             wm_width = 12 * cm
             wm_height = 12 * cm
 
@@ -64,8 +68,11 @@ def draw_watermark(c, width, height):
             )
             c.restoreState()
 
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"Error watermark PUBBM: {e}")
+    else:
+        print(f"Watermark PUBBM tidak ditemukan: {WATERMARK_PATH}")
+
 def draw_header(c, width, height):
     margin_old = 1.5 * cm
     right_limit_old = width - margin_old
@@ -75,11 +82,9 @@ def draw_header(c, width, height):
     # ========================
     # LOGO KOP SURAT
     # ========================
-    logo_path = "assets/logo.png"
-
-    if os.path.exists(logo_path):
+    if LOGO_PATH.exists():
         try:
-            logo = ImageReader(logo_path)
+            logo = ImageReader(str(LOGO_PATH))
             logo_width = 1.9 * cm
             logo_height = 2.2 * cm
             logo_y = y - logo_height + 0.45 * cm
@@ -93,9 +98,10 @@ def draw_header(c, width, height):
                 mask="auto"
             )
 
-        except Exception:
-            pass
-
+        except Exception as e:
+            print(f"Error logo kop PUBBM: {e}")
+    else:
+        print(f"Logo PUBBM tidak ditemukan: {LOGO_PATH}")
     # ========================
     # TEKS KOP SURAT
     # ========================

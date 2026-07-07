@@ -4,6 +4,14 @@ from modules.pubbm.sertifikat_pubbm_generator import generate_sertifikat_pubbm
 from datetime import date, datetime
 import re
 
+def run():
+    st.title("Pengujian PUBBM")
+
+    if st.button("← Kembali ke Home"):
+        st.session_state.halaman = "home"
+        st.rerun()
+
+
 @st.cache_data
 def load_data_media_spbu():
     try:

@@ -12,6 +12,7 @@ def run():
     if st.button("← Kembali ke Home"):
         st.session_state.halaman = "home"
         st.rerun()
+    st.divider()
 
 def bulan_ke_romawi(bulan):
     romawi = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]

@@ -63,8 +63,8 @@ with col1:
         )
 
         if st.button("Masuk ke Timbangan Jembatan", use_container_width=True):
-            st.page_link("pages/timbangan_jembatan.py")
-
+            st.session_state.halaman = "tj"
+            st.rerun()
 with col2:
     with st.container(border=True):
         st.markdown("## ⛽ PUBBM")
@@ -74,8 +74,8 @@ with col2:
         )
 
         if st.button("Masuk ke PUBBM", use_container_width=True):
-            st.page_link("pages/pubbm.py")
-
+            st.session_state.halaman = "pubbm"
+            st.rerun()
 st.divider()
 
 st.caption("PENERA - Pengujian UTTP")

@@ -1,10 +1,79 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, date
 from modules.timbangan_jembatan.cerapan_tj_generator import generate_cerapan_pdf
 from modules.timbangan_jembatan.sertifikat_tj_generator import generate_sertifikat_pdf
 import os
 from pathlib import Path
+
+def bulan_singkat_id(tanggal):
+    bulan = {
+        1: "JAN", 2: "FEB", 3: "MAR", 4: "APR",
+        5: "MEI", 6: "JUN", 7: "JUL", 8: "AGS",
+        9: "SEP", 10: "OKT", 11: "NOV", 12: "DES"
+    }
+    return bulan.get(tanggal.month, "")
+
+
+def slug_filename(text):
+    text = str(text).replace("/", "_").replace("\\", "_").replace(" ", "_")
+    return "".join(ch for ch in text if ch.isalnum() or ch in ["_", "-", "."])
+
+
+def parse_tanggal_file(data):
+    tanggal = data.get("tanggal") or data.get("tanggal_pengujian")
+
+    if tanggal:
+        if isinstance(tanggal, str):
+            try:
+                return datetime.strptime(tanggal, "%Y-%m-%d")
+            except Exception:
+                pass
+        return tanggal
+
+    tanggal_penera = data.get("tanggal_penera", "")
+
+    if tanggal_penera:
+        try:
+            bulan_map = {
+                "Januari": 1, "Februari": 2, "Maret": 3, "April": 4,
+                "Mei": 5, "Juni": 6, "Juli": 7, "Agustus": 8,
+                "September": 9, "Oktober": 10, "November": 11, "Desember": 12
+            }
+
+            parts = tanggal_penera.split()
+
+            if len(parts) == 3:
+                day = int(parts[0])
+                month = bulan_map[parts[1]]
+                year = int(parts[2])
+                return datetime(year, month, day)
+
+        except Exception:
+            pass
+
+    return datetime.now()
+
+
+def format_nama_file_dokumen(data, jenis_dokumen="Sertifikat"):
+    nama_perusahaan = (
+        data.get("pemilik")
+        or data.get("nama_perusahaan")
+        or "PERUSAHAAN"
+    )
+
+    nama_penera = (
+        data.get("nama_penera")
+        or data.get("penera_1")
+        or data.get("penera")
+        or "PENERA"
+    )
+
+    tanggal = parse_tanggal_file(data)
+    tanggal_file = f"{tanggal.day:02d} {bulan_singkat_id(tanggal)}"
+
+    nama_file = f"{nama_perusahaan}_TJ_{jenis_dokumen}_{nama_penera}_{tanggal_file}"
+    return slug_filename(nama_file)
 
 def run():
     st.title("Pengujian Timbangan Jembatan")
@@ -1139,27 +1208,46 @@ def run():
                     try:
                         output_path = Path("./output")
                         output_path.mkdir(exist_ok=True)
-                        filename = output_path / f"Cerapan_{data.get('no_seri', 'UNKNOWN')}_{data.get('tanggal', '').replace('-', '')}.pdf"
+            
+                        nama_file = format_nama_file_dokumen(data, "Cerapan")
+                        filename = output_path / f"{nama_file}.pdf"
+            
                         generate_cerapan_pdf(st.session_state.saved_data, str(filename))
-                        st.session_state.generated_files['cerapan'] = str(filename)
+                        st.session_state.generated_files["cerapan"] = str(filename)
+            
                         st.success("✅ Cerapan berhasil dibuat!")
+            
                     except Exception as e:
                         st.error(f"❌ Error: {str(e)}")
                         import traceback
                         st.code(traceback.format_exc())
             
-             # --- Tombol Generate Sertifikat ---
+            
+            # --- Tombol Generate Sertifikat ---
             with col_btn2:
                 if st.button("🎫 Generate Sertifikat", use_container_width=True):
                     try:
                         output_path = Path("./output")
                         output_path.mkdir(exist_ok=True)
-                        filename = output_path / f"Sertifikat_{data.get('no_seri', 'UNKNOWN')}_{data.get('tanggal', '').replace('-', '')}.pdf"
-                        generate_sertifikat_pdf(st.session_state.saved_data, str(filename), nomor_sertifikat)
-                        st.session_state.generated_files['sertifikat'] = str(filename)
+            
+                        nama_file = format_nama_file_dokumen(data, "Sertifikat")
+                        filename = output_path / f"{nama_file}.pdf"
+            
+                        generate_sertifikat_pdf(
+                            st.session_state.saved_data,
+                            str(filename),
+                            nomor_sertifikat
+                        )
+            
+                        st.session_state.generated_files["sertifikat"] = str(filename)
+            
                         st.success("✅ Sertifikat berhasil dibuat!")
+            
                     except Exception as e:
                         st.error(f"❌ Error: {str(e)}")
+                        import traceback
+                        st.code(traceback.format_exc())
+            
             
             # --- Tombol Generate Kedua Dokumen ---
             with col_btn3:
@@ -1167,55 +1255,71 @@ def run():
                     try:
                         output_path = Path("./output")
                         output_path.mkdir(exist_ok=True)
-                        
-                        cerapan_file = output_path / f"Cerapan_{data.get('no_seri', 'UNKNOWN')}_{data.get('tanggal', '').replace('-', '')}.pdf"
-                        generate_cerapan_pdf(st.session_state.saved_data, str(cerapan_file))
-                        st.session_state.generated_files['cerapan'] = str(cerapan_file)
-                        
-                        sertifikat_file = output_path / f"Sertifikat_{data.get('no_seri', 'UNKNOWN')}_{data.get('tanggal', '').replace('-', '')}.pdf"
-                        generate_sertifikat_pdf(st.session_state.saved_data, str(sertifikat_file), nomor_sertifikat)
-                        st.session_state.generated_files['sertifikat'] = str(sertifikat_file)
-                        
+            
+                        nama_file_cerapan = format_nama_file_dokumen(data, "Cerapan")
+                        cerapan_file = output_path / f"{nama_file_cerapan}.pdf"
+            
+                        generate_cerapan_pdf(
+                            st.session_state.saved_data,
+                            str(cerapan_file)
+                        )
+            
+                        st.session_state.generated_files["cerapan"] = str(cerapan_file)
+            
+                        nama_file_sertifikat = format_nama_file_dokumen(data, "Sertifikat")
+                        sertifikat_file = output_path / f"{nama_file_sertifikat}.pdf"
+            
+                        generate_sertifikat_pdf(
+                            st.session_state.saved_data,
+                            str(sertifikat_file),
+                            nomor_sertifikat
+                        )
+            
+                        st.session_state.generated_files["sertifikat"] = str(sertifikat_file)
+            
                         st.success("✅ Kedua dokumen berhasil dibuat!")
                         st.balloons()
+            
                     except Exception as e:
                         st.error(f"❌ Error: {str(e)}")
-            
-            st.markdown("---")
-            
-            # ===== TOMBOL DOWNLOAD BERDASARKAN SESSION STATE =====
-            st.subheader("📥 Download Dokumen")
-            
-            cerapan_path = st.session_state.generated_files.get('cerapan')
-            sertifikat_path = st.session_state.generated_files.get('sertifikat')
-            
-            col_dl1, col_dl2 = st.columns(2)
-            
-            with col_dl1:
-                if cerapan_path and Path(cerapan_path).exists():
-                    with open(cerapan_path, "rb") as f:
-                        st.download_button(
-                            label="⬇️ Download Cerapan",
-                            data=f.read(),
-                            file_name=Path(cerapan_path).name,
-                            mime="application/pdf",
-                            use_container_width=True
-                        )
-                else:
-                    st.caption("Cerapan belum digenerate.")
-            
-            with col_dl2:
-                if sertifikat_path and Path(sertifikat_path).exists():
-                    with open(sertifikat_path, "rb") as f:
-                        st.download_button(
-                            label="⬇️ Download Sertifikat",
-                            data=f.read(),
-                            file_name=Path(sertifikat_path).name,
-                            mime="application/pdf",
-                            use_container_width=True
-                        )
-                else:
-                    st.caption("Sertifikat belum digenerate.")
+                        import traceback
+                        st.code(traceback.format_exc())
+                        
+                        st.markdown("---")
+                        
+                        # ===== TOMBOL DOWNLOAD BERDASARKAN SESSION STATE =====
+                        st.subheader("📥 Download Dokumen")
+                        
+                        cerapan_path = st.session_state.generated_files.get('cerapan')
+                        sertifikat_path = st.session_state.generated_files.get('sertifikat')
+                        
+                        col_dl1, col_dl2 = st.columns(2)
+                        
+                        with col_dl1:
+                            if cerapan_path and Path(cerapan_path).exists():
+                                with open(cerapan_path, "rb") as f:
+                                    st.download_button(
+                                        label="⬇️ Download Cerapan",
+                                        data=f.read(),
+                                        file_name=Path(cerapan_path).name,
+                                        mime="application/pdf",
+                                        use_container_width=True
+                                    )
+                            else:
+                                st.caption("Cerapan belum digenerate.")
+                        
+                        with col_dl2:
+                            if sertifikat_path and Path(sertifikat_path).exists():
+                                with open(sertifikat_path, "rb") as f:
+                                    st.download_button(
+                                        label="⬇️ Download Sertifikat",
+                                        data=f.read(),
+                                        file_name=Path(sertifikat_path).name,
+                                        mime="application/pdf",
+                                        use_container_width=True
+                                    )
+                            else:
+                                st.caption("Sertifikat belum digenerate.")
             
             st.markdown("---")
             

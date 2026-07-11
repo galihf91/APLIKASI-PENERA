@@ -1287,42 +1287,39 @@ def run():
                         
                         st.markdown("---")
                         
-                        # ===== TOMBOL DOWNLOAD BERDASARKAN SESSION STATE =====
-                        st.subheader("📥 Download Dokumen")
-                        
-                        cerapan_path = st.session_state.generated_files.get('cerapan')
-                        sertifikat_path = st.session_state.generated_files.get('sertifikat')
-                        
-                        col_dl1, col_dl2 = st.columns(2)
-                        
-                        with col_dl1:
-                            if cerapan_path and Path(cerapan_path).exists():
-                                with open(cerapan_path, "rb") as f:
-                                    st.download_button(
-                                        label="⬇️ Download Cerapan",
-                                        data=f.read(),
-                                        file_name=Path(cerapan_path).name,
-                                        mime="application/pdf",
-                                        use_container_width=True
-                                    )
-                            else:
-                                st.caption("Cerapan belum digenerate.")
-                        
-                        with col_dl2:
-                            if sertifikat_path and Path(sertifikat_path).exists():
-                                with open(sertifikat_path, "rb") as f:
-                                    st.download_button(
-                                        label="⬇️ Download Sertifikat",
-                                        data=f.read(),
-                                        file_name=Path(sertifikat_path).name,
-                                        mime="application/pdf",
-                                        use_container_width=True
-                                    )
-                            else:
-                                st.caption("Sertifikat belum digenerate.")
+            # ===== TOMBOL DOWNLOAD BERDASARKAN SESSION STATE =====
+            st.subheader("📥 Download Dokumen")
             
-            st.markdown("---")
+            cerapan_path = st.session_state.generated_files.get('cerapan')
+            sertifikat_path = st.session_state.generated_files.get('sertifikat')
             
+            col_dl1, col_dl2 = st.columns(2)
+            
+            with col_dl1:
+                if cerapan_path and Path(cerapan_path).exists():
+                    with open(cerapan_path, "rb") as f:
+                        st.download_button(
+                            label="⬇️ Download Cerapan",
+                            data=f.read(),
+                            file_name=Path(cerapan_path).name,
+                            mime="application/pdf",
+                            use_container_width=True
+                        )
+                else:
+                    st.caption("Cerapan belum digenerate.")
+            
+            with col_dl2:
+                if sertifikat_path and Path(sertifikat_path).exists():
+                    with open(sertifikat_path, "rb") as f:
+                        st.download_button(
+                            label="⬇️ Download Sertifikat",
+                            data=f.read(),
+                            file_name=Path(sertifikat_path).name,
+                            mime="application/pdf",
+                            use_container_width=True
+                        )
+                else:
+                    st.caption("Sertifikat belum digenerate.")        
     
     st.markdown("---")
     st.markdown("""

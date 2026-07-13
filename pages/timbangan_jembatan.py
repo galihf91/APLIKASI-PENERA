@@ -78,14 +78,21 @@ def format_nama_file_dokumen(data, jenis_dokumen="Sertifikat"):
 def run():
     st.title("Pengujian Timbangan Jembatan")
 
-    col_nav1, col_nav2 = st.columns([1, 1])
+    col_nav1, col_nav2, col_nav3 = st.columns([1, 1, 1])
+
     with col_nav1:
         if st.button("← Kembali ke Home", use_container_width=True):
             st.session_state.halaman = "home"
             st.rerun()
+
     with col_nav2:
         if st.button("⛽ Ke PUBBM", use_container_width=True):
             st.session_state.halaman = "pubbm"
+            st.rerun()
+
+    with col_nav3:
+        if st.button("⚡ Ke kWh Meter", use_container_width=True):
+            st.session_state.halaman = "kwh"
             st.rerun()
 
     def bulan_ke_romawi(bulan):

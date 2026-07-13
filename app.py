@@ -66,24 +66,33 @@ def home():
     st.subheader("Pengujian UTTP")
     st.write("Silakan pilih jenis UTTP yang akan diuji:")
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
         with st.container(border=True):
             st.markdown("## ⚖️ Timbangan Jembatan")
             st.write("Output: Cerapan PDF dan Sertifikat PDF")
-
+    
             if st.button("Masuk ke Timbangan Jembatan", use_container_width=True):
                 st.session_state.halaman = "tj"
                 st.rerun()
-
+    
     with col2:
         with st.container(border=True):
             st.markdown("## ⛽ PUBBM")
             st.write("Output: Sertifikat PDF")
-
+    
             if st.button("Masuk ke PUBBM", use_container_width=True):
                 st.session_state.halaman = "pubbm"
+                st.rerun()
+    
+    with col3:
+        with st.container(border=True):
+            st.markdown("## ⚡ kWh Meter")
+            st.write("Output: Sertifikat PDF")
+    
+            if st.button("Masuk ke kWh Meter", use_container_width=True):
+                st.session_state.halaman = "kwh"
                 st.rerun()
 
     st.divider()
@@ -99,4 +108,8 @@ elif st.session_state.halaman == "tj":
 
 elif st.session_state.halaman == "pubbm":
     from pages.pubbm import run
+    run()
+
+elif st.session_state.halaman == "kwh":
+    from pages.kwh_meter import run
     run()

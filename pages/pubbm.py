@@ -7,10 +7,15 @@ import re
 def run():
     st.title("Pengujian PUBBM")
 
-    if st.button("← Kembali ke Home"):
-        st.session_state.halaman = "home"
-        st.rerun()
-    st.divider()
+    col_nav1, col_nav2 = st.columns([1, 1])
+    with col_nav1:
+        if st.button("← Kembali ke Home", use_container_width=True):
+            st.session_state.halaman = "home"
+            st.rerun()
+    with col_nav2:
+        if st.button("⚖️ Ke Timbangan Jembatan", use_container_width=True):
+            st.session_state.halaman = "tj"
+            st.rerun()
 
     @st.cache_data
     def load_data_media_spbu():

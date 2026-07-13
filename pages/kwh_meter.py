@@ -38,15 +38,7 @@ def format_nama_file_sertifikat(data):
 @st.cache_data
 def load_data_penera():
     try:
-        df = pd.read_excel("data_penera.xlsx")
-        df.columns = df.columns.str.strip()
-        return df
-    except FileNotFoundError:
-        return pd.DataFrame(columns=["Nama", "NIP", "Golongan"])
-@st.cache_data
-def load_data_penera():
-    try:
-        df = pd.read_excel(DATA_DIR / "data_penera.xlsx")
+        df = pd.read_excel("data/data_penera.xlsx")
         df.columns = df.columns.str.strip()
         return df
     except FileNotFoundError:
@@ -92,15 +84,10 @@ def slug_filename(text):
 def init_state():
     defaults = {
         "data_penera": load_data_penera(),
-        "data_perusahaan": load_data_perusahaan(),
-        "data_standar_kwh": load_data_standar_kwh(),
         "saved_data_kwh": {},
         "data_kwh": {},
-        "nama_perusahaan_kwh": "",
-        "alamat_perusahaan_kwh": "",
-        "alamat_edit_kwh": "",
-        "last_company_kwh": None,
     }
+
     for key, value in defaults.items():
         if key not in st.session_state:
             st.session_state[key] = value

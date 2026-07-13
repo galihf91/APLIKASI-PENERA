@@ -99,6 +99,9 @@ def run():
     init_state()
 
     st.title("⚡ Pengujian kWh Meter")
+    import inspect
+
+    st.info(f"Generator KWH yang dipakai: {inspect.getfile(generate_sertifikat_kwh)}")
 
     col_nav1, col_nav2, col_nav3 = st.columns(3)
 

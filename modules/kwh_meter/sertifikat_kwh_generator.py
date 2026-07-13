@@ -247,10 +247,10 @@ def draw_label(
         y - 0.07 * cm
     )
 
-    # Label Inggris
+    # Label Inggris, bisa multiline
     c.setFont("Helvetica-Oblique", size)
-    c.drawString(x_label, sub_y, sublabel)
-
+    for i, line in enumerate(safe_text(sublabel).split("\n")):
+        c.drawString(x_label, sub_y - i * 0.36 * cm, line)
     # Titik dua
     c.setFont("Helvetica", size)
     c.drawString(x_colon, y, ":")
@@ -270,8 +270,10 @@ def draw_label(
     )
 
     # Minimal turun 0.9 cm agar label dan sublabel berikutnya tidak nabrak
-    return min(y_after, y - 0.90 * cm)
-
+    jumlah_baris_sublabel = max(1, len(safe_text(sublabel).split("\n")))
+    minimal_turun = 0.90 * cm + ((jumlah_baris_sublabel - 1) * 0.36 * cm)
+    
+    return min(y_after, y - minimal_turun)
 
 def build_penera_text(data):
     lines = []
@@ -383,10 +385,10 @@ def draw_sertifikat_satu_halaman(c, data, width, height):
     y -= 0.9 * cm
 
     # Margin isi sertifikat disamakan dengan PUBBM
-    margin = 1.5 * cm
+    margin = 3.0 * cm
 
     x_label = margin
-    x_colon = 6.95 * cm
+    x_colon = 7.25 * cm
     x_value = x_colon + 0.35 * cm
 
     right_margin = 1.5 * cm
@@ -448,7 +450,7 @@ def draw_sertifikat_satu_halaman(c, data, width, height):
         x_value,
         y,
         "Merk / Buatan",
-        "Trade Mark / Manufactured by",
+        "Trade Mark /\nManufactured by",
         merk_buatan,
         value_width,
         bold_value=False,
@@ -495,27 +497,26 @@ def draw_sertifikat_satu_halaman(c, data, width, height):
         else:
             gabungan_pemilik += "\nUntuk " + untuk
 
-        # ========================
+    # ========================
     # PEMILIK
     # ========================
     c.setFont("Helvetica-Bold", 11)
     c.drawString(x_label, y, "Pemilik")
-
+    
     underline_width = c.stringWidth("Pemilik", "Helvetica-Bold", 11)
     c.line(x_label, y - 0.07 * cm, x_label + underline_width, y - 0.07 * cm)
-
+    
     c.setFont("Helvetica-BoldOblique", 11)
     c.drawString(x_label, y - 0.42 * cm, "User")
-
+    
     c.setFont("Helvetica-Bold", 11)
     c.drawString(x_colon, y, ":")
-
-    # Isi pemilik bold + otomatis turun baris
+    
     line_height = 0.42 * cm
-
-    # Lebar khusus pemilik, dibuat lebih panjang tetapi tetap aman dari margin kanan
-    max_width_pemilik = width - x_value - 0.50* cm
-
+    
+    # Isi Pemilik tetap sejajar aturan x_value dan dibatasi margin kanan
+    max_width_pemilik = width - x_value - right_margin
+    
     y_after_pemilik = draw_wrapped_lines(
         c,
         gabungan_pemilik,
@@ -526,10 +527,9 @@ def draw_sertifikat_satu_halaman(c, data, width, height):
         size=11,
         leading=line_height
     )
-
+    
     y = min(y_after_pemilik, y - 0.95 * cm)
     y -= 0.34 * cm
-
 
     # ========================
     # PENERA

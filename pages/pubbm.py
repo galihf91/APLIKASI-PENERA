@@ -4,6 +4,64 @@ from modules.pubbm.sertifikat_pubbm_generator import generate_sertifikat_pubbm
 from datetime import date, datetime
 import re
 
+def bulan_singkat_id(tanggal):
+    bulan = {
+        1: "JAN", 2: "FEB", 3: "MAR", 4: "APR",
+        5: "MEI", 6: "JUN", 7: "JUL", 8: "AGS",
+        9: "SEP", 10: "OKT", 11: "NOV", 12: "DES"
+    }
+    return bulan.get(tanggal.month, "")
+
+
+def slug_filename(text):
+    text = str(text).replace("/", "_").replace("\\", "_").replace(" ", "_")
+    return "".join(ch for ch in text if ch.isalnum() or ch in ["_", "-", "."])
+
+
+def parse_tanggal_file_pubbm(data):
+    tanggal = (
+        data.get("tanggal_pengujian")
+        or data.get("tanggal")
+        or data.get("tanggal_tera")
+        or data.get("tanggal_penera")
+    )
+
+    if tanggal:
+        if isinstance(tanggal, str):
+            try:
+                return datetime.strptime(tanggal, "%Y-%m-%d")
+            except Exception:
+                pass
+
+        return tanggal
+
+    return datetime.now()
+
+
+def format_nama_file_pubbm(data):
+    nama_spbu = (
+        data.get("nama_spbu")
+        or data.get("nomor_spbu")
+        or data.get("nama_perusahaan")
+        or data.get("pemilik")
+        or "SPBU"
+    )
+
+    nama_penera = (
+        data.get("penera_1")
+        or data.get("nama_penera")
+        or data.get("penera")
+        or "PENERA"
+    )
+
+    tanggal = parse_tanggal_file_pubbm(data)
+    tanggal_file = f"{tanggal.day:02d} {bulan_singkat_id(tanggal)}"
+
+    nama_file = f"{nama_spbu}_{nama_penera}_{tanggal_file}"
+    return slug_filename(nama_file)
+
+
+
 def run():
     st.title("Pengujian PUBBM")
 
@@ -788,19 +846,29 @@ def run():
         st.subheader("Generate Sertifikat")
     
         if st.button("📄 Generate Sertifikat PU BBM", type="primary"):
-    
-            nomor_order = data_pubbm.get("nomor_order", "PUBBM").replace("/", "_")
-            output_file = f"PUBBM_{nomor_order}.pdf"
-    
-            generate_sertifikat_pubbm(
-                data_pubbm,
-                output_file
-            )
-    
-            with open(output_file, "rb") as pdf:
-                st.download_button(
-                    label="⬇️ Download Sertifikat PU BBM",
-                    data=pdf,
-                    file_name=output_file,
-                    mime="application/pdf"
+            try:
+                output_dir = Path("output")
+                output_dir.mkdir(exist_ok=True)
+        
+                nama_file = format_nama_file_pubbm(data_pubbm)
+                output_file = output_dir / f"{nama_file}.pdf"
+        
+                generate_sertifikat_pubbm(
+                    data_pubbm,
+                    str(output_file)
                 )
+        
+                with open(output_file, "rb") as pdf:
+                    st.download_button(
+                        label="⬇️ Download Sertifikat PU BBM",
+                        data=pdf.read(),
+                        file_name=output_file.name,
+                        mime="application/pdf"
+                    )
+        
+                st.success("✅ Sertifikat PU BBM berhasil dibuat!")
+        
+            except Exception as e:
+                st.error(f"Gagal membuat sertifikat PU BBM: {e}")
+                import traceback
+                st.code(traceback.format_exc())

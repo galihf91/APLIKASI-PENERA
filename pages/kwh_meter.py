@@ -242,7 +242,7 @@ def run():
             )
             
             tanggal_cetak = st.date_input(
-                "Tanggal Tanda Tangan",
+                "Tanggal Cetak / Tanggal Tanda Tangan",
                 value=saved.get("tanggal_cetak", date.today()),
                 key="tanggal_cetak_kwh"
             )

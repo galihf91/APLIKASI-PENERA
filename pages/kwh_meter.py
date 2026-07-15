@@ -235,7 +235,17 @@ def run():
                 index=0,
             )
 
-            tanggal_pengujian = st.date_input("Tanggal Pengujian", value=date.today())
+            tanggal_pengujian = st.date_input(
+                "Tanggal Pengujian",
+                value=saved.get("tanggal_pengujian", date.today()),
+                key="tanggal_pengujian_kwh"
+            )
+            
+            tanggal_cetak = st.date_input(
+                "Tanggal Tanda Tangan",
+                value=saved.get("tanggal_cetak", date.today()),
+                key="tanggal_cetak_kwh"
+            )
             default_sertifikat = generate_nomor_sertifikat(tanggal_pengujian)
             default_order = generate_nomor_order(tanggal_pengujian)
 
@@ -423,7 +433,7 @@ def run():
             "nomor_sertifikat": nomor_sertifikat,
             "nomor_order": nomor_order,
             "tanggal_pengujian": tanggal_pengujian,
-            "tanggal_cetak": date.today(),
+            "tanggal_cetak": tanggal_cetak,
             "berlaku_sampai": berlaku_sampai,
             "jenis_pengujian": jenis_pengujian,
             "nama_alat": nama_alat,

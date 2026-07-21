@@ -48,13 +48,13 @@ st.markdown(
 # =========================================================
 # SESSION STATE NAVIGASI UTAMA
 # =========================================================
-if "app_halaman" not in st.session_state:
-    st.session_state.app_halaman = "home"
+if "halaman" not in st.session_state:
+    st.session_state.halaman = "home"
 
 
 def pindah_halaman(nama_halaman):
     """Memindahkan halaman aplikasi utama."""
-    st.session_state.app_halaman = nama_halaman
+    st.session_state.halaman = nama_halaman
     st.rerun()
 
 
@@ -62,7 +62,7 @@ def pindah_halaman(nama_halaman):
 # HALAMAN HOME
 # =========================================================
 def home():
-    # Sidebar hanya disembunyikan di halaman Home
+    # Sidebar hanya disembunyikan pada halaman Home
     st.markdown(
         """
         <style>
@@ -120,7 +120,7 @@ def home():
         with st.container(border=True):
             st.markdown("## ⚖️ Timbangan Jembatan")
             st.write(
-                "Pengujian timbangan jembatan."
+                "Pengujian Timbangan Jembatan."
             )
             st.write(
                 "**Output:** Cerapan PDF dan Sertifikat PDF"
@@ -196,27 +196,9 @@ def home():
 
 
 # =========================================================
-# TOMBOL KEMBALI KE HOME
-# Ditampilkan pada semua halaman selain Home
-# =========================================================
-if st.session_state.app_halaman != "home":
-    with st.sidebar:
-        st.markdown("### ⚖️ PENERA")
-
-        if st.button(
-            "← Kembali ke Home",
-            use_container_width=True,
-            key="app_kembali_home"
-        ):
-            pindah_halaman("home")
-
-        st.divider()
-
-
-# =========================================================
 # ROUTER HALAMAN
 # =========================================================
-halaman_aktif = st.session_state.app_halaman
+halaman_aktif = st.session_state.halaman
 
 
 if halaman_aktif == "home":
@@ -224,7 +206,9 @@ if halaman_aktif == "home":
 
 
 elif halaman_aktif == "tj":
-    from pages.timbangan_jembatan import run as run_timbangan_jembatan
+    from pages.timbangan_jembatan import (
+        run as run_timbangan_jembatan
+    )
 
     run_timbangan_jembatan()
 
@@ -249,5 +233,5 @@ elif halaman_aktif == "kwh":
 
 else:
     # Fallback jika nilai halaman tidak dikenali
-    st.session_state.app_halaman = "home"
+    st.session_state.halaman = "home"
     st.rerun()

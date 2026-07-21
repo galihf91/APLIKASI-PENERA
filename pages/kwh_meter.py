@@ -101,7 +101,7 @@ def run():
     st.title("⚡ Pengujian kWh Meter")
     import inspect
 
-    col_nav1, col_nav2, col_nav3 = st.columns(3)
+    col_nav1, col_nav2, col_nav3, col_nav4 = st.columns(4)
 
     with col_nav1:
         if st.button("← Kembali ke Home", use_container_width=True):
@@ -116,6 +116,11 @@ def run():
     with col_nav3:
         if st.button("⛽ Ke PUBBM", use_container_width=True):
             st.session_state.halaman = "pubbm"
+            st.rerun()
+
+    with col_nav4:
+        if st.button("⚖️ Ke Timbangan", use_container_width=True):
+            st.session_state.halaman = "timbangan"
             st.rerun()
 
     st.markdown("---")

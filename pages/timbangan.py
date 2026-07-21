@@ -1000,16 +1000,19 @@ def run():
     st.title("⚖️ Aplikasi Automasi Sertifikat Tera Timbangan")
     st.markdown("---")
 
-    # Navigasi internal modul. Tidak memakai sidebar agar tidak bentrok
-    # dengan navigasi aplikasi gabungan.
-    mode = st.radio(
-        "Pilih Mode:",
-        ["📝 Input Data Pengujian", "📄 Generate Dokumen"],
-        key="tb_mode",
-        horizontal=True,
-        label_visibility="collapsed",
-        help="Pilih mode yang ingin digunakan.",
-    )
+    # Sidebar navigasi mengikuti tampilan Timbangan Jembatan
+    with st.sidebar:
+        st.header("📋 Menu Navigasi")
+    
+        mode = st.radio(
+            "Pilih Mode:",
+            [
+                "📝 Input Data Pengujian",
+                "📄 Generate Dokumen"
+            ],
+            key="tb_mode",
+            help="Pilih mode yang ingin digunakan."
+        )
 
     if mode == "📝 Input Data Pengujian":
         st.header("Masukkan Data Pengujian")

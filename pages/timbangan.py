@@ -987,11 +987,9 @@ def reset_form_timbangan():
 def run():
     init_timbangan_state()
 
-    st.title("Pengujian Timbangan")
+    st.title("⚖️ Pengujian Timbangan")
 
-    col_nav1, col_nav2, col_nav3, col_nav4 = st.columns(
-        [1, 1, 1, 1]
-    )
+    col_nav1, col_nav2, col_nav3, col_nav4 = st.columns(4)
 
     with col_nav1:
         if st.button(
@@ -999,7 +997,7 @@ def run():
             use_container_width=True,
             key="tb_nav_home"
         ):
-            st.session_state.app_halaman = "home"
+            st.session_state.halaman = "home"
             st.rerun()
 
     with col_nav2:
@@ -1008,7 +1006,7 @@ def run():
             use_container_width=True,
             key="tb_nav_tj"
         ):
-            st.session_state.app_halaman = "tj"
+            st.session_state.halaman = "tj"
             st.rerun()
 
     with col_nav3:
@@ -1017,7 +1015,7 @@ def run():
             use_container_width=True,
             key="tb_nav_pubbm"
         ):
-            st.session_state.app_halaman = "pubbm"
+            st.session_state.halaman = "pubbm"
             st.rerun()
 
     with col_nav4:
@@ -1026,11 +1024,11 @@ def run():
             use_container_width=True,
             key="tb_nav_kwh"
         ):
-            st.session_state.app_halaman = "kwh"
+            st.session_state.halaman = "kwh"
             st.rerun()
 
     st.markdown("---")
-
+    
     # CSS styling
     st.markdown(
         """

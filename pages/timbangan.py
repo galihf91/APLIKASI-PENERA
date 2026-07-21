@@ -987,23 +987,66 @@ def reset_form_timbangan():
 def run():
     init_timbangan_state()
 
-    # CSS styling
-    st.markdown("""
-        <style>
-        .main {
-            padding-top: 2rem;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+    st.title("Pengujian Timbangan")
 
-    # Title
-    st.title("⚖️ Aplikasi Automasi Sertifikat Tera Timbangan")
+    col_nav1, col_nav2, col_nav3, col_nav4 = st.columns(
+        [1, 1, 1, 1]
+    )
+
+    with col_nav1:
+        if st.button(
+            "← Kembali ke Home",
+            use_container_width=True,
+            key="tb_nav_home"
+        ):
+            st.session_state.app_halaman = "home"
+            st.rerun()
+
+    with col_nav2:
+        if st.button(
+            "⚖️ Ke Timbangan Jembatan",
+            use_container_width=True,
+            key="tb_nav_tj"
+        ):
+            st.session_state.app_halaman = "tj"
+            st.rerun()
+
+    with col_nav3:
+        if st.button(
+            "⛽ Ke PUBBM",
+            use_container_width=True,
+            key="tb_nav_pubbm"
+        ):
+            st.session_state.app_halaman = "pubbm"
+            st.rerun()
+
+    with col_nav4:
+        if st.button(
+            "⚡ Ke kWh Meter",
+            use_container_width=True,
+            key="tb_nav_kwh"
+        ):
+            st.session_state.app_halaman = "kwh"
+            st.rerun()
+
     st.markdown("---")
 
-    # Sidebar navigasi mengikuti tampilan Timbangan Jembatan
+    # CSS styling
+    st.markdown(
+        """
+        <style>
+            .main {
+                padding-top: 2rem;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Sidebar navigasi
     with st.sidebar:
         st.header("📋 Menu Navigasi")
-    
+
         mode = st.radio(
             "Pilih Mode:",
             [

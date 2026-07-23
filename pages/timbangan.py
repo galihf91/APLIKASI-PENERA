@@ -1420,7 +1420,7 @@ def run():
                 # KAPASITAS MINIMUM OTOMATIS
                 # =========================================================
                 
-                # Hitung kelas dan kapasitas minimum terlebih dahulu
+                # Hitung ulang berdasarkan maksimum, interval skala, dan kelas
                 update_class()
                 
                 min_kg = st.session_state.get(
@@ -1433,62 +1433,88 @@ def run():
                     "kg"
                 )
                 
-                formatted = (
-                    tampilkan_dalam_satuan_aktif(min_kg)
+                # Konversi nilai minimum dari kg ke satuan yang sedang digunakan
+                min_tampil = kg_to_satuan(
+                    min_kg,
+                    satuan
+                )
+                
+                # Tentukan jumlah desimal berdasarkan interval skala
+                interval_tampil = kg_to_satuan(
+                    get_input_kg("interval_skala_input", 0.0),
+                    satuan
+                )
+                
+                jumlah_desimal_min = get_decimal_places_from_number(
+                    interval_tampil
+                )
+                
+                formatted_min = (
+                    format_angka_id(
+                        min_tampil,
+                        jumlah_desimal_min
+                    )
                     if min_kg > 0
                     else ""
                 )
-                
-                # Sinkronkan nilai widget dengan hasil perhitungan terbaru
-                st.session_state["tb_kapasitas_min_tampil"] = formatted
                 
                 col_val, col_unit = st.columns([3, 1])
                 
                 with col_val:
                     st.text_input(
                         "Kapasitas Minimum",
+                        value=formatted_min,
                         disabled=True,
                         help=(
-                            "Kapasitas minimum dihitung berdasarkan "
-                            "kelas: faktor × interval skala (e)."
+                            "Kapasitas minimum dihitung otomatis berdasarkan "
+                            "kelas timbangan dan interval skala verifikasi."
                         ),
-                        key="tb_kapasitas_min_tampil",
+                        key=(
+                            f"tb_kapasitas_min_tampil_"
+                            f"{min_kg}_{satuan}_{jumlah_desimal_min}"
+                        ),
                         label_visibility="collapsed",
                     )
                 
                 with col_unit:
                     st.markdown(f"**{satuan}**")
-                                kapasitas_max_kg = get_input_kg(
-                                    "kapasitas_max_input",
-                                    0.0
-                                )
                 
-                                daya_baca_kg = get_input_kg(
-                                    "daya_baca_input",
-                                    0.0
-                                )
                 
-                                if is_timbangan_elektronik:
-                                    interval_skala_kg = get_input_kg(
-                                        "interval_skala_input",
-                                        0.0
-                                    )
-                                else:
-                                    # Alat selain Timbangan Elektronik: e = d
-                                    interval_skala_kg = daya_baca_kg
-                                kelas_final = st.session_state.get(
-                                    "tb_kelas",
-                                    "III"
-                                )
-                                kapasitas_min_final = st.session_state.get(
-                                    "tb_kapasitas_min_kg",
-                                    0.0
-                                )
-                                status_kelas = st.session_state.get(
-                                    "tb_kelas_status",
-                                    ""
-                                )
-                        st.markdown("---")
+                # Nilai final yang digunakan pada bagian pengujian dan penyimpanan
+                kapasitas_max_kg = get_input_kg(
+                    "kapasitas_max_input",
+                    0.0
+                )
+                
+                daya_baca_kg = get_input_kg(
+                    "daya_baca_input",
+                    0.0
+                )
+                
+                if is_timbangan_elektronik:
+                    interval_skala_kg = get_input_kg(
+                        "interval_skala_input",
+                        0.0
+                    )
+                else:
+                    interval_skala_kg = daya_baca_kg
+                
+                kelas_final = st.session_state.get(
+                    "tb_kelas",
+                    "III"
+                )
+                
+                kapasitas_min_final = st.session_state.get(
+                    "tb_kapasitas_min_kg",
+                    0.0
+                )
+                
+                status_kelas = st.session_state.get(
+                    "tb_kelas_status",
+                    ""
+                )
+                
+                st.markdown("---")
 
         # ======================== KELAS & JENIS PENGUJIAN ========================
         col_extra1, col_extra2 = st.columns(2)

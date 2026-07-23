@@ -1540,6 +1540,7 @@ def run():
                     "Pilih Kelas",
                     options=options,
                     key="tb_kelas",
+                    on_change=update_class,
                     help=(
                         "Kelas diupdate otomatis saat Kapasitas "
                         "Maksimum atau Interval Skala berubah, "

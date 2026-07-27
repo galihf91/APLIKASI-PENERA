@@ -674,15 +674,180 @@ def run():
             unsafe_allow_html=True
         )
     
-        jumlah_dispenser = st.number_input(
-            "Jumlah Dispenser / Pompa",
-            min_value=1,
-            max_value=50,
-            value=st.session_state.saved_data.get("jumlah_dispenser", 1),
-            step=1
+        # ==========================================
+        # KELOLA JUMLAH DISPENSER
+        # ==========================================
+        if "jumlah_dispenser_pubbm" not in st.session_state:
+            st.session_state.jumlah_dispenser_pubbm = int(
+                st.session_state.saved_data.get(
+                    "jumlah_dispenser",
+                    1
+                )
+            )
+        
+        col_tambah, col_copy, col_hapus = st.columns(3)
+        
+        # ==========================================
+        # TAMBAH DISPENSER KOSONG
+        # ==========================================
+        with col_tambah:
+            if st.button(
+                "➕ Tambah Dispenser",
+                use_container_width=True,
+                key="tambah_dispenser_pubbm"
+            ):
+                if st.session_state.jumlah_dispenser_pubbm < 50:
+                    st.session_state.jumlah_dispenser_pubbm += 1
+                    st.rerun()
+                else:
+                    st.warning("Jumlah dispenser maksimal 50.")
+        
+        # ==========================================
+        # TAMBAH DAN COPY DISPENSER TERAKHIR
+        # ==========================================
+        with col_copy:
+            if st.button(
+                "📋 Tambah & Copy Dispenser",
+                use_container_width=True,
+                key="tambah_copy_dispenser_pubbm"
+            ):
+                jumlah_lama = st.session_state.jumlah_dispenser_pubbm
+        
+                if jumlah_lama < 50:
+                    dispenser_asal = jumlah_lama
+                    dispenser_baru = jumlah_lama + 1
+        
+                    # Salin identitas dispenser
+                    st.session_state[f"merk_{dispenser_baru}"] = (
+                        st.session_state.get(
+                            f"merk_{dispenser_asal}",
+                            ""
+                        )
+                    )
+        
+                    st.session_state[f"tipe_{dispenser_baru}"] = (
+                        st.session_state.get(
+                            f"tipe_{dispenser_asal}",
+                            ""
+                        )
+                    )
+        
+                    st.session_state[f"no_seri_{dispenser_baru}"] = (
+                        st.session_state.get(
+                            f"no_seri_{dispenser_asal}",
+                            ""
+                        )
+                    )
+        
+                    # Salin jumlah posisi
+                    jumlah_posisi_asal = int(
+                        st.session_state.get(
+                            f"jumlah_posisi_{dispenser_asal}",
+                            4
+                        )
+                    )
+        
+                    st.session_state[
+                        f"jumlah_posisi_{dispenser_baru}"
+                    ] = jumlah_posisi_asal
+        
+                    # Salin posisi dan media
+                    for idx_copy in range(
+                        1,
+                        jumlah_posisi_asal + 1
+                    ):
+                        st.session_state[
+                            f"posisi_{dispenser_baru}_{idx_copy}"
+                        ] = st.session_state.get(
+                            f"posisi_{dispenser_asal}_{idx_copy}",
+                            ""
+                        )
+        
+                        media_asal = st.session_state.get(
+                            f"media_{dispenser_asal}_{idx_copy}",
+                            ""
+                        )
+        
+                        if media_asal in media_options:
+                            st.session_state[
+                                f"media_{dispenser_baru}_{idx_copy}"
+                            ] = media_asal
+                        else:
+                            st.session_state[
+                                f"media_{dispenser_baru}_{idx_copy}"
+                            ] = ""
+        
+                    st.session_state.jumlah_dispenser_pubbm = (
+                        dispenser_baru
+                    )
+        
+                    st.rerun()
+        
+                else:
+                    st.warning("Jumlah dispenser maksimal 50.")
+        
+        # ==========================================
+        # HAPUS DISPENSER TERAKHIR
+        # ==========================================
+        with col_hapus:
+            if st.button(
+                "🗑️ Hapus Dispenser Terakhir",
+                use_container_width=True,
+                key="hapus_dispenser_pubbm",
+                disabled=(
+                    st.session_state.jumlah_dispenser_pubbm <= 1
+                )
+            ):
+                dispenser_hapus = (
+                    st.session_state.jumlah_dispenser_pubbm
+                )
+        
+                jumlah_posisi_hapus = int(
+                    st.session_state.get(
+                        f"jumlah_posisi_{dispenser_hapus}",
+                        4
+                    )
+                )
+        
+                # Hapus data identitas dispenser
+                for key_hapus in [
+                    f"merk_{dispenser_hapus}",
+                    f"tipe_{dispenser_hapus}",
+                    f"no_seri_{dispenser_hapus}",
+                    f"jumlah_posisi_{dispenser_hapus}",
+                    f"copy_dispenser_{dispenser_hapus}",
+                ]:
+                    st.session_state.pop(key_hapus, None)
+        
+                # Hapus data posisi dan media
+                for idx_hapus in range(
+                    1,
+                    jumlah_posisi_hapus + 1
+                ):
+                    st.session_state.pop(
+                        f"posisi_{dispenser_hapus}_{idx_hapus}",
+                        None
+                    )
+        
+                    st.session_state.pop(
+                        f"media_{dispenser_hapus}_{idx_hapus}",
+                        None
+                    )
+        
+                st.session_state.jumlah_dispenser_pubbm -= 1
+                st.rerun()
+        
+        jumlah_dispenser = (
+            st.session_state.jumlah_dispenser_pubbm
         )
-    
-        st.session_state.saved_data["jumlah_dispenser"] = jumlah_dispenser
+        
+        st.session_state.saved_data[
+            "jumlah_dispenser"
+        ] = jumlah_dispenser
+        
+        st.caption(
+            f"Jumlah dispenser saat ini: {jumlah_dispenser}"
+        )
     
         data_rows = []
 

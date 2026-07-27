@@ -91,8 +91,73 @@ def load_data_bejana():
                 "Kelas", "Kapasitas", "Daya Baca", "Telusuran"
             ]
         )
+def get_kategori_spbu(nama_spbu):
+    nama = str(nama_spbu).upper()
+
+    if "SHELL" in nama:
+        return "SPBU SHELL"
+
+    elif "BP AKR" in nama or "BP" in nama:
+        return "SPBU BP AKR"
+
+    elif "VIVO" in nama:
+        return "SPBU VIVO"
+
+    elif "PERTASHOP" in nama:
+        return "PERTASHOP"
+
+    else:
+        return "SPBU"
 
 
+def get_media_options(nama_spbu, df_media):
+    kategori = get_kategori_spbu(nama_spbu)
+
+    if df_media is None or df_media.empty:
+        return []
+
+    row = df_media[
+        df_media["NAMA SPBU"].astype(str).str.upper().str.strip()
+        == kategori.upper()
+    ]
+
+    if row.empty:
+        return []
+
+    media_text = row.iloc[0]["MEDIA"]
+
+    media_list = [
+        m.strip()
+        for m in str(media_text).split(",")
+        if m.strip()
+    ]
+
+    return media_list
+@st.cache_data
+def load_data_media_spbu():
+    try:
+        df = pd.read_excel("data/data_media_spbu.xlsx")
+        df.columns = df.columns.str.strip()
+        return df
+    except FileNotFoundError:
+        return pd.DataFrame(
+            {
+                "NAMA SPBU": [
+                    "SPBU",
+                    "SPBU BP AKR",
+                    "SPBU SHELL",
+                    "SPBU VIVO",
+                    "PERTASHOP"
+                ],
+                "MEDIA": [
+                    "Pertalite, Pertamax, PERTAMAX GREEN, Pertamax Turbo, Solar, Pertamina Dex",
+                    "BP 92, BP Ultimate, BP Diesel",
+                    "Super, V-Power, Diesel",
+                    "Revvo 90, Revvo 92, Revvo 95",
+                    "Pertamax"
+                ]
+            }
+        )
 def run():
     col_nav1, col_nav2, col_nav3, col_nav4 = st.columns([1, 1, 1, 1])
 

@@ -282,8 +282,8 @@ def run():
                 st.session_state.last_company = None
     
             if df_spbu is not None and not df_spbu.empty:
-                all_names = df_spbu["Nama SPBU"].tolist()
-    
+                all_names = df_spbu["Nama SPBU"].dropna().astype(str).tolist()
+            
                 selected = st.selectbox(
                     "Cari & Pilih Nama SPBU",
                     options=[""] + all_names,
@@ -291,46 +291,63 @@ def run():
                     placeholder="Ketik nama SPBU...",
                     key="spbu_select"
                 )
-    
-                if selected:
+            
+                # Isi data master hanya saat pilihan SPBU berubah
+                if selected and selected != st.session_state.get("last_company"):
                     row = df_spbu[df_spbu["Nama SPBU"] == selected].iloc[0]
+            
                     st.session_state.nama_perusahaan = selected
-                    st.session_state.alamat_perusahaan = row["Alamat"]
-                    st.session_state.alamat_edit = row["Alamat"]
-    
-                st.text_area(
+                    st.session_state.alamat_edit = str(row.get("Alamat", ""))
+                    st.session_state.alamat_perusahaan = str(row.get("Alamat", ""))
+                    st.session_state.last_company = selected
+            
+                # Alamat dapat diedit oleh user dan tidak ditimpa saat rerun
+                alamat_edit = st.text_area(
                     "Alamat",
-                    value=st.session_state.alamat_edit,
                     height=90,
                     key="alamat_edit"
                 )
-    
-                st.session_state.alamat_perusahaan = st.session_state.alamat_edit
-    
-                if st.checkbox("Input manual nama SPBU / perusahaan"):
+            
+                st.session_state.alamat_perusahaan = alamat_edit
+            
+                input_manual = st.checkbox(
+                    "Input manual nama SPBU / perusahaan",
+                    key="input_manual_spbu"
+                )
+            
+                if input_manual:
                     manual_nama = st.text_input(
                         "Nama Pemilik / SPBU / Perusahaan",
-                        value=st.session_state.nama_perusahaan
+                        value=st.session_state.get("nama_perusahaan", ""),
+                        key="manual_nama_spbu"
                     )
-                    if manual_nama:
-                        st.session_state.nama_perusahaan = manual_nama
-    
+            
+                    st.session_state.nama_perusahaan = manual_nama
+            
             else:
-                st.info("📂 File data perusahaan tidak ditemukan. Silakan input manual.")
-    
+                st.info(
+                    "📂 File data perusahaan tidak ditemukan. "
+                    "Silakan input manual."
+                )
+            
                 manual_nama = st.text_input(
                     "Nama Pemilik / SPBU / Perusahaan",
-                    value=st.session_state.nama_perusahaan,
-                    placeholder="Contoh: SPBU 34-15717 PT. YASINCO INDO PRATAMA"
+                    value=st.session_state.get("nama_perusahaan", ""),
+                    placeholder="Contoh: SPBU 34-15717 PT. YASINCO INDO PRATAMA",
+                    key="manual_nama_spbu_tanpa_data"
                 )
-    
+            
                 manual_alamat = st.text_area(
                     "Alamat",
-                    value=st.session_state.alamat_perusahaan,
+                    value=st.session_state.get("alamat_perusahaan", ""),
                     height=80,
-                    placeholder="Contoh: Jalan Aria Wasangkara Desa Tapos Kecamatan Tigaraksa Kabupaten Tangerang"
+                    placeholder=(
+                        "Contoh: Jalan Aria Wasangkara Desa Tapos "
+                        "Kecamatan Tigaraksa Kabupaten Tangerang"
+                    ),
+                    key="manual_alamat_spbu"
                 )
-    
+            
                 st.session_state.nama_perusahaan = manual_nama
                 st.session_state.alamat_perusahaan = manual_alamat
                 st.session_state.alamat_edit = manual_alamat

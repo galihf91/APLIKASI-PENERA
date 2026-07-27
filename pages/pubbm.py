@@ -748,76 +748,156 @@ def run():
         st.session_state.saved_data["jumlah_dispenser"] = jumlah_dispenser
     
         data_rows = []
-    
+
         for i in range(1, jumlah_dispenser + 1):
-    
-            with st.expander(f"⛽ Dispenser / Pompa Nomor {i}", expanded=True if i == 1 else False):
-    
+
+            with st.expander(
+                f"⛽ Dispenser / Pompa Nomor {i}",
+                expanded=(i == 1)
+            ):
+
                 st.markdown(
                     f"""
                     <div class="pubbm-title">Dispenser {i}</div>
                     <div class="pubbm-help">
-                        Isi spesifikasi dispenser, kemudian pilih media untuk setiap posisi/nozzle.
+                        Isi spesifikasi dispenser, kemudian pilih media
+                        untuk setiap posisi/nozzle.
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
-    
+
+                # ==========================================
+                # COPY DATA DARI DISPENSER SEBELUMNYA
+                # ==========================================
+                if i > 1:
+                    if st.button(
+                        f"📋 Salin Data dari Dispenser {i - 1}",
+                        key=f"copy_dispenser_{i}",
+                        use_container_width=True
+                    ):
+                        # Salin data utama dispenser
+                        st.session_state[f"merk_{i}"] = (
+                            st.session_state.get(f"merk_{i - 1}", "")
+                        )
+
+                        st.session_state[f"tipe_{i}"] = (
+                            st.session_state.get(f"tipe_{i - 1}", "")
+                        )
+
+                        st.session_state[f"no_seri_{i}"] = (
+                            st.session_state.get(f"no_seri_{i - 1}", "")
+                        )
+
+                        # Salin jumlah posisi/nozzle
+                        jumlah_posisi_sebelumnya = int(
+                            st.session_state.get(
+                                f"jumlah_posisi_{i - 1}",
+                                4
+                            )
+                        )
+
+                        st.session_state[
+                            f"jumlah_posisi_{i}"
+                        ] = jumlah_posisi_sebelumnya
+
+                        # Salin posisi dan media
+                        for idx_copy in range(
+                            1,
+                            jumlah_posisi_sebelumnya + 1
+                        ):
+                            st.session_state[
+                                f"posisi_{i}_{idx_copy}"
+                            ] = st.session_state.get(
+                                f"posisi_{i - 1}_{idx_copy}",
+                                ""
+                            )
+
+                            media_sebelumnya = st.session_state.get(
+                                f"media_{i - 1}_{idx_copy}",
+                                ""
+                            )
+
+                            # Pastikan media masih tersedia dalam options
+                            if media_sebelumnya in media_options:
+                                st.session_state[
+                                    f"media_{i}_{idx_copy}"
+                                ] = media_sebelumnya
+                            else:
+                                st.session_state[
+                                    f"media_{i}_{idx_copy}"
+                                ] = ""
+
+                        st.success(
+                            f"Data Dispenser {i - 1} berhasil "
+                            f"disalin ke Dispenser {i}."
+                        )
+
+                        st.rerun()
+
+                # ==========================================
+                # IDENTITAS DISPENSER
+                # ==========================================
                 col_b, col_c, col_d = st.columns(3)
-    
-                no_dispenser = i
-    
+
                 with col_b:
                     merk = st.text_input(
                         "Merk",
                         placeholder="",
                         key=f"merk_{i}"
                     )
-    
+
                 with col_c:
                     tipe = st.text_input(
                         "Tipe",
                         placeholder="",
                         key=f"tipe_{i}"
                     )
-    
+
                 with col_d:
                     no_seri = st.text_input(
                         "No. Seri",
                         placeholder="",
                         key=f"no_seri_{i}"
                     )
-    
+
                 st.markdown("**Posisi / Nozzle dan Media**")
-    
+
+                # Siapkan nilai awal jumlah posisi
+                key_jumlah_posisi = f"jumlah_posisi_{i}"
+
+                if key_jumlah_posisi not in st.session_state:
+                    st.session_state[key_jumlah_posisi] = 4
+
                 jumlah_posisi = st.number_input(
                     "Jumlah Posisi / Nozzle",
                     min_value=1,
                     max_value=20,
-                    value=4,
                     step=1,
-                    key=f"jumlah_posisi_{i}"
+                    key=key_jumlah_posisi
                 )
-    
+
+                # ==========================================
+                # DATA POSISI DAN MEDIA
+                # ==========================================
                 for idx in range(1, jumlah_posisi + 1):
-    
+
                     col_posisi, col_media = st.columns([1, 2])
-    
+
                     with col_posisi:
                         posisi = st.text_input(
                             f"Posisi {idx}",
-                            value="",
                             placeholder="Contoh: 1, 1.1, 1.2, 3.4",
                             key=f"posisi_{i}_{idx}"
                         )
-    
+
                     with col_media:
                         media = st.selectbox(
                             f"Media {idx}",
                             options=[""] + media_options,
                             key=f"media_{i}_{idx}"
                         )
-    
+
                     if media.strip():
                         data_rows.append(
                             {

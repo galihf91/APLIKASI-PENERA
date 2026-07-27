@@ -690,10 +690,12 @@ def run():
                 jumlah_awal
             )
         
-        jumlah_dispenser = (
-            st.session_state.jumlah_dispenser_pubbm
+        jumlah_dispenser = int(
+            st.session_state.get(
+                "jumlah_dispenser_pubbm",
+                1
+            )
         )
-        
         st.session_state.saved_data[
             "jumlah_dispenser"
         ] = jumlah_dispenser

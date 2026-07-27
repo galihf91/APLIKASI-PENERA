@@ -931,47 +931,47 @@ def run():
                             }
                         )
 
-                # ==========================================
-                # TOMBOL HANYA DI DISPENSER TERAKHIR
-                # ==========================================
-                if i == jumlah_dispenser:
-                    st.markdown("---")
-                    st.markdown("**Kelola Dispenser**")
+        # ==========================================
+        # KELOLA DISPENSER (di luar expander, tampil di bawah
+        # setelah semua card dispenser selesai diisi)
+        # ==========================================
+        st.markdown("---")
+        st.markdown("**Kelola Dispenser**")
 
-                    col_tambah, col_copy, col_hapus = st.columns(3)
+        col_tambah, col_copy, col_hapus = st.columns(3)
 
-                    with col_tambah:
-                        st.button(
-                            "➕ Tambah Dispenser",
-                            use_container_width=True,
-                            key=f"tambah_dispenser_setelah_{i}",
-                            on_click=tambah_dispenser,
-                            disabled=(
-                                st.session_state.jumlah_dispenser_pubbm >= 50
-                            )
-                        )
+        with col_tambah:
+            st.button(
+                "➕ Tambah Dispenser",
+                use_container_width=True,
+                key="tambah_dispenser_btn",
+                on_click=tambah_dispenser,
+                disabled=(
+                    st.session_state.jumlah_dispenser_pubbm >= 50
+                )
+            )
 
-                    with col_copy:
-                        st.button(
-                            "📋 Tambah & Copy",
-                            use_container_width=True,
-                            key=f"copy_dispenser_setelah_{i}",
-                            on_click=tambah_copy_dispenser,
-                            disabled=(
-                                st.session_state.jumlah_dispenser_pubbm >= 50
-                            )
-                        )
+        with col_copy:
+            st.button(
+                "📋 Tambah & Copy",
+                use_container_width=True,
+                key="copy_dispenser_btn",
+                on_click=tambah_copy_dispenser,
+                disabled=(
+                    st.session_state.jumlah_dispenser_pubbm >= 50
+                )
+            )
 
-                    with col_hapus:
-                        st.button(
-                            "🗑️ Hapus Dispenser",
-                            use_container_width=True,
-                            key=f"hapus_dispenser_{i}",
-                            on_click=hapus_dispenser_terakhir,
-                            disabled=(
-                                st.session_state.jumlah_dispenser_pubbm <= 1
-                            )
-                        )
+        with col_hapus:
+            st.button(
+                "🗑️ Hapus Dispenser",
+                use_container_width=True,
+                key="hapus_dispenser_btn",
+                on_click=hapus_dispenser_terakhir,
+                disabled=(
+                    st.session_state.jumlah_dispenser_pubbm <= 1
+                )
+            )
 
         kolom_dispenser = [
             "No",

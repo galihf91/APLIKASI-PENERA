@@ -955,20 +955,34 @@ def run():
         st.markdown("---")
     
         st.subheader("Perangkat Bejana Ukur Standar")
-    
-        col4, col5, col6 = st.columns(3)
-    
-        with col4:
-            st.write("**Merk / Buatan:**")
-            st.write(data_pubbm.get("merk_bus", ""))
-    
-        with col5:
-            st.write("**Nomor Seri:**")
-            st.write(data_pubbm.get("nomor_seri_bus", ""))
-    
-        with col6:
-            st.write("**Telusuran:**")
-            st.write(data_pubbm.get("telusuran_bus", ""))
+
+        alat_standar_df = data_pubbm.get("alat_standar")
+        
+        if (
+            alat_standar_df is not None
+            and isinstance(alat_standar_df, pd.DataFrame)
+            and not alat_standar_df.empty
+        ):
+            st.dataframe(
+                alat_standar_df,
+                use_container_width=True,
+                hide_index=True
+            )
+        
+        else:
+            col4, col5, col6 = st.columns(3)
+        
+            with col4:
+                st.write("**Merk / Buatan:**")
+                st.write(data_pubbm.get("merk_bus", ""))
+        
+            with col5:
+                st.write("**Nomor Seri:**")
+                st.write(data_pubbm.get("nomor_seri_bus", ""))
+        
+            with col6:
+                st.write("**Telusuran:**")
+                st.write(data_pubbm.get("telusuran_bus", ""))
     
         st.markdown("---")
     

@@ -668,27 +668,85 @@ def generate_sertifikat_pubbm(data, output_path="sertifikat_pubbm.pdf"):
 
     y -= 1.8 * cm
 
-    # ======================== PERANGKAT BEJANA UKUR STANDAR ========================
+    # ========================
+    # PERANGKAT BEJANA UKUR STANDAR
+    # ========================
     c.setFont("Helvetica-Bold", 12)
     c.drawString(2.2 * cm, y, "Perangkat Bejana Ukur Standar")
-    y -= 0.5 * cm
+    y -= 0.55 * cm
 
-    c.setFont("Helvetica", 12)
-    c.drawString(2.2 * cm, y, "Merek / Buatan")
-    c.drawString(5.0 * cm, y, ":")
-    c.drawString(5.4 * cm, y, data.get("merk_bus", ""))
-    y -= 0.45 * cm
+    alat_standar_df = data.get("alat_standar")
 
-    c.drawString(2.2 * cm, y, "Nomor Seri")
-    c.drawString(5.0 * cm, y, ":")
-    c.drawString(5.4 * cm, y, data.get("nomor_seri_bus", ""))
-    y -= 0.45 * cm
+    if (
+        alat_standar_df is not None
+        and isinstance(alat_standar_df, pd.DataFrame)
+        and not alat_standar_df.empty
+    ):
+        for nomor, (_, alat) in enumerate(
+            alat_standar_df.iterrows(),
+            start=1
+        ):
+            merk = str(alat.get("Merk", ""))
+            nomor_seri = str(alat.get("Nomor Seri", ""))
+            telusuran = str(alat.get("Telusuran", ""))
 
-    c.drawString(2.2 * cm, y, "Telusuran")
-    c.drawString(5.0 * cm, y, ":")
-    c.drawString(5.4 * cm, y, data.get("telusuran_bus", ""))
-    y -= 1.0 * cm
+            c.setFont("Helvetica-Bold", 11)
+            c.drawString(
+                2.2 * cm,
+                y,
+                f"Alat Standar {nomor}"
+            )
+            y -= 0.45 * cm
 
+            c.setFont("Helvetica", 11)
+
+            c.drawString(2.5 * cm, y, "Merek / Buatan")
+            c.drawString(5.2 * cm, y, ":")
+            c.drawString(5.6 * cm, y, merk)
+            y -= 0.42 * cm
+
+            c.drawString(2.5 * cm, y, "Nomor Seri")
+            c.drawString(5.2 * cm, y, ":")
+            c.drawString(5.6 * cm, y, nomor_seri)
+            y -= 0.42 * cm
+
+            c.drawString(2.5 * cm, y, "Telusuran")
+            c.drawString(5.2 * cm, y, ":")
+            c.drawString(5.6 * cm, y, telusuran)
+            y -= 0.65 * cm
+
+    else:
+        # Fallback untuk data lama yang hanya memiliki satu BUS
+        c.setFont("Helvetica", 12)
+
+        c.drawString(2.2 * cm, y, "Merek / Buatan")
+        c.drawString(5.0 * cm, y, ":")
+        c.drawString(
+            5.4 * cm,
+            y,
+            str(data.get("merk_bus", ""))
+        )
+        y -= 0.45 * cm
+
+        c.drawString(2.2 * cm, y, "Nomor Seri")
+        c.drawString(5.0 * cm, y, ":")
+        c.drawString(
+            5.4 * cm,
+            y,
+            str(data.get("nomor_seri_bus", ""))
+        )
+        y -= 0.45 * cm
+
+        c.drawString(2.2 * cm, y, "Telusuran")
+        c.drawString(5.0 * cm, y, ":")
+        c.drawString(
+            5.4 * cm,
+            y,
+            str(data.get("telusuran_bus", ""))
+        )
+        y -= 0.65 * cm
+
+    y -= 0.35 * cm
         # ======================== JUDUL TABEL ========================
     c.setFont("Helvetica-Bold", 12)
     c.drawCentredString(width / 2, y, "DAFTAR POMPA UKUR BBM")

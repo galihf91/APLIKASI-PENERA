@@ -701,7 +701,130 @@ def run():
         st.caption(
             f"Jumlah dispenser saat ini: {jumlah_dispenser}"
         )
-    
+        def tambah_dispenser():
+            jumlah_sekarang = st.session_state.jumlah_dispenser_pubbm
+        
+            if jumlah_sekarang < 50:
+                st.session_state.jumlah_dispenser_pubbm += 1
+        
+        
+        def tambah_copy_dispenser():
+            jumlah_lama = st.session_state.jumlah_dispenser_pubbm
+        
+            if jumlah_lama >= 50:
+                return
+        
+            dispenser_asal = jumlah_lama
+            dispenser_baru = jumlah_lama + 1
+        
+            # Salin identitas dispenser
+            st.session_state[f"merk_{dispenser_baru}"] = (
+                st.session_state.get(
+                    f"merk_{dispenser_asal}",
+                    ""
+                )
+            )
+        
+            st.session_state[f"tipe_{dispenser_baru}"] = (
+                st.session_state.get(
+                    f"tipe_{dispenser_asal}",
+                    ""
+                )
+            )
+        
+            st.session_state[f"no_seri_{dispenser_baru}"] = (
+                st.session_state.get(
+                    f"no_seri_{dispenser_asal}",
+                    ""
+                )
+            )
+        
+            jumlah_posisi_asal = int(
+                st.session_state.get(
+                    f"jumlah_posisi_{dispenser_asal}",
+                    4
+                )
+            )
+        
+            st.session_state[
+                f"jumlah_posisi_{dispenser_baru}"
+            ] = jumlah_posisi_asal
+        
+            # Salin posisi dan media
+            for idx_copy in range(
+                1,
+                jumlah_posisi_asal + 1
+            ):
+                st.session_state[
+                    f"posisi_{dispenser_baru}_{idx_copy}"
+                ] = st.session_state.get(
+                    f"posisi_{dispenser_asal}_{idx_copy}",
+                    ""
+                )
+        
+                media_asal = st.session_state.get(
+                    f"media_{dispenser_asal}_{idx_copy}",
+                    ""
+                )
+        
+                st.session_state[
+                    f"media_{dispenser_baru}_{idx_copy}"
+                ] = (
+                    media_asal
+                    if media_asal in media_options
+                    else ""
+                )
+        
+            st.session_state.jumlah_dispenser_pubbm = (
+                dispenser_baru
+            )
+        
+        
+        def hapus_dispenser_terakhir():
+            jumlah_sekarang = (
+                st.session_state.jumlah_dispenser_pubbm
+            )
+        
+            if jumlah_sekarang <= 1:
+                return
+        
+            dispenser_hapus = jumlah_sekarang
+        
+            jumlah_posisi_hapus = int(
+                st.session_state.get(
+                    f"jumlah_posisi_{dispenser_hapus}",
+                    4
+                )
+            )
+        
+            # Hapus identitas dispenser
+            for key_hapus in [
+                f"merk_{dispenser_hapus}",
+                f"tipe_{dispenser_hapus}",
+                f"no_seri_{dispenser_hapus}",
+                f"jumlah_posisi_{dispenser_hapus}",
+            ]:
+                st.session_state.pop(
+                    key_hapus,
+                    None
+                )
+        
+            # Hapus posisi dan media
+            for idx_hapus in range(
+                1,
+                jumlah_posisi_hapus + 1
+            ):
+                st.session_state.pop(
+                    f"posisi_{dispenser_hapus}_{idx_hapus}",
+                    None
+                )
+        
+                st.session_state.pop(
+                    f"media_{dispenser_hapus}_{idx_hapus}",
+                    None
+                )
+        
+            st.session_state.jumlah_dispenser_pubbm -= 1
         data_rows = []
 
         for i in range(1, jumlah_dispenser + 1):

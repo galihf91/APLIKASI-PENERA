@@ -363,7 +363,14 @@ def run():
                 "Tanggal Pengujian",
                 value=date.today()
             )
-    
+            tanggal_cetak = st.date_input(
+                "Tanggal Cetak / Tanggal Tanda Tangan",
+                value=st.session_state.saved_data.get(
+                    "tanggal_cetak",
+                    date.today()
+                ),
+                key="tanggal_cetak_pubbm"
+            )
             # Generate nomor berdasarkan tanggal
             tanggal_data = tanggal_pengujian
     

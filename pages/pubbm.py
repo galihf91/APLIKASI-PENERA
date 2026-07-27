@@ -855,7 +855,7 @@ def run():
 
             with st.expander(
                 f"⛽ Dispenser / Pompa Nomor {i}",
-                expanded=(i == 1)
+                expanded=(i == jumlah_dispenser)
             ):
 
                 st.markdown(

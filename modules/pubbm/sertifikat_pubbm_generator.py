@@ -710,7 +710,7 @@ def generate_sertifikat_pubbm(data, output_path="sertifikat_pubbm.pdf"):
             nomor_seri = str(alat.get("Nomor Seri", "") or "")
             telusuran = str(alat.get("Telusuran", "") or "")
 
-            c.setFont("Helvetica-Bold", 12)
+            c.setFont("Helvetica-Bold", 11)
             c.drawString(
                 x_awal,
                 y_alat,
@@ -719,7 +719,7 @@ def generate_sertifikat_pubbm(data, output_path="sertifikat_pubbm.pdf"):
 
             y_isian = y_alat - 0.45 * cm
 
-            c.setFont("Helvetica", 9)
+            c.setFont("Helvetica", 11)
 
             # Merek / Buatan
             c.drawString(
@@ -785,7 +785,7 @@ def generate_sertifikat_pubbm(data, output_path="sertifikat_pubbm.pdf"):
 
     else:
         # Fallback untuk data lama
-        c.setFont("Helvetica", 12)
+        c.setFont("Helvetica", 11)
 
         c.drawString(2.2 * cm, y, "Merek / Buatan")
         c.drawString(5.0 * cm, y, ":")

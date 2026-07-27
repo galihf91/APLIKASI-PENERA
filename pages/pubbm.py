@@ -584,32 +584,6 @@ def run():
                         nomor_seri_bus_item = ""
                         telusuran_bus_item = ""
 
-                    col8, col9, col10 = st.columns(3)
-
-                    with col8:
-                        st.text_input(
-                            f"Merk / Buatan {i}",
-                            value=merk_bus_item,
-                            disabled=True,
-                            key=f"merk_bus_tampil_{i}"
-                        )
-
-                    with col9:
-                        st.text_input(
-                            f"Nomor Seri {i}",
-                            value=nomor_seri_bus_item,
-                            disabled=True,
-                            key=f"nomor_seri_bus_tampil_{i}"
-                        )
-
-                    with col10:
-                        st.text_input(
-                            f"Telusuran {i}",
-                            value=telusuran_bus_item,
-                            disabled=True,
-                            key=f"telusuran_bus_tampil_{i}"
-                        )
-
                     if selected_bejana:
                         data_alat_standar.append(
                             {

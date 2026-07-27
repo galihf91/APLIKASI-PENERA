@@ -158,6 +158,27 @@ def load_data_media_spbu():
                 ]
             }
         )
+def update_spbu_terpilih():
+    selected = st.session_state.get("spbu_select", "")
+    df_spbu = st.session_state.get("data_spbu")
+
+    if not selected or df_spbu is None or df_spbu.empty:
+        return
+
+    row = df_spbu[
+        df_spbu["Nama SPBU"].astype(str) == str(selected)
+    ]
+
+    if row.empty:
+        return
+
+    data = row.iloc[0]
+
+    st.session_state.nama_perusahaan = str(selected)
+    st.session_state.alamat_input_pubbm = str(
+        data.get("Alamat", "") or ""
+    )
+
 def run():
     col_nav1, col_nav2, col_nav3, col_nav4 = st.columns([1, 1, 1, 1])
 
@@ -272,57 +293,48 @@ def run():
             if "nama_perusahaan" not in st.session_state:
                 st.session_state.nama_perusahaan = st.session_state.saved_data.get("pemilik", "")
     
-            if "alamat_perusahaan" not in st.session_state:
-                st.session_state.alamat_perusahaan = st.session_state.saved_data.get("alamat", "")
-    
-            if "alamat_edit" not in st.session_state:
-                st.session_state.alamat_edit = st.session_state.alamat_perusahaan
-    
-            if "last_company" not in st.session_state:
-                st.session_state.last_company = None
+            if "nama_perusahaan" not in st.session_state:
+                st.session_state.nama_perusahaan = ""
+            
+            if "alamat_input_pubbm" not in st.session_state:
+                st.session_state.alamat_input_pubbm = ""
+            
+            if "input_manual_spbu" not in st.session_state:
+                st.session_state.input_manual_spbu = False
     
             if df_spbu is not None and not df_spbu.empty:
-                all_names = df_spbu["Nama SPBU"].dropna().astype(str).tolist()
+                all_names = (
+                    df_spbu["Nama SPBU"]
+                    .dropna()
+                    .astype(str)
+                    .tolist()
+                )
             
-                selected = st.selectbox(
+                st.selectbox(
                     "Cari & Pilih Nama SPBU",
                     options=[""] + all_names,
-                    index=0,
                     placeholder="Ketik nama SPBU...",
-                    key="spbu_select"
+                    key="spbu_select",
+                    on_change=update_spbu_terpilih
                 )
             
-                # Isi data master hanya saat pilihan SPBU berubah
-                if selected and selected != st.session_state.get("last_company"):
-                    row = df_spbu[df_spbu["Nama SPBU"] == selected].iloc[0]
-            
-                    st.session_state.nama_perusahaan = selected
-                    st.session_state.alamat_edit = str(row.get("Alamat", ""))
-                    st.session_state.alamat_perusahaan = str(row.get("Alamat", ""))
-                    st.session_state.last_company = selected
-            
-                # Alamat dapat diedit oleh user dan tidak ditimpa saat rerun
-                alamat_edit = st.text_area(
+                st.text_area(
                     "Alamat",
-                    height=90,
-                    key="alamat_edit"
+                    height=100,
+                    key="alamat_input_pubbm",
+                    help="Alamat ini dapat dilengkapi atau diedit."
                 )
             
-                st.session_state.alamat_perusahaan = alamat_edit
-            
-                input_manual = st.checkbox(
+                st.checkbox(
                     "Input manual nama SPBU / perusahaan",
                     key="input_manual_spbu"
                 )
             
-                if input_manual:
-                    manual_nama = st.text_input(
+                if st.session_state.input_manual_spbu:
+                    st.text_input(
                         "Nama Pemilik / SPBU / Perusahaan",
-                        value=st.session_state.get("nama_perusahaan", ""),
-                        key="manual_nama_spbu"
+                        key="nama_perusahaan"
                     )
-            
-                    st.session_state.nama_perusahaan = manual_nama
             
             else:
                 st.info(
@@ -330,30 +342,27 @@ def run():
                     "Silakan input manual."
                 )
             
-                manual_nama = st.text_input(
+                st.text_input(
                     "Nama Pemilik / SPBU / Perusahaan",
-                    value=st.session_state.get("nama_perusahaan", ""),
-                    placeholder="Contoh: SPBU 34-15717 PT. YASINCO INDO PRATAMA",
-                    key="manual_nama_spbu_tanpa_data"
+                    key="nama_perusahaan",
+                    placeholder=(
+                        "Contoh: SPBU 34-15717 "
+                        "PT. YASINCO INDO PRATAMA"
+                    )
                 )
             
-                manual_alamat = st.text_area(
+                st.text_area(
                     "Alamat",
-                    value=st.session_state.get("alamat_perusahaan", ""),
-                    height=80,
+                    height=100,
+                    key="alamat_input_pubbm",
                     placeholder=(
                         "Contoh: Jalan Aria Wasangkara Desa Tapos "
                         "Kecamatan Tigaraksa Kabupaten Tangerang"
-                    ),
-                    key="manual_alamat_spbu"
+                    )
                 )
-            
-                st.session_state.nama_perusahaan = manual_nama
-                st.session_state.alamat_perusahaan = manual_alamat
-                st.session_state.alamat_edit = manual_alamat
     
-            pemilik = st.session_state.get("nama_perusahaan", "")
-            alamat = st.session_state.get("alamat_perusahaan", "")
+            pemilik = st.session_state.get("nama_perusahaan", "").strip()
+            alamat = st.session_state.get("alamat_input_pubbm", "").strip()
     
             match_spbu = re.search(r"SPBU\s*[\d\.-]+", pemilik, re.IGNORECASE)
     

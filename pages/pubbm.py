@@ -719,7 +719,7 @@ def run():
             "nomor_sertifikat": nomor_sertifikat,
             "nomor_order": nomor_order,
             "tanggal_pengujian": tanggal_pengujian,
-            "tanggal_cetak": date.today(),
+            "tanggal_cetak": tanggal_cetak,
     
             "nama_alat": "Pompa Ukur BBM (Dispenser)",
     

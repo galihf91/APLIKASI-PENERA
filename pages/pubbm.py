@@ -78,7 +78,7 @@ def load_data_spbu():
         return df
     except FileNotFoundError:
         return pd.DataFrame(columns=["Nama SPBU", "Alamat"])
- @st.cache_data
+@st.cache_data
 def load_data_bejana():
     try:
         df = pd.read_excel("data/data_bejana.xlsx")

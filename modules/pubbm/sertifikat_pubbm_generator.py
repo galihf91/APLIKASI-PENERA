@@ -673,7 +673,7 @@ def generate_sertifikat_pubbm(data, output_path="sertifikat_pubbm.pdf"):
     # ========================
     c.setFont("Helvetica-Bold", 12)
     c.drawString(2.2 * cm, y, "Perangkat Bejana Ukur Standar")
-    y -= 0.55 * cm
+    y -= 0.65 * cm
 
     alat_standar_df = data.get("alat_standar")
 
@@ -682,42 +682,110 @@ def generate_sertifikat_pubbm(data, output_path="sertifikat_pubbm.pdf"):
         and isinstance(alat_standar_df, pd.DataFrame)
         and not alat_standar_df.empty
     ):
-        for nomor, (_, alat) in enumerate(
-            alat_standar_df.iterrows(),
-            start=1
-        ):
-            merk = str(alat.get("Merk", ""))
-            nomor_seri = str(alat.get("Nomor Seri", ""))
-            telusuran = str(alat.get("Telusuran", ""))
+        # Dua alat standar dalam satu baris
+        posisi_x = [
+            2.2 * cm,    # kolom kiri
+            10.5 * cm,   # kolom kanan
+        ]
 
-            c.setFont("Helvetica-Bold", 11)
+        lebar_label = 2.6 * cm
+        jarak_titik_dua = 0.25 * cm
+        tinggi_satu_baris_alat = 2.25 * cm
+
+        daftar_alat = list(alat_standar_df.iterrows())
+
+        for nomor_index, (_, alat) in enumerate(daftar_alat):
+            nomor_alat = nomor_index + 1
+
+            # 0 = kiri, 1 = kanan
+            kolom = nomor_index % 2
+
+            # Pindah ke baris berikutnya setiap dua alat
+            baris = nomor_index // 2
+
+            x_awal = posisi_x[kolom]
+            y_alat = y - (baris * tinggi_satu_baris_alat)
+
+            merk = str(alat.get("Merk", "") or "")
+            nomor_seri = str(alat.get("Nomor Seri", "") or "")
+            telusuran = str(alat.get("Telusuran", "") or "")
+
+            c.setFont("Helvetica-Bold", 10)
             c.drawString(
-                2.2 * cm,
-                y,
-                f"Alat Standar {nomor}"
+                x_awal,
+                y_alat,
+                f"Alat Standar {nomor_alat}"
             )
-            y -= 0.45 * cm
 
-            c.setFont("Helvetica", 11)
+            y_isian = y_alat - 0.45 * cm
 
-            c.drawString(2.5 * cm, y, "Merek / Buatan")
-            c.drawString(5.2 * cm, y, ":")
-            c.drawString(5.6 * cm, y, merk)
-            y -= 0.42 * cm
+            c.setFont("Helvetica", 9)
 
-            c.drawString(2.5 * cm, y, "Nomor Seri")
-            c.drawString(5.2 * cm, y, ":")
-            c.drawString(5.6 * cm, y, nomor_seri)
-            y -= 0.42 * cm
+            # Merek / Buatan
+            c.drawString(
+                x_awal,
+                y_isian,
+                "Merek / Buatan"
+            )
+            c.drawString(
+                x_awal + lebar_label,
+                y_isian,
+                ":"
+            )
+            c.drawString(
+                x_awal + lebar_label + jarak_titik_dua,
+                y_isian,
+                merk
+            )
 
-            c.drawString(2.5 * cm, y, "Telusuran")
-            c.drawString(5.2 * cm, y, ":")
-            c.drawString(5.6 * cm, y, telusuran)
-            y -= 0.65 * cm
+            y_isian -= 0.4 * cm
+
+            # Nomor Seri
+            c.drawString(
+                x_awal,
+                y_isian,
+                "Nomor Seri"
+            )
+            c.drawString(
+                x_awal + lebar_label,
+                y_isian,
+                ":"
+            )
+            c.drawString(
+                x_awal + lebar_label + jarak_titik_dua,
+                y_isian,
+                nomor_seri
+            )
+
+            y_isian -= 0.4 * cm
+
+            # Telusuran
+            c.drawString(
+                x_awal,
+                y_isian,
+                "Telusuran"
+            )
+            c.drawString(
+                x_awal + lebar_label,
+                y_isian,
+                ":"
+            )
+            c.drawString(
+                x_awal + lebar_label + jarak_titik_dua,
+                y_isian,
+                telusuran
+            )
+
+        # Hitung berapa baris alat standar yang terbentuk
+        jumlah_baris_alat = (
+            len(alat_standar_df) + 1
+        ) // 2
+
+        y -= jumlah_baris_alat * tinggi_satu_baris_alat
 
     else:
-        # Fallback untuk data lama yang hanya memiliki satu BUS
-        c.setFont("Helvetica", 12)
+        # Fallback untuk data lama
+        c.setFont("Helvetica", 11)
 
         c.drawString(2.2 * cm, y, "Merek / Buatan")
         c.drawString(5.0 * cm, y, ":")
@@ -746,7 +814,7 @@ def generate_sertifikat_pubbm(data, output_path="sertifikat_pubbm.pdf"):
         )
         y -= 0.65 * cm
 
-    y -= 0.35 * cm
+    y -= 0.25 * cm
         # ======================== JUDUL TABEL ========================
     c.setFont("Helvetica-Bold", 12)
     c.drawCentredString(width / 2, y, "DAFTAR POMPA UKUR BBM")

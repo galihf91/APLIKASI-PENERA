@@ -701,10 +701,17 @@ def run():
             f"Jumlah dispenser saat ini: {jumlah_dispenser}"
         )
         def tambah_dispenser():
-            jumlah_sekarang = st.session_state.jumlah_dispenser_pubbm
+            jumlah_sekarang = int(
+                st.session_state.get(
+                    "jumlah_dispenser_pubbm",
+                    1
+                )
+            )
         
             if jumlah_sekarang < 50:
-                st.session_state.jumlah_dispenser_pubbm += 1
+                st.session_state.jumlah_dispenser_pubbm = (
+                    jumlah_sekarang + 1
+                )
         
         
         def tambah_copy_dispenser():

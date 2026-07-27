@@ -292,9 +292,6 @@ def run():
     
             if "nama_perusahaan" not in st.session_state:
                 st.session_state.nama_perusahaan = st.session_state.saved_data.get("pemilik", "")
-    
-            if "nama_perusahaan" not in st.session_state:
-                st.session_state.nama_perusahaan = ""
             
             if "alamat_input_pubbm" not in st.session_state:
                 st.session_state.alamat_input_pubbm = ""
@@ -827,6 +824,8 @@ def run():
                 )
         
             st.session_state.jumlah_dispenser_pubbm -= 1
+
+        
         data_rows = []
 
         for i in range(1, jumlah_dispenser + 1):

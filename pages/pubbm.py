@@ -633,34 +633,39 @@ def run():
         # DATA POMPA UKUR BBM
         # =========================
         st.subheader("Data Pompa Ukur BBM")
-    
+
         df_media = st.session_state.get("data_media_spbu")
         media_options = get_media_options(pemilik, df_media)
-    
+
         if media_options:
             st.success(
-                "Pilihan media tersedia: " + ", ".join(media_options)
+                "Pilihan media tersedia: "
+                + ", ".join(media_options)
             )
         else:
-            st.warning("Pilihan media belum tersedia. Periksa nama SPBU atau data_media_spbu.xlsx.")
-            media_options = ["Pertalite", "Pertamax", "Solar"]
-    
-        # Sedikit styling agar lebih enak dilihat
+            st.warning(
+                "Pilihan media belum tersedia. "
+                "Periksa nama SPBU atau data_media_spbu.xlsx."
+            )
+
+            media_options = [
+                "Pertalite",
+                "Pertamax",
+                "Solar"
+            ]
+
+        # =========================
+        # STYLE TAMPILAN
+        # =========================
         st.markdown(
             """
             <style>
-            .pubbm-card {
-                padding: 18px;
-                border-radius: 14px;
-                border: 1px solid #e5e7eb;
-                background-color: #fafafa;
-                margin-bottom: 14px;
-            }
             .pubbm-title {
                 font-size: 18px;
                 font-weight: 700;
                 margin-bottom: 8px;
             }
+
             .pubbm-help {
                 font-size: 13px;
                 color: #6b7280;
@@ -670,10 +675,10 @@ def run():
             """,
             unsafe_allow_html=True
         )
-    
-        # ==========================================
-        # KELOLA JUMLAH DISPENSER
-        # ==========================================
+
+        # =========================
+        # SESSION STATE DISPENSER
+        # =========================
         if "jumlah_dispenser_pubbm" not in st.session_state:
             jumlah_awal = int(
                 st.session_state.saved_data.get(
@@ -681,25 +686,15 @@ def run():
                     1
                 )
             )
-        
+
             st.session_state.jumlah_dispenser_pubbm = max(
                 1,
                 jumlah_awal
             )
-        
-        jumlah_dispenser = int(
-            st.session_state.get(
-                "jumlah_dispenser_pubbm",
-                1
-            )
-        )
-        st.session_state.saved_data[
-            "jumlah_dispenser"
-        ] = jumlah_dispenser
-        
-        st.caption(
-            f"Jumlah dispenser saat ini: {jumlah_dispenser}"
-        )
+
+        # =========================
+        # FUNGSI TAMBAH DISPENSER
+        # =========================
         def tambah_dispenser():
             jumlah_sekarang = int(
                 st.session_state.get(
@@ -707,13 +702,47 @@ def run():
                     1
                 )
             )
-        
-            if jumlah_sekarang < 50:
-                st.session_state.jumlah_dispenser_pubbm = (
-                    jumlah_sekarang + 1
+
+            if jumlah_sekarang >= 50:
+                return
+
+            dispenser_baru = jumlah_sekarang + 1
+
+            # Pastikan dispenser baru kosong
+            st.session_state.pop(
+                f"merk_{dispenser_baru}",
+                None
+            )
+            st.session_state.pop(
+                f"tipe_{dispenser_baru}",
+                None
+            )
+            st.session_state.pop(
+                f"no_seri_{dispenser_baru}",
+                None
+            )
+
+            st.session_state[
+                f"jumlah_posisi_{dispenser_baru}"
+            ] = 4
+
+            for idx_baru in range(1, 21):
+                st.session_state.pop(
+                    f"posisi_{dispenser_baru}_{idx_baru}",
+                    None
                 )
-        
-        
+                st.session_state.pop(
+                    f"media_{dispenser_baru}_{idx_baru}",
+                    None
+                )
+
+            st.session_state.jumlah_dispenser_pubbm = (
+                dispenser_baru
+            )
+
+        # =========================
+        # FUNGSI TAMBAH DAN COPY
+        # =========================
         def tambah_copy_dispenser():
             jumlah_lama = int(
                 st.session_state.get(
@@ -721,48 +750,46 @@ def run():
                     1
                 )
             )
-        
+
             if jumlah_lama >= 50:
                 return
-        
+
             dispenser_asal = jumlah_lama
             dispenser_baru = jumlah_lama + 1
-        
-            # lanjutkan kode copy yang sudah ada
-        
+
             # Salin identitas dispenser
-            st.session_state[f"merk_{dispenser_baru}"] = (
-                st.session_state.get(
-                    f"merk_{dispenser_asal}",
-                    ""
-                )
+            st.session_state[
+                f"merk_{dispenser_baru}"
+            ] = st.session_state.get(
+                f"merk_{dispenser_asal}",
+                ""
             )
-        
-            st.session_state[f"tipe_{dispenser_baru}"] = (
-                st.session_state.get(
-                    f"tipe_{dispenser_asal}",
-                    ""
-                )
+
+            st.session_state[
+                f"tipe_{dispenser_baru}"
+            ] = st.session_state.get(
+                f"tipe_{dispenser_asal}",
+                ""
             )
-        
-            st.session_state[f"no_seri_{dispenser_baru}"] = (
-                st.session_state.get(
-                    f"no_seri_{dispenser_asal}",
-                    ""
-                )
+
+            st.session_state[
+                f"no_seri_{dispenser_baru}"
+            ] = st.session_state.get(
+                f"no_seri_{dispenser_asal}",
+                ""
             )
-        
+
             jumlah_posisi_asal = int(
                 st.session_state.get(
                     f"jumlah_posisi_{dispenser_asal}",
                     4
                 )
             )
-        
+
             st.session_state[
                 f"jumlah_posisi_{dispenser_baru}"
             ] = jumlah_posisi_asal
-        
+
             # Salin posisi dan media
             for idx_copy in range(
                 1,
@@ -774,42 +801,48 @@ def run():
                     f"posisi_{dispenser_asal}_{idx_copy}",
                     ""
                 )
-        
+
                 media_asal = st.session_state.get(
                     f"media_{dispenser_asal}_{idx_copy}",
                     ""
                 )
-        
-                st.session_state[
-                    f"media_{dispenser_baru}_{idx_copy}"
-                ] = (
-                    media_asal
-                    if media_asal in media_options
-                    else ""
-                )
-        
+
+                if media_asal in media_options:
+                    st.session_state[
+                        f"media_{dispenser_baru}_{idx_copy}"
+                    ] = media_asal
+                else:
+                    st.session_state[
+                        f"media_{dispenser_baru}_{idx_copy}"
+                    ] = ""
+
             st.session_state.jumlah_dispenser_pubbm = (
                 dispenser_baru
             )
-        
-        
+
+        # =========================
+        # FUNGSI HAPUS DISPENSER
+        # =========================
         def hapus_dispenser_terakhir():
-            jumlah_sekarang = (
-                st.session_state.jumlah_dispenser_pubbm
+            jumlah_sekarang = int(
+                st.session_state.get(
+                    "jumlah_dispenser_pubbm",
+                    1
+                )
             )
-        
+
             if jumlah_sekarang <= 1:
                 return
-        
+
             dispenser_hapus = jumlah_sekarang
-        
+
             jumlah_posisi_hapus = int(
                 st.session_state.get(
                     f"jumlah_posisi_{dispenser_hapus}",
                     4
                 )
             )
-        
+
             # Hapus identitas dispenser
             for key_hapus in [
                 f"merk_{dispenser_hapus}",
@@ -821,7 +854,7 @@ def run():
                     key_hapus,
                     None
                 )
-        
+
             # Hapus posisi dan media
             for idx_hapus in range(
                 1,
@@ -831,15 +864,31 @@ def run():
                     f"posisi_{dispenser_hapus}_{idx_hapus}",
                     None
                 )
-        
+
                 st.session_state.pop(
                     f"media_{dispenser_hapus}_{idx_hapus}",
                     None
                 )
-        
-            st.session_state.jumlah_dispenser_pubbm -= 1
 
-        
+            st.session_state.jumlah_dispenser_pubbm = (
+                jumlah_sekarang - 1
+            )
+
+        # Ambil jumlah dispenser terbaru
+        jumlah_dispenser = int(
+            st.session_state.get(
+                "jumlah_dispenser_pubbm",
+                1
+            )
+        )
+
+        st.session_state.saved_data[
+            "jumlah_dispenser"
+        ] = jumlah_dispenser
+
+        # =========================
+        # DATA DISPENSER
+        # =========================
         data_rows = []
 
         for i in range(1, jumlah_dispenser + 1):
@@ -851,64 +900,84 @@ def run():
 
                 st.markdown(
                     f"""
-                    <div class="pubbm-title">Dispenser {i}</div>
+                    <div class="pubbm-title">
+                        Dispenser {i}
+                    </div>
+
                     <div class="pubbm-help">
-                        Isi spesifikasi dispenser, kemudian pilih media
-                        untuk setiap posisi/nozzle.
+                        Isi spesifikasi dispenser, kemudian pilih
+                        media untuk setiap posisi/nozzle.
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
 
-                # ==========================================
+                # =========================
                 # IDENTITAS DISPENSER
-                # ==========================================
-                col_b, col_c, col_d = st.columns(3)
+                # =========================
+                col_merk, col_tipe, col_seri = st.columns(3)
 
-                with col_b:
+                with col_merk:
                     merk = st.text_input(
                         "Merk",
                         key=f"merk_{i}"
                     )
 
-                with col_c:
+                with col_tipe:
                     tipe = st.text_input(
                         "Tipe",
                         key=f"tipe_{i}"
                     )
 
-                with col_d:
+                with col_seri:
                     no_seri = st.text_input(
                         "No. Seri",
                         key=f"no_seri_{i}"
                     )
 
-                st.markdown("**Posisi / Nozzle dan Media**")
-
-                key_jumlah_posisi = f"jumlah_posisi_{i}"
-
-                if key_jumlah_posisi not in st.session_state:
-                    st.session_state[key_jumlah_posisi] = 4
-
-                jumlah_posisi = st.number_input(
-                    "Jumlah Posisi / Nozzle",
-                    min_value=1,
-                    max_value=20,
-                    step=1,
-                    key=key_jumlah_posisi
+                st.markdown(
+                    "**Posisi / Nozzle dan Media**"
                 )
 
-                # ==========================================
-                # DATA POSISI DAN MEDIA
-                # ==========================================
-                for idx in range(1, jumlah_posisi + 1):
+                # =========================
+                # JUMLAH POSISI
+                # =========================
+                key_jumlah_posisi = (
+                    f"jumlah_posisi_{i}"
+                )
 
-                    col_posisi, col_media = st.columns([1, 2])
+                if key_jumlah_posisi not in st.session_state:
+                    st.session_state[
+                        key_jumlah_posisi
+                    ] = 4
+
+                jumlah_posisi = int(
+                    st.number_input(
+                        "Jumlah Posisi / Nozzle",
+                        min_value=1,
+                        max_value=20,
+                        step=1,
+                        key=key_jumlah_posisi
+                    )
+                )
+
+                # =========================
+                # POSISI DAN MEDIA
+                # =========================
+                for idx in range(
+                    1,
+                    jumlah_posisi + 1
+                ):
+                    col_posisi, col_media = st.columns(
+                        [1, 2]
+                    )
 
                     with col_posisi:
                         posisi = st.text_input(
                             f"Posisi {idx}",
-                            placeholder="Contoh: 1, 1.1, 1.2, 3.4",
+                            placeholder=(
+                                "Contoh: 1, 1.1, 1.2, 3.4"
+                            ),
                             key=f"posisi_{i}_{idx}"
                         )
 
@@ -931,48 +1000,63 @@ def run():
                             }
                         )
 
-        # ==========================================
-        # KELOLA DISPENSER (di luar expander, tampil di bawah
-        # setelah semua card dispenser selesai diisi)
-        # ==========================================
-        st.markdown("---")
-        st.markdown("**Kelola Dispenser**")
+                # =========================
+                # TOMBOL DI DISPENSER TERAKHIR
+                # =========================
+                if i == jumlah_dispenser:
+                    st.markdown("---")
+                    st.markdown(
+                        "**Kelola Dispenser**"
+                    )
 
-        col_tambah, col_copy, col_hapus = st.columns(3)
+                    col_tambah, col_copy, col_hapus = (
+                        st.columns(3)
+                    )
 
-        with col_tambah:
-            st.button(
-                "➕ Tambah Dispenser",
-                use_container_width=True,
-                key="tambah_dispenser_btn",
-                on_click=tambah_dispenser,
-                disabled=(
-                    st.session_state.jumlah_dispenser_pubbm >= 50
-                )
-            )
+                    with col_tambah:
+                        st.button(
+                            "➕ Tambah Dispenser",
+                            use_container_width=True,
+                            key=(
+                                f"tambah_dispenser_"
+                                f"setelah_{i}"
+                            ),
+                            on_click=tambah_dispenser,
+                            disabled=(
+                                jumlah_dispenser >= 50
+                            )
+                        )
 
-        with col_copy:
-            st.button(
-                "📋 Tambah & Copy",
-                use_container_width=True,
-                key="copy_dispenser_btn",
-                on_click=tambah_copy_dispenser,
-                disabled=(
-                    st.session_state.jumlah_dispenser_pubbm >= 50
-                )
-            )
+                    with col_copy:
+                        st.button(
+                            "📋 Tambah & Copy",
+                            use_container_width=True,
+                            key=(
+                                f"copy_dispenser_"
+                                f"setelah_{i}"
+                            ),
+                            on_click=tambah_copy_dispenser,
+                            disabled=(
+                                jumlah_dispenser >= 50
+                            )
+                        )
 
-        with col_hapus:
-            st.button(
-                "🗑️ Hapus Dispenser",
-                use_container_width=True,
-                key="hapus_dispenser_btn",
-                on_click=hapus_dispenser_terakhir,
-                disabled=(
-                    st.session_state.jumlah_dispenser_pubbm <= 1
-                )
-            )
+                    with col_hapus:
+                        st.button(
+                            "🗑️ Hapus Dispenser",
+                            use_container_width=True,
+                            key=f"hapus_dispenser_{i}",
+                            on_click=(
+                                hapus_dispenser_terakhir
+                            ),
+                            disabled=(
+                                jumlah_dispenser <= 1
+                            )
+                        )
 
+        # =========================
+        # DATAFRAME DISPENSER
+        # =========================
         kolom_dispenser = [
             "No",
             "Posisi",
@@ -981,17 +1065,24 @@ def run():
             "No. Seri",
             "Media"
         ]
-    
-        dispenser_df = pd.DataFrame(data_rows, columns=kolom_dispenser)
-    
-        # Bersihkan baris yang belum lengkap media-nya jika kolom tersedia
+
+        dispenser_df = pd.DataFrame(
+            data_rows,
+            columns=kolom_dispenser
+        )
+
         if not dispenser_df.empty:
             dispenser_df = dispenser_df[
-                (dispenser_df["Media"].astype(str).str.strip() != "")
+                dispenser_df["Media"]
+                .astype(str)
+                .str.strip()
+                .ne("")
             ]
-    
-        st.session_state.pubbm_dispenser = dispenser_df
-    
+
+        st.session_state.pubbm_dispenser = (
+            dispenser_df
+        )
+
         st.markdown("---")
     
         # =========================

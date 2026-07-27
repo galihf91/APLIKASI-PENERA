@@ -715,13 +715,20 @@ def run():
         
         
         def tambah_copy_dispenser():
-            jumlah_lama = st.session_state.jumlah_dispenser_pubbm
+            jumlah_lama = int(
+                st.session_state.get(
+                    "jumlah_dispenser_pubbm",
+                    1
+                )
+            )
         
             if jumlah_lama >= 50:
                 return
         
             dispenser_asal = jumlah_lama
             dispenser_baru = jumlah_lama + 1
+        
+            # lanjutkan kode copy yang sudah ada
         
             # Salin identitas dispenser
             st.session_state[f"merk_{dispenser_baru}"] = (

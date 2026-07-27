@@ -993,7 +993,7 @@ def run():
             "merk_bus": merk_bus,
             "nomor_seri_bus": nomor_seri_bus,
             "telusuran_bus": telusuran_bus,
-    
+            "jumlah_dispenser": jumlah_dispenser,
             "dispenser": dispenser_df,
         }
     

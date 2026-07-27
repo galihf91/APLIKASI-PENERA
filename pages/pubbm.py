@@ -220,16 +220,6 @@ def run():
         except FileNotFoundError:
             return pd.DataFrame(columns=["Nama SPBU", "Alamat"])
     
-    
-    # =========================
-    # KONFIGURASI HALAMAN
-    # =========================
-    st.set_page_config(
-        page_title="PENERA - Sertifikat PU BBM",
-        layout="wide"
-    )
-    
-    
     # =========================
     # SESSION STATE AWAL
     # =========================
@@ -382,7 +372,10 @@ def run():
     
             nomor_sertifikat = st.text_input(
                 "Nomor Sertifikat",
-                value=default_sertifikat,
+                value=st.session_state.saved_data.get(
+                    "nomor_sertifikat",
+                    default_sertifikat
+                ),
                 placeholder="Format: XXX.X.X.XX/XXXX/XXX-X/X/XXXX"
             )
     
@@ -858,8 +851,8 @@ def run():
     
         if st.button("📄 Generate Sertifikat PU BBM", type="primary"):
             try:
-                output_dir = Path("output")
-                output_dir.mkdir(exist_ok=True)
+                output_dir = Path("output/pubbm/sertifikat")
+                output_dir.mkdir(parents=True, exist_ok=True)
         
                 nama_file = format_nama_file_pubbm(data_pubbm)
                 output_file = output_dir / f"{nama_file}.pdf"

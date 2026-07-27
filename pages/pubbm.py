@@ -918,44 +918,44 @@ def run():
                                 "Media": media.strip()
                             }
                         )
-            if i == jumlah_dispenser:
-                st.markdown("---")
-                st.markdown("**Kelola Dispenser**")
-            
-                col_tambah, col_copy, col_hapus = st.columns(3)
-            
-                with col_tambah:
-                    st.button(
-                        "➕ Tambah Dispenser",
-                        use_container_width=True,
-                        key=f"tambah_dispenser_setelah_{i}",
-                        on_click=tambah_dispenser,
-                        disabled=(
-                            st.session_state.jumlah_dispenser_pubbm >= 50
+                if i == jumlah_dispenser:
+                    st.markdown("---")
+                    st.markdown("**Kelola Dispenser**")
+                
+                    col_tambah, col_copy, col_hapus = st.columns(3)
+                
+                    with col_tambah:
+                        st.button(
+                            "➕ Tambah Dispenser",
+                            use_container_width=True,
+                            key=f"tambah_dispenser_setelah_{i}",
+                            on_click=tambah_dispenser,
+                            disabled=(
+                                st.session_state.jumlah_dispenser_pubbm >= 50
+                            )
                         )
-                    )
-            
-                with col_copy:
-                    st.button(
-                        "📋 Tambah & Copy",
-                        use_container_width=True,
-                        key=f"copy_dispenser_setelah_{i}",
-                        on_click=tambah_copy_dispenser,
-                        disabled=(
-                            st.session_state.jumlah_dispenser_pubbm >= 50
+                
+                    with col_copy:
+                        st.button(
+                            "📋 Tambah & Copy",
+                            use_container_width=True,
+                            key=f"copy_dispenser_setelah_{i}",
+                            on_click=tambah_copy_dispenser,
+                            disabled=(
+                                st.session_state.jumlah_dispenser_pubbm >= 50
+                            )
                         )
-                    )
-            
-                with col_hapus:
-                    st.button(
-                        "🗑️ Hapus Dispenser",
-                        use_container_width=True,
-                        key=f"hapus_dispenser_{i}",
-                        on_click=hapus_dispenser_terakhir,
-                        disabled=(
-                            st.session_state.jumlah_dispenser_pubbm <= 1
+                
+                    with col_hapus:
+                        st.button(
+                            "🗑️ Hapus Dispenser",
+                            use_container_width=True,
+                            key=f"hapus_dispenser_{i}",
+                            on_click=hapus_dispenser_terakhir,
+                            disabled=(
+                                st.session_state.jumlah_dispenser_pubbm <= 1
+                            )
                         )
-                    )
         kolom_dispenser = ["No", "Posisi", "Merk", "Tipe", "No. Seri", "Media"]
     
         dispenser_df = pd.DataFrame(data_rows, columns=kolom_dispenser)

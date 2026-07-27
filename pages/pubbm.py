@@ -515,76 +515,186 @@ def run():
         # BEJANA UKUR STANDAR
         # =========================
         st.subheader("Perangkat Bejana Ukur Standar 20L")
-    
+
         df_bejana = st.session_state.get("data_bejana")
-    
+
+        jumlah_alat_standar = st.number_input(
+            "Jumlah Alat Standar",
+            min_value=1,
+            max_value=10,
+            value=int(
+                st.session_state.saved_data.get(
+                    "jumlah_alat_standar",
+                    1
+                )
+            ),
+            step=1,
+            key="jumlah_alat_standar_pubbm"
+        )
+
+        st.session_state.saved_data[
+            "jumlah_alat_standar"
+        ] = jumlah_alat_standar
+
+        data_alat_standar = []
+
         if df_bejana is not None and not df_bejana.empty:
-    
+
             pilihan_bejana = (
                 df_bejana["Merk"].astype(str)
                 + " | No Seri : "
                 + df_bejana["Nomor Seri"].astype(str)
             )
-    
-            selected_bejana = st.selectbox(
-                "Pilih Bejana Ukur Standar",
-                options=[""] + pilihan_bejana.tolist(),
-                index=0,
-                key="bejana_select"
-            )
-    
-            if selected_bejana:
-                idx = pilihan_bejana[pilihan_bejana == selected_bejana].index[0]
-                row = df_bejana.loc[idx]
-    
-                merk_bus = row["Merk"]
-                nomor_seri_bus = str(row["Nomor Seri"])
-                telusuran_bus = row["Telusuran"]
-    
-            else:
-                merk_bus = ""
-                nomor_seri_bus = ""
-                telusuran_bus = ""
-    
-            col8, col9, col10 = st.columns(3)
-    
-            with col8:
-                st.text_input(
-                    "Merk / Buatan",
-                    value=merk_bus,
-                    disabled=True
-                )
-    
-            with col9:
-                st.text_input(
-                    "Nomor Seri",
-                    value=nomor_seri_bus,
-                    disabled=True
-                )
-    
-            with col10:
-                st.text_input(
-                    "Telusuran",
-                    value=telusuran_bus,
-                    disabled=True
-                )
-    
+
+            for i in range(1, jumlah_alat_standar + 1):
+
+                with st.expander(
+                    f"⚖️ Alat Standar {i}",
+                    expanded=True
+                ):
+
+                    selected_bejana = st.selectbox(
+                        f"Pilih Bejana Ukur Standar {i}",
+                        options=[""] + pilihan_bejana.tolist(),
+                        index=0,
+                        key=f"bejana_select_{i}"
+                    )
+
+                    if selected_bejana:
+                        idx = pilihan_bejana[
+                            pilihan_bejana == selected_bejana
+                        ].index[0]
+
+                        row_bejana = df_bejana.loc[idx]
+
+                        merk_bus_item = str(
+                            row_bejana.get("Merk", "")
+                        )
+
+                        nomor_seri_bus_item = str(
+                            row_bejana.get("Nomor Seri", "")
+                        )
+
+                        telusuran_bus_item = str(
+                            row_bejana.get("Telusuran", "")
+                        )
+
+                    else:
+                        merk_bus_item = ""
+                        nomor_seri_bus_item = ""
+                        telusuran_bus_item = ""
+
+                    col8, col9, col10 = st.columns(3)
+
+                    with col8:
+                        st.text_input(
+                            f"Merk / Buatan {i}",
+                            value=merk_bus_item,
+                            disabled=True,
+                            key=f"merk_bus_tampil_{i}"
+                        )
+
+                    with col9:
+                        st.text_input(
+                            f"Nomor Seri {i}",
+                            value=nomor_seri_bus_item,
+                            disabled=True,
+                            key=f"nomor_seri_bus_tampil_{i}"
+                        )
+
+                    with col10:
+                        st.text_input(
+                            f"Telusuran {i}",
+                            value=telusuran_bus_item,
+                            disabled=True,
+                            key=f"telusuran_bus_tampil_{i}"
+                        )
+
+                    if selected_bejana:
+                        data_alat_standar.append(
+                            {
+                                "No": i,
+                                "Merk": merk_bus_item,
+                                "Nomor Seri": nomor_seri_bus_item,
+                                "Telusuran": telusuran_bus_item
+                            }
+                        )
+
         else:
-            st.warning("Data bejana ukur tidak ditemukan.")
-    
-            col8, col9, col10 = st.columns(3)
-    
-            with col8:
-                merk_bus = st.text_input("Merk / Buatan")
-    
-            with col9:
-                nomor_seri_bus = st.text_input("Nomor Seri")
-    
-            with col10:
-                telusuran_bus = st.text_input("Telusuran")
+            st.warning(
+                "Data bejana ukur tidak ditemukan. "
+                "Silakan input alat standar secara manual."
+            )
+
+            for i in range(1, jumlah_alat_standar + 1):
+
+                with st.expander(
+                    f"⚖️ Alat Standar {i}",
+                    expanded=True
+                ):
+
+                    col8, col9, col10 = st.columns(3)
+
+                    with col8:
+                        merk_bus_item = st.text_input(
+                            f"Merk / Buatan {i}",
+                            key=f"merk_bus_manual_{i}"
+                        )
+
+                    with col9:
+                        nomor_seri_bus_item = st.text_input(
+                            f"Nomor Seri {i}",
+                            key=f"nomor_seri_bus_manual_{i}"
+                        )
+
+                    with col10:
+                        telusuran_bus_item = st.text_input(
+                            f"Telusuran {i}",
+                            key=f"telusuran_bus_manual_{i}"
+                        )
+
+                    if (
+                        merk_bus_item.strip()
+                        or nomor_seri_bus_item.strip()
+                        or telusuran_bus_item.strip()
+                    ):
+                        data_alat_standar.append(
+                            {
+                                "No": i,
+                                "Merk": merk_bus_item.strip(),
+                                "Nomor Seri": nomor_seri_bus_item.strip(),
+                                "Telusuran": telusuran_bus_item.strip()
+                            }
+                        )
+
+        alat_standar_df = pd.DataFrame(
+            data_alat_standar,
+            columns=[
+                "No",
+                "Merk",
+                "Nomor Seri",
+                "Telusuran"
+            ]
+        )
+
+        # Tetap siapkan variabel lama agar generator lama tidak error
+        if not alat_standar_df.empty:
+            alat_pertama = alat_standar_df.iloc[0]
+
+            merk_bus = str(alat_pertama.get("Merk", ""))
+            nomor_seri_bus = str(
+                alat_pertama.get("Nomor Seri", "")
+            )
+            telusuran_bus = str(
+                alat_pertama.get("Telusuran", "")
+            )
+
+        else:
+            merk_bus = ""
+            nomor_seri_bus = ""
+            telusuran_bus = ""
+
         st.markdown("---")
-    
-        # =========================
         # =========================
         # DATA POMPA UKUR BBM
         # =========================

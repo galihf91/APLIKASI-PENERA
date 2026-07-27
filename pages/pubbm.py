@@ -394,6 +394,8 @@ def run():
     
             st.session_state.saved_data["nomor_sertifikat"] = nomor_sertifikat
             st.session_state.saved_data["nomor_order"] = nomor_order
+            st.session_state.saved_data["tanggal_pengujian"] = tanggal_pengujian
+            st.session_state.saved_data["tanggal_cetak"] = tanggal_cetak
     
         st.markdown("---")
     

@@ -678,11 +678,16 @@ def run():
         # KELOLA JUMLAH DISPENSER
         # ==========================================
         if "jumlah_dispenser_pubbm" not in st.session_state:
-            st.session_state.jumlah_dispenser_pubbm = int(
+            jumlah_awal = int(
                 st.session_state.saved_data.get(
                     "jumlah_dispenser",
                     1
                 )
+            )
+        
+            st.session_state.jumlah_dispenser_pubbm = max(
+                1,
+                jumlah_awal
             )
         
         col_tambah, col_copy, col_hapus = st.columns(3)

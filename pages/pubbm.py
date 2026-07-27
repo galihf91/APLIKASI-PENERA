@@ -61,6 +61,36 @@ def format_nama_file_pubbm(data):
     nama_file = f"{nama_spbu}_{nama_penera}_{tanggal_file}"
     return slug_filename(nama_file)
 
+@st.cache_data
+def load_data_penera():
+    try:
+        df = pd.read_excel("data/data_penera.xlsx")
+        df.columns = df.columns.str.strip()
+        return df
+    except FileNotFoundError:
+        return pd.DataFrame(columns=["Nama", "NIP", "Golongan"])
+
+@st.cache_data
+def load_data_spbu():
+    try:
+        df = pd.read_csv("data/data_spbu.csv", sep=";", encoding="utf-8-sig")
+        df.columns = df.columns.str.strip()
+        return df
+    except FileNotFoundError:
+        return pd.DataFrame(columns=["Nama SPBU", "Alamat"])
+ @st.cache_data
+def load_data_bejana():
+    try:
+        df = pd.read_excel("data/data_bejana.xlsx")
+        df.columns = df.columns.str.strip()
+        return df
+    except FileNotFoundError:
+        return pd.DataFrame(
+            columns=[
+                "Standar Volume", "Merk", "Tipe", "Nomor Seri",
+                "Kelas", "Kapasitas", "Daya Baca", "Telusuran"
+            ]
+        )
 
 
 def run():
@@ -155,19 +185,6 @@ def run():
         ]
     
         return media_list
-    @st.cache_data
-    def load_data_bejana():
-        try:
-            df = pd.read_excel("data/data_bejana.xlsx")
-            df.columns = df.columns.str.strip()
-            return df
-        except FileNotFoundError:
-            return pd.DataFrame(
-                columns=[
-                    "Standar Volume", "Merk", "Tipe", "Nomor Seri",
-                    "Kelas", "Kapasitas", "Daya Baca", "Telusuran"
-                ]
-            )
     
     def bulan_ke_romawi(bulan):
         romawi = {
@@ -201,24 +218,6 @@ def run():
             t = tanggal
     
         return f"0000/SCD/{bulan_ke_romawi(t.month)}/{t.year}"
-    
-    @st.cache_data
-    def load_data_penera():
-        try:
-            df = pd.read_excel("data/data_penera.xlsx")
-            df.columns = df.columns.str.strip()
-            return df
-        except FileNotFoundError:
-            return pd.DataFrame(columns=["Nama", "NIP", "Golongan"])
-    
-    @st.cache_data
-    def load_data_spbu():
-        try:
-            df = pd.read_csv("data/data_spbu.csv", sep=";", encoding="utf-8-sig")
-            df.columns = df.columns.str.strip()
-            return df
-        except FileNotFoundError:
-            return pd.DataFrame(columns=["Nama SPBU", "Alamat"])
     
     # =========================
     # SESSION STATE AWAL

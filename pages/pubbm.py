@@ -870,7 +870,8 @@ def run():
             "golongan_penera_2": golongan_penera_2,
     
             "jumlah_penera": jumlah_penera,
-    
+            "jumlah_alat_standar": jumlah_alat_standar,
+            "alat_standar": alat_standar_df,
             "merk_bus": merk_bus,
             "nomor_seri_bus": nomor_seri_bus,
             "telusuran_bus": telusuran_bus,

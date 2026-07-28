@@ -424,7 +424,8 @@ def run():
         [
             "📝 Input Data Pengujian",
             "📄 Preview & Generate Data"
-        ]
+        ],
+        key="mode_pubbm"
     )
     # =========================
     # TITLE

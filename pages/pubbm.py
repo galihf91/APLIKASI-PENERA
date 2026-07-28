@@ -651,7 +651,7 @@ def run():
             media_options = [
                 "Pertalite",
                 "Pertamax",
-                "Solar"
+                "Bio Solar"
             ]
 
         # =========================

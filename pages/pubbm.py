@@ -255,6 +255,167 @@ def run():
         st.session_state.data_media_spbu = load_data_media_spbu()
     if "data_pubbm" not in st.session_state:
         st.session_state.data_pubbm = {}
+
+    def pulihkan_data_pubbm():
+        data = st.session_state.get("data_pubbm", {})
+    
+        if not data:
+            return
+    
+        # Identitas SPBU
+        st.session_state["nama_perusahaan"] = data.get(
+            "pemilik",
+            ""
+        )
+    
+        st.session_state["alamat_input_pubbm"] = data.get(
+            "alamat",
+            ""
+        )
+    
+        # Sertifikat
+        st.session_state["jenis_pengujian_pubbm"] = data.get(
+            "jenis_pengujian",
+            "Tera Ulang"
+        )
+    
+        st.session_state["tanggal_pengujian_pubbm"] = data.get(
+            "tanggal_pengujian",
+            date.today()
+        )
+    
+        st.session_state["tanggal_cetak_pubbm"] = data.get(
+            "tanggal_cetak",
+            date.today()
+        )
+    
+        st.session_state["nomor_sertifikat_pubbm"] = data.get(
+            "nomor_sertifikat",
+            ""
+        )
+    
+        st.session_state["nomor_order_pubbm"] = data.get(
+            "nomor_order",
+            ""
+        )
+    
+        # Penera
+        st.session_state["jumlah_penera"] = data.get(
+            "jumlah_penera",
+            1
+        )
+    
+        st.session_state["penera_1_select"] = data.get(
+            "penera_1",
+            ""
+        )
+    
+        st.session_state["penera_2_select"] = data.get(
+            "penera_2",
+            ""
+        )
+    
+        # Jumlah alat standar
+        st.session_state["jumlah_alat_standar_pubbm"] = int(
+            data.get(
+                "jumlah_alat_standar",
+                1
+            )
+        )
+    
+        alat_standar = data.get("alat_standar")
+    
+        if (
+            isinstance(alat_standar, pd.DataFrame)
+            and not alat_standar.empty
+        ):
+            for _, row in alat_standar.iterrows():
+                nomor = int(row.get("No", 1))
+                merk = str(row.get("Merk", ""))
+                nomor_seri = str(
+                    row.get("Nomor Seri", "")
+                )
+    
+                st.session_state[
+                    f"bejana_select_{nomor}"
+                ] = (
+                    f"{merk} | No Seri : {nomor_seri}"
+                )
+    
+        # Jumlah dispenser
+        jumlah_dispenser = int(
+            data.get(
+                "jumlah_dispenser",
+                1
+            )
+        )
+    
+        st.session_state[
+            "jumlah_dispenser_pubbm"
+        ] = max(1, jumlah_dispenser)
+    
+        # Data dispenser
+        dispenser_df = data.get("dispenser")
+    
+        if (
+            isinstance(dispenser_df, pd.DataFrame)
+            and not dispenser_df.empty
+        ):
+            for nomor_dispenser in sorted(
+                dispenser_df["No"].unique()
+            ):
+                nomor_dispenser = int(nomor_dispenser)
+    
+                data_dispenser = dispenser_df[
+                    dispenser_df["No"]
+                    == nomor_dispenser
+                ].reset_index(drop=True)
+    
+                if data_dispenser.empty:
+                    continue
+    
+                baris_pertama = data_dispenser.iloc[0]
+    
+                st.session_state[
+                    f"merk_{nomor_dispenser}"
+                ] = str(
+                    baris_pertama.get("Merk", "")
+                )
+    
+                st.session_state[
+                    f"tipe_{nomor_dispenser}"
+                ] = str(
+                    baris_pertama.get("Tipe", "")
+                )
+    
+                st.session_state[
+                    f"no_seri_{nomor_dispenser}"
+                ] = str(
+                    baris_pertama.get("No. Seri", "")
+                )
+    
+                jumlah_posisi = len(data_dispenser)
+    
+                st.session_state[
+                    f"jumlah_posisi_{nomor_dispenser}"
+                ] = max(1, jumlah_posisi)
+    
+                for idx, row in data_dispenser.iterrows():
+                    nomor_posisi = idx + 1
+    
+                    st.session_state[
+                        f"posisi_{nomor_dispenser}_{nomor_posisi}"
+                    ] = str(
+                        row.get("Posisi", "")
+                    )
+    
+                    st.session_state[
+                        f"media_{nomor_dispenser}_{nomor_posisi}"
+                    ] = str(
+                        row.get("Media", "")
+                    )
+    
+    
     # =========================
     # SIDEBAR
     # =========================

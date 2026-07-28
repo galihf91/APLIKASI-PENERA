@@ -529,63 +529,79 @@ def run():
                 nomor_spbu = ""
     
         # ======================== KOLOM 2 ========================
-        jenis_pengujian = st.selectbox(
-            "Jenis Pengujian",
-            ["Tera", "Tera Ulang"],
-            index=1,
-            key="jenis_pengujian_pubbm"
-        )
-        
-        tanggal_pengujian = st.date_input(
-            "Tanggal Pengujian",
-            value=st.session_state.saved_data.get(
-                "tanggal_pengujian",
-                date.today()
-            ),
-            key="tanggal_pengujian_pubbm"
-        )
-        
-        tanggal_cetak = st.date_input(
-            "Tanggal Cetak / Tanggal Tanda Tangan",
-            value=st.session_state.saved_data.get(
-                "tanggal_cetak",
-                date.today()
-            ),
-            key="tanggal_cetak_pubbm"
-        )
-        
-        tanggal_data = tanggal_pengujian
-        
-        default_sertifikat = generate_nomor_sertifikat(
-            tanggal_data
-        )
-        
-        default_order = generate_nomor_order(
-            tanggal_data
-        )
-        
-        nomor_sertifikat = st.text_input(
-            "Nomor Sertifikat",
-            value=st.session_state.saved_data.get(
-                "nomor_sertifikat",
-                default_sertifikat
-            ),
-            key="nomor_sertifikat_pubbm"
-        )
-        
-        nomor_order = st.text_input(
-            "Nomor Order",
-            value=st.session_state.saved_data.get(
-                "nomor_order",
-                default_order
-            ),
-            key="nomor_order_pubbm"
-        )
-    
-            st.session_state.saved_data["nomor_sertifikat"] = nomor_sertifikat
-            st.session_state.saved_data["nomor_order"] = nomor_order
-            st.session_state.saved_data["tanggal_pengujian"] = tanggal_pengujian
-            st.session_state.saved_data["tanggal_cetak"] = tanggal_cetak
+        with col2:
+            st.subheader("Data Sertifikat")
+
+            jenis_pengujian = st.selectbox(
+                "Jenis Pengujian",
+                ["Tera", "Tera Ulang"],
+                index=1,
+                key="jenis_pengujian_pubbm"
+            )
+
+            tanggal_pengujian = st.date_input(
+                "Tanggal Pengujian",
+                value=st.session_state.saved_data.get(
+                    "tanggal_pengujian",
+                    date.today()
+                ),
+                key="tanggal_pengujian_pubbm"
+            )
+
+            tanggal_cetak = st.date_input(
+                "Tanggal Cetak / Tanggal Tanda Tangan",
+                value=st.session_state.saved_data.get(
+                    "tanggal_cetak",
+                    date.today()
+                ),
+                key="tanggal_cetak_pubbm"
+            )
+
+            tanggal_data = tanggal_pengujian
+
+            default_sertifikat = generate_nomor_sertifikat(
+                tanggal_data
+            )
+
+            default_order = generate_nomor_order(
+                tanggal_data
+            )
+
+            nomor_sertifikat = st.text_input(
+                "Nomor Sertifikat",
+                value=st.session_state.saved_data.get(
+                    "nomor_sertifikat",
+                    default_sertifikat
+                ),
+                key="nomor_sertifikat_pubbm"
+            )
+
+            nomor_order = st.text_input(
+                "Nomor Order",
+                value=st.session_state.saved_data.get(
+                    "nomor_order",
+                    default_order
+                ),
+                key="nomor_order_pubbm"
+            )
+
+            st.session_state.saved_data[
+                "nomor_sertifikat"
+            ] = nomor_sertifikat
+
+            st.session_state.saved_data[
+                "nomor_order"
+            ] = nomor_order
+
+            st.session_state.saved_data[
+                "tanggal_pengujian"
+            ] = tanggal_pengujian
+
+            st.session_state.saved_data[
+                "tanggal_cetak"
+            ] = tanggal_cetak
+
+        st.markdown("---")
     
         st.markdown("---")
     

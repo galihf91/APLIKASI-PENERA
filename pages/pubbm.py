@@ -265,23 +265,6 @@ def run():
             "📄 Preview & Generate Data"
         ]
     )
-    if st.sidebar.button("🔄 Muat Ulang Data Master"):
-        st.cache_data.clear()
-    
-        st.session_state.pop("data_media_spbu", None)
-        st.session_state.pop("data_bejana", None)
-    
-        for key in list(st.session_state.keys()):
-            if (
-                key.startswith("media_")
-                or key.startswith("bejana_select_")
-                or key.startswith("merk_bus_")
-                or key.startswith("nomor_seri_bus_")
-                or key.startswith("telusuran_bus_")
-            ):
-                st.session_state.pop(key, None)
-    
-        st.rerun()
     # =========================
     # TITLE
     # =========================

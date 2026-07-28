@@ -265,7 +265,20 @@ def run():
             "📄 Preview & Generate Data"
         ]
     )
+    if st.sidebar.button("🔄 Muat Ulang Data Media SPBU"):
+        st.cache_data.clear()
     
+        st.session_state.pop(
+            "data_media_spbu",
+            None
+        )
+    
+        # Bersihkan pilihan media lama pada dispenser
+        for key in list(st.session_state.keys()):
+            if key.startswith("media_"):
+                del st.session_state[key]
+    
+        st.rerun()
     
     # =========================
     # TITLE

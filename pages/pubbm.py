@@ -150,9 +150,9 @@ def load_data_media_spbu():
                     "PERTASHOP"
                 ],
                 "MEDIA": [
-                    "Pertalite, Pertamax, PERTAMAX GREEN, Pertamax Turbo, Solar, Pertamina Dex",
-                    "BP 92, BP Ultimate, BP Diesel",
-                    "Super, V-Power, Diesel",
+                    "Pertalite, Pertamax, Pertamax GREEN, Pertamax Turbo, Bio Solar, Pertamina Dex",
+                    "BP 92, BP Ultimate, BP Ultimate Diesel",
+                    "Super, V-Power, V-Power Diesel, V-Power Nitro+",
                     "Revvo 90, Revvo 92, Revvo 95",
                     "Pertamax"
                 ]

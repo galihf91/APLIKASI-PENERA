@@ -1293,15 +1293,35 @@ def run():
             "dispenser": dispenser_df,
         }
     
-        if st.button("💾 Simpan Data", type="primary"):
+        if st.button(
+            "💾 Simpan Data",
+            type="primary"
+        ):
             st.session_state.data_pubbm = data_pubbm
-    
-            st.balloons()
-    
-            st.success(
-                "Data PU BBM berhasil disimpan. Silakan buka menu Preview & Generate Data untuk mengecek dan generate sertifikat."
+        
+            st.session_state.saved_data.update(
+                {
+                    "pemilik": pemilik,
+                    "alamat": alamat,
+                    "jenis_pengujian": jenis_pengujian,
+                    "tanggal_pengujian": tanggal_pengujian,
+                    "tanggal_cetak": tanggal_cetak,
+                    "nomor_sertifikat": nomor_sertifikat,
+                    "nomor_order": nomor_order,
+                    "jumlah_penera": jumlah_penera,
+                    "penera_1": penera_1,
+                    "penera_2": penera_2,
+                    "jumlah_alat_standar": jumlah_alat_standar,
+                    "jumlah_dispenser": jumlah_dispenser,
+                }
             )
-    
+        
+            st.balloons()
+        
+            st.success(
+                "Data PU BBM berhasil disimpan. "
+                "Silakan buka menu Preview & Generate Data."
+            )
     # =========================
     # MODE PREVIEW
     # =========================

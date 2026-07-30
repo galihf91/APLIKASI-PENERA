@@ -1092,9 +1092,19 @@ def run():
                     f"posisi_{dispenser_hapus}_{idx_hapus}",
                     None
                 )
-
+            
                 st.session_state.pop(
                     f"media_{dispenser_hapus}_{idx_hapus}",
+                    None
+                )
+            
+                st.session_state.pop(
+                    f"media_manual_{dispenser_hapus}_{idx_hapus}",
+                    None
+                )
+            
+                st.session_state.pop(
+                    f"media_restore_{dispenser_hapus}_{idx_hapus}",
                     None
                 )
 

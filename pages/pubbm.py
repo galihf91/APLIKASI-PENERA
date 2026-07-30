@@ -5,6 +5,7 @@ from datetime import date, datetime
 import re
 from pathlib import Path
 
+OPSI_MEDIA_MANUAL = "✍️ Input Media Manual"
 def bulan_singkat_id(tanggal):
     bulan = {
         1: "JAN", 2: "FEB", 3: "MAR", 4: "APR",

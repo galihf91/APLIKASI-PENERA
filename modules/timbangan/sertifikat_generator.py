@@ -26,9 +26,6 @@ def find_assets_dir():
     # Fallback apabila dijalankan dari folder utama
     return Path("assets")
 
-LOGO_PATH = ASSETS_DIR / "logo.png"
-WATERMARK_PATH = ASSETS_DIR / "logo_metrologi.png"
-
 
 def format_tanggal_indonesia(tanggal_str):
     if not tanggal_str:

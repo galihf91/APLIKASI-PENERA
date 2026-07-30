@@ -921,8 +921,19 @@ def run():
                     f"posisi_{dispenser_baru}_{idx_baru}",
                     None
                 )
+            
                 st.session_state.pop(
                     f"media_{dispenser_baru}_{idx_baru}",
+                    None
+                )
+            
+                st.session_state.pop(
+                    f"media_manual_{dispenser_baru}_{idx_baru}",
+                    None
+                )
+            
+                st.session_state.pop(
+                    f"media_restore_{dispenser_baru}_{idx_baru}",
                     None
                 )
 

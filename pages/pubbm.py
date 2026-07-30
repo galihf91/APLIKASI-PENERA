@@ -1003,18 +1003,45 @@ def run():
                     ""
                 )
 
-                media_asal = st.session_state.get(
-                    f"media_{dispenser_asal}_{idx_copy}",
+                key_media_asal = (
+                    f"media_{dispenser_asal}_{idx_copy}"
+                )
+                
+                key_manual_asal = (
+                    f"media_manual_{dispenser_asal}_{idx_copy}"
+                )
+                
+                key_media_baru = (
+                    f"media_{dispenser_baru}_{idx_copy}"
+                )
+                
+                key_manual_baru = (
+                    f"media_manual_{dispenser_baru}_{idx_copy}"
+                )
+                
+                pilihan_media_asal = st.session_state.get(
+                    key_media_asal,
                     ""
                 )
-
-                if media_asal in media_options:
+                
+                media_manual_asal = st.session_state.get(
+                    key_manual_asal,
+                    ""
+                )
+                
+                # Salin pilihan media
+                st.session_state[
+                    key_media_baru
+                ] = pilihan_media_asal
+                
+                # Salin isi manual apabila menggunakan media manual
+                if pilihan_media_asal == OPSI_MEDIA_MANUAL:
                     st.session_state[
-                        f"media_{dispenser_baru}_{idx_copy}"
-                    ] = media_asal
+                        key_manual_baru
+                    ] = media_manual_asal
                 else:
                     st.session_state[
-                        f"media_{dispenser_baru}_{idx_copy}"
+                        key_manual_baru
                     ] = ""
 
             st.session_state.jumlah_dispenser_pubbm = (

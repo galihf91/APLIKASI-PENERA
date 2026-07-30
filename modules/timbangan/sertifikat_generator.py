@@ -163,16 +163,32 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         )
 
     # ======================== LOGO KOP SURAT ========================
-    logo_path = "logo.png"
-    if os.path.exists(logo_path):
+    if LOGO_PATH.exists():
         try:
-            logo = ImageReader(logo_path)
-            logo_width = 1.9*cm
-            logo_height = 2.2*cm
-            logo_y = y - logo_height + 0.45*cm
-            c.drawImage(logo, margin_old, logo_y, width=logo_width, height=logo_height, mask='auto')
-        except:
-            pass
+            logo = ImageReader(str(LOGO_PATH))
+    
+            logo_width = 1.9 * cm
+            logo_height = 2.2 * cm
+            logo_y = y - logo_height + 0.45 * cm
+    
+            c.drawImage(
+                logo,
+                margin_old,
+                logo_y,
+                width=logo_width,
+                height=logo_height,
+                mask="auto",
+                preserveAspectRatio=True
+            )
+    
+        except Exception as e:
+            print(
+                f"Gagal menampilkan logo kop: {e}"
+            )
+    else:
+        print(
+            f"Logo kop tidak ditemukan: {LOGO_PATH}"
+        )
 
     # ======================== TEKS KOP SURAT ========================
     offset = 0.4*cm

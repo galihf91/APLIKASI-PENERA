@@ -131,19 +131,36 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     y = height - 1.2*cm
 
     # ======================== WATERMARK LOGO METROLOGI ========================
-    watermark_path = "logo_metrologi.png"
-    if os.path.exists(watermark_path):
+    if WATERMARK_PATH.exists():
         try:
-            wm = ImageReader(watermark_path)
-            wm_width = 12*cm
-            wm_height = 12*cm
+            wm = ImageReader(str(WATERMARK_PATH))
+    
+            wm_width = 12 * cm
+            wm_height = 12 * cm
+    
             c.saveState()
             c.setFillAlpha(0.15)
-            c.drawImage(wm, (width - wm_width)/2, (height - wm_height)/2,
-                        width=wm_width, height=wm_height, mask='auto')
+    
+            c.drawImage(
+                wm,
+                (width - wm_width) / 2,
+                (height - wm_height) / 2,
+                width=wm_width,
+                height=wm_height,
+                mask="auto",
+                preserveAspectRatio=True
+            )
+    
             c.restoreState()
-        except:
-            pass
+    
+        except Exception as e:
+            print(
+                f"Gagal menampilkan watermark: {e}"
+            )
+    else:
+        print(
+            f"Watermark tidak ditemukan: {WATERMARK_PATH}"
+        )
 
     # ======================== LOGO KOP SURAT ========================
     logo_path = "logo.png"

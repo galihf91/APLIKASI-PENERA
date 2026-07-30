@@ -130,64 +130,50 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     y = height - 1.2*cm
 
     # ======================== WATERMARK LOGO METROLOGI ========================
-    if WATERMARK_PATH.exists():
+    if watermark_path.exists():
         try:
-            wm = ImageReader(str(WATERMARK_PATH))
-    
+            wm = ImageReader(str(watermark_path))
+
             wm_width = 12 * cm
             wm_height = 12 * cm
-    
+
             c.saveState()
             c.setFillAlpha(0.15)
-    
+
             c.drawImage(
                 wm,
                 (width - wm_width) / 2,
                 (height - wm_height) / 2,
                 width=wm_width,
                 height=wm_height,
-                mask="auto",
-                preserveAspectRatio=True
+                mask="auto"
             )
-    
+
             c.restoreState()
-    
+
         except Exception as e:
-            print(
-                f"Gagal menampilkan watermark: {e}"
-            )
-    else:
-        print(
-            f"Watermark tidak ditemukan: {WATERMARK_PATH}"
-        )
+            print(f"Error watermark: {e}")
 
     # ======================== LOGO KOP SURAT ========================
-    if LOGO_PATH.exists():
+    if logo_path.exists():
         try:
-            logo = ImageReader(str(LOGO_PATH))
-    
+            logo = ImageReader(str(logo_path))
+
             logo_width = 1.9 * cm
             logo_height = 2.2 * cm
             logo_y = y - logo_height + 0.45 * cm
-    
+
             c.drawImage(
                 logo,
                 margin_old,
                 logo_y,
                 width=logo_width,
                 height=logo_height,
-                mask="auto",
-                preserveAspectRatio=True
+                mask="auto"
             )
-    
+
         except Exception as e:
-            print(
-                f"Gagal menampilkan logo kop: {e}"
-            )
-    else:
-        print(
-            f"Logo kop tidak ditemukan: {LOGO_PATH}"
-        )
+            print(f"Error logo kop surat: {e}")
 
     # ======================== TEKS KOP SURAT ========================
     offset = 0.4*cm

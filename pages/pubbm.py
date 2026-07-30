@@ -410,11 +410,13 @@ def run():
                         row.get("Posisi", "")
                     )
     
-                    st.session_state[
-                        f"media_{nomor_dispenser}_{nomor_posisi}"
-                    ] = str(
+                    media_tersimpan = str(
                         row.get("Media", "")
-                    )
+                    ).strip()
+                    
+                    st.session_state[
+                        f"media_restore_{nomor_dispenser}_{nomor_posisi}"
+                    ] = media_tersimpan
     
     
     # =========================

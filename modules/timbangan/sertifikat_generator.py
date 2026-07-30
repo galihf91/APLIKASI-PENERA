@@ -8,6 +8,26 @@ import os
 from reportlab.lib.utils import ImageReader
 from pathlib import Path
 
+def find_assets_dir():
+    current_file = Path(__file__).resolve()
+
+    # Cari folder assets dari lokasi file generator
+    for parent in [current_file.parent] + list(current_file.parents):
+        assets_dir = parent / "assets"
+
+        if assets_dir.exists():
+            return assets_dir
+
+    # Fallback apabila dijalankan dari folder utama
+    return Path("assets")
+
+
+ASSETS_DIR = find_assets_dir()
+
+LOGO_PATH = ASSETS_DIR / "logo.png"
+WATERMARK_PATH = ASSETS_DIR / "logo_metrologi.png"
+
+
 def format_tanggal_indonesia(tanggal_str):
     if not tanggal_str:
         return ""

@@ -1152,6 +1152,7 @@ def run():
                 )
 
                 # =========================
+                # =========================
                 # POSISI DAN MEDIA
                 # =========================
                 for idx in range(
@@ -1161,24 +1162,84 @@ def run():
                     col_posisi, col_media = st.columns(
                         [1, 2]
                     )
-
+                
+                    key_posisi = f"posisi_{i}_{idx}"
+                    key_media_pilihan = f"media_{i}_{idx}"
+                    key_media_manual = f"media_manual_{i}_{idx}"
+                    key_media_restore = f"media_restore_{i}_{idx}"
+                
+                    # =================================================
+                    # PULIHKAN MEDIA SAAT USER KEMBALI DARI PREVIEW
+                    # =================================================
+                    if key_media_restore in st.session_state:
+                        media_tersimpan = str(
+                            st.session_state.pop(
+                                key_media_restore,
+                                ""
+                            )
+                        ).strip()
+                
+                        if media_tersimpan in media_options:
+                            st.session_state[
+                                key_media_pilihan
+                            ] = media_tersimpan
+                
+                            st.session_state[
+                                key_media_manual
+                            ] = ""
+                
+                        elif media_tersimpan:
+                            st.session_state[
+                                key_media_pilihan
+                            ] = OPSI_MEDIA_MANUAL
+                
+                            st.session_state[
+                                key_media_manual
+                            ] = media_tersimpan
+                
                     with col_posisi:
                         posisi = st.text_input(
                             f"Posisi {idx}",
                             placeholder=(
                                 "Contoh: 1, 1.1, 1.2, 3.4"
                             ),
-                            key=f"posisi_{i}_{idx}"
+                            key=key_posisi
                         )
-
+                
                     with col_media:
-                        media = st.selectbox(
+                        pilihan_media = st.selectbox(
                             f"Media {idx}",
-                            options=[""] + media_options,
-                            key=f"media_{i}_{idx}"
+                            options=(
+                                [""]
+                                + media_options
+                                + [OPSI_MEDIA_MANUAL]
+                            ),
+                            key=key_media_pilihan
                         )
-
-                    if media.strip():
+                
+                        if pilihan_media == OPSI_MEDIA_MANUAL:
+                            media_manual = st.text_input(
+                                f"Nama Media Manual {idx}",
+                                placeholder=(
+                                    "Contoh: Dexlite, BBM Khusus, "
+                                    "Produk lainnya"
+                                ),
+                                key=key_media_manual
+                            )
+                
+                            media = media_manual.strip()
+                
+                            if media:
+                                st.caption(
+                                    f"Media sertifikat: **{media}**"
+                                )
+                
+                        else:
+                            media = str(
+                                pilihan_media
+                            ).strip()
+                
+                    if media:
                         data_rows.append(
                             {
                                 "No": i,
@@ -1186,7 +1247,7 @@ def run():
                                 "Merk": merk.strip(),
                                 "Tipe": tipe.strip(),
                                 "No. Seri": no_seri.strip(),
-                                "Media": media.strip()
+                                "Media": media
                             }
                         )
 

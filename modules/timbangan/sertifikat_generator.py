@@ -8,6 +8,11 @@ import os
 from reportlab.lib.utils import ImageReader
 from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parents[2]
+ASSETS_DIR = BASE_DIR / "assets"
+
+watermark_path = ASSETS_DIR / "logo_metrologi.png"
+logo_path = ASSETS_DIR / "logo.png"
 def find_assets_dir():
     current_file = Path(__file__).resolve()
 
@@ -20,9 +25,6 @@ def find_assets_dir():
 
     # Fallback apabila dijalankan dari folder utama
     return Path("assets")
-
-
-ASSETS_DIR = find_assets_dir()
 
 LOGO_PATH = ASSETS_DIR / "logo.png"
 WATERMARK_PATH = ASSETS_DIR / "logo_metrologi.png"

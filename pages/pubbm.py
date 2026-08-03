@@ -605,7 +605,12 @@ def run():
                         f"media_restore_{nomor_dispenser}_{nomor_posisi}"
                     ] = media_tersimpan
     
+    def kembali_ke_input_pubbm():
+        pulihkan_data_pubbm()
     
+        st.session_state[
+            "mode_pubbm"
+        ] = "📝 Input Data Pengujian" 
     # =========================
     # SIDEBAR
     # =========================

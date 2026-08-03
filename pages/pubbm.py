@@ -57,9 +57,20 @@ def format_nama_file_pubbm(data):
     )
 
     tanggal = parse_tanggal_file_pubbm(data)
-    tanggal_file = f"{tanggal.day:02d} {bulan_singkat_id(tanggal)}"
 
-    nama_file = f"{nama_spbu}_{nama_penera}_{tanggal_file}"
+    tanggal_file = (
+        f"{tanggal.day:02d}_"
+        f"{bulan_singkat_id(tanggal)}"
+    )
+
+    nama_file = (
+        f"{nama_spbu}_"
+        f"PUBBM_"
+        f"SERTIFIKAT_"
+        f"{nama_penera}_"
+        f"{tanggal_file}"
+    )
+
     return slug_filename(nama_file)
 
 @st.cache_data

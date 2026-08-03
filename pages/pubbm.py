@@ -277,6 +277,68 @@ def run():
         st.session_state.data_media_spbu = load_data_media_spbu()
     if "data_pubbm" not in st.session_state:
         st.session_state.data_pubbm = {}
+    saved_pubbm = st.session_state.get(
+        "saved_data",
+        {}
+    )
+    
+    tanggal_pengujian_awal = saved_pubbm.get(
+        "tanggal_pengujian",
+        date.today()
+    )
+    
+    if isinstance(tanggal_pengujian_awal, str):
+        try:
+            tanggal_pengujian_awal = datetime.strptime(
+                tanggal_pengujian_awal,
+                "%Y-%m-%d"
+            ).date()
+        except ValueError:
+            tanggal_pengujian_awal = date.today()
+    
+    tanggal_cetak_awal = saved_pubbm.get(
+        "tanggal_cetak",
+        date.today()
+    )
+    
+    if isinstance(tanggal_cetak_awal, str):
+        try:
+            tanggal_cetak_awal = datetime.strptime(
+                tanggal_cetak_awal,
+                "%Y-%m-%d"
+            ).date()
+        except ValueError:
+            tanggal_cetak_awal = date.today()
+    
+    if "tanggal_pengujian_pubbm" not in st.session_state:
+        st.session_state.tanggal_pengujian_pubbm = (
+            tanggal_pengujian_awal
+        )
+    
+    if "tanggal_cetak_pubbm" not in st.session_state:
+        st.session_state.tanggal_cetak_pubbm = (
+            tanggal_cetak_awal
+        )
+    
+    if "nomor_sertifikat_pubbm" not in st.session_state:
+        st.session_state.nomor_sertifikat_pubbm = (
+            saved_pubbm.get(
+                "nomor_sertifikat",
+                generate_nomor_sertifikat(
+                    tanggal_pengujian_awal
+                )
+            )
+        )
+    
+    if "nomor_order_pubbm" not in st.session_state:
+        st.session_state.nomor_order_pubbm = (
+            saved_pubbm.get(
+                "nomor_order",
+                generate_nomor_order(
+                    tanggal_pengujian_awal
+                )
+            )
+        )
 
     def pulihkan_data_pubbm():
         data = st.session_state.get("data_pubbm", {})

@@ -1266,12 +1266,16 @@ def run():
                             f"**⚖️ Alat Standar {i}**"
                         )
         
+                        key_bejana = f"bejana_select_{i}"
+
+                        if key_bejana not in st.session_state:
+                            st.session_state[key_bejana] = ""
+                        
                         selected_bejana = st.selectbox(
                             f"Pilih Bejana Ukur Standar {i}",
                             options=[""] + pilihan_bejana.tolist(),
-                            index=0,
-                            key=f"bejana_select_{i}",
-                            label_visibility="collapsed"
+                            key=key_bejana,
+                            label_visibility="collapsed",
                         )
         
                         if selected_bejana:

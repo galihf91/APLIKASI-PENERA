@@ -1723,8 +1723,13 @@ def run():
         data_pubbm = {
             "nomor_sertifikat": nomor_sertifikat,
             "nomor_order": nomor_order,
-            "tanggal_pengujian": tanggal_pengujian,
-            "tanggal_cetak": tanggal_cetak,
+            "tanggal_pengujian": (
+                tanggal_pengujian.strftime("%Y-%m-%d")
+            ),
+            
+            "tanggal_cetak": (
+                tanggal_cetak.strftime("%Y-%m-%d")
+            ),
     
             "nama_alat": "Pompa Ukur BBM (Dispenser)",
     

@@ -1644,17 +1644,12 @@ def run():
     elif mode == "📄 Preview & Generate Data":
     
         st.header("Preview Data PU BBM")
-        if st.button(
+        st.button(
             "✏️ Kembali dan Edit Data",
-            use_container_width=True
-        ):
-            pulihkan_data_pubbm()
-        
-            st.session_state[
-                "mode_pubbm"
-            ] = "📝 Input Data Pengujian"
-        
-            st.rerun()
+            use_container_width=True,
+            key="kembali_edit_pubbm",
+            on_click=kembali_ke_input_pubbm,
+        )
         data_pubbm = st.session_state.get("data_pubbm")
     
         if not data_pubbm:

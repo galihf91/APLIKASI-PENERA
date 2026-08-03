@@ -181,26 +181,51 @@ def update_spbu_terpilih():
     )
 
 def run():
-    col_nav1, col_nav2, col_nav3, col_nav4 = st.columns([1, 1, 1, 1])
+    col_nav1, col_nav2, col_nav3, col_nav4, col_nav5 = st.columns(5)
 
     with col_nav1:
-        if st.button("← Kembali ke Home", use_container_width=True):
-            st.session_state.halaman = "home"
+        if st.button(
+            "← Kembali ke Pengujian UTTP",
+            use_container_width=True,
+            key="pubbm_nav_home",
+        ):
+            st.session_state.halaman_uttp = "home_uttp"
             st.rerun()
     
     with col_nav2:
-        if st.button("⚖️ Ke Timbangan Jembatan", use_container_width=True):
-            st.session_state.halaman = "tj"
+        if st.button(
+            "⚖️ Ke Timbangan Jembatan",
+            use_container_width=True,
+            key="pubbm_nav_tj",
+        ):
+            st.session_state.halaman_uttp = "tj"
             st.rerun()
     
     with col_nav3:
-        if st.button("⚡ Ke kWh Meter", use_container_width=True):
-            st.session_state.halaman = "kwh"
+        if st.button(
+            "⚡ Ke kWh Meter",
+            use_container_width=True,
+            key="pubbm_nav_kwh",
+        ):
+            st.session_state.halaman_uttp = "kwh"
             st.rerun()
-
+    
     with col_nav4:
-        if st.button("⚖️ Ke Timbangan", use_container_width=True):
-            st.session_state.halaman = "timbangan"
+        if st.button(
+            "⚖️ Ke Timbangan",
+            use_container_width=True,
+            key="pubbm_nav_timbangan",
+        ):
+            st.session_state.halaman_uttp = "timbangan"
+            st.rerun()
+    
+    with col_nav5:
+        if st.button(
+            "📋 Ke UTTP",
+            use_container_width=True,
+            key="pubbm_nav_uttp",
+        ):
+            st.session_state.halaman_uttp = "uttp"
             st.rerun()
     
     def bulan_ke_romawi(bulan):

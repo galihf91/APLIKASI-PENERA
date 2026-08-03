@@ -1824,16 +1824,15 @@ def run():
                     data_pubbm,
                     str(output_file)
                 )
-        
-                with open(output_file, "rb") as pdf:
-                    st.download_button(
-                        label="⬇️ Download Sertifikat PU BBM",
-                        data=pdf.read(),
-                        file_name=output_file.name,
-                        mime="application/pdf"
-                    )
-        
-                st.success("✅ Sertifikat PU BBM berhasil dibuat!")
+                
+                st.session_state.generated_files_pubbm[
+                    "sertifikat"
+                ] = str(output_file)
+                
+                st.success(
+                    f"✅ Sertifikat PU BBM berhasil dibuat: "
+                    f"{output_file.name}"
+                )
         
             except Exception as e:
                 st.error(f"Gagal membuat sertifikat PU BBM: {e}")

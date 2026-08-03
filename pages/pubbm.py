@@ -485,10 +485,23 @@ def run():
             "tanggal_pengujian_pubbm"
         ] = tanggal_pengujian_restore
     
-        st.session_state["tanggal_cetak_pubbm"] = data.get(
+        tanggal_cetak_restore = data.get(
             "tanggal_cetak",
             date.today()
         )
+        
+        if isinstance(tanggal_cetak_restore, str):
+            try:
+                tanggal_cetak_restore = datetime.strptime(
+                    tanggal_cetak_restore,
+                    "%Y-%m-%d"
+                ).date()
+            except ValueError:
+                tanggal_cetak_restore = date.today()
+        
+        st.session_state[
+            "tanggal_cetak_pubbm"
+        ] = tanggal_cetak_restore
     
         st.session_state["nomor_sertifikat_pubbm"] = data.get(
             "nomor_sertifikat",

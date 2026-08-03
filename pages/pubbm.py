@@ -571,13 +571,8 @@ def run():
 
             tanggal_cetak = st.date_input(
                 "Tanggal Cetak / Tanggal Tanda Tangan",
-                value=st.session_state.saved_data.get(
-                    "tanggal_cetak",
-                    date.today()
-                ),
-                key="tanggal_cetak_pubbm"
+                key="tanggal_cetak_pubbm",
             )
-
             tanggal_data = tanggal_pengujian
 
             default_sertifikat = generate_nomor_sertifikat(

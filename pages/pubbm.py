@@ -381,6 +381,37 @@ def run():
         st.session_state.data_media_spbu = load_data_media_spbu()
     if "data_pubbm" not in st.session_state:
         st.session_state.data_pubbm = {}
+    if "nip_penera_1_pubbm" not in st.session_state:
+        st.session_state.nip_penera_1_pubbm = (
+            st.session_state.data_pubbm.get(
+                "nip_penera_1",
+                ""
+            )
+        )
+    
+    if "golongan_penera_1_pubbm" not in st.session_state:
+        st.session_state.golongan_penera_1_pubbm = (
+            st.session_state.data_pubbm.get(
+                "golongan_penera_1",
+                ""
+            )
+        )
+    
+    if "nip_penera_2_pubbm" not in st.session_state:
+        st.session_state.nip_penera_2_pubbm = (
+            st.session_state.data_pubbm.get(
+                "nip_penera_2",
+                ""
+            )
+        )
+    
+    if "golongan_penera_2_pubbm" not in st.session_state:
+        st.session_state.golongan_penera_2_pubbm = (
+            st.session_state.data_pubbm.get(
+                "golongan_penera_2",
+                ""
+            )
+        )
     if "generated_files_pubbm" not in st.session_state:
         st.session_state.generated_files_pubbm = {}
     saved_pubbm = st.session_state.get(

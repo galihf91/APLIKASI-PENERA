@@ -1752,10 +1752,63 @@ def run():
             "dispenser": dispenser_df,
         }
     
-        if st.button(
-            "💾 Simpan Data",
-            type="primary"
-        ):
+        col_simpan, col_reset = st.columns(2)
+
+        with col_simpan:
+            simpan_pubbm = st.button(
+                "💾 Simpan Data",
+                type="primary",
+                use_container_width=True,
+                key="simpan_data_pubbm",
+            )
+        
+        with col_reset:
+            st.button(
+                "🔄 Reset Form",
+                use_container_width=True,
+                key="reset_form_pubbm",
+                on_click=reset_form_pubbm,
+            )
+        
+        if simpan_pubbm:
+            st.session_state.data_pubbm = data_pubbm
+        
+            st.session_state.saved_data.update(
+                {
+                    "pemilik": pemilik,
+                    "alamat": alamat,
+                    "jenis_pengujian": jenis_pengujian,
+        
+                    "tanggal_pengujian": (
+                        tanggal_pengujian.strftime(
+                            "%Y-%m-%d"
+                        )
+                    ),
+        
+                    "tanggal_cetak": (
+                        tanggal_cetak.strftime(
+                            "%Y-%m-%d"
+                        )
+                    ),
+        
+                    "nomor_sertifikat": nomor_sertifikat,
+                    "nomor_order": nomor_order,
+                    "jumlah_penera": jumlah_penera,
+                    "penera_1": penera_1,
+                    "penera_2": penera_2,
+                    "jumlah_alat_standar": jumlah_alat_standar,
+                    "jumlah_dispenser": jumlah_dispenser,
+                }
+            )
+        
+            st.session_state.generated_files_pubbm = {}
+        
+            st.balloons()
+        
+            st.success(
+                "Data PU BBM berhasil disimpan. "
+                "Silakan buka menu Preview & Generate Data."
+            )
             st.session_state.data_pubbm = data_pubbm
         
             st.session_state.saved_data.update(

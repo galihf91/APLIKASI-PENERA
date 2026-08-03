@@ -585,19 +585,11 @@ def run():
 
             nomor_sertifikat = st.text_input(
                 "Nomor Sertifikat",
-                value=st.session_state.saved_data.get(
-                    "nomor_sertifikat",
-                    default_sertifikat
-                ),
                 key="nomor_sertifikat_pubbm"
             )
 
             nomor_order = st.text_input(
                 "Nomor Order",
-                value=st.session_state.saved_data.get(
-                    "nomor_order",
-                    default_order
-                ),
                 key="nomor_order_pubbm"
             )
 

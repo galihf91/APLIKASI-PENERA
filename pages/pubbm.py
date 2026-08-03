@@ -632,7 +632,10 @@ def run():
                 merk = str(row.get("Merk", ""))
                 nomor_seri = str(
                     row.get("Nomor Seri", "")
-                )
+                ).strip()
+                
+                if nomor_seri.endswith(".0"):
+                    nomor_seri = nomor_seri[:-2]
     
                 st.session_state[
                     f"bejana_select_{nomor}"

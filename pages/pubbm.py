@@ -257,6 +257,110 @@ def run():
         st.session_state[
             "nomor_order_pubbm"
         ] = generate_nomor_order(tanggal)
+    def update_penera_1_pubbm():
+        selected = str(
+            st.session_state.get(
+                "penera_1_select",
+                ""
+            )
+        ).strip()
+    
+        df_penera = st.session_state.get(
+            "data_penera"
+        )
+    
+        if (
+            not selected
+            or df_penera is None
+            or df_penera.empty
+        ):
+            st.session_state["nip_penera_1_pubbm"] = ""
+            st.session_state[
+                "golongan_penera_1_pubbm"
+            ] = ""
+            return
+    
+        row = df_penera[
+            df_penera["Nama"]
+            .astype(str)
+            .str.strip()
+            == selected
+        ]
+    
+        if row.empty:
+            return
+    
+        data_penera = row.iloc[0]
+    
+        nip = str(
+            data_penera.get("NIP", "")
+        ).strip()
+    
+        if nip.endswith(".0"):
+            nip = nip[:-2]
+    
+        st.session_state[
+            "nip_penera_1_pubbm"
+        ] = nip
+    
+        st.session_state[
+            "golongan_penera_1_pubbm"
+        ] = str(
+            data_penera.get("Golongan", "")
+        ).strip()
+    
+    
+    def update_penera_2_pubbm():
+        selected = str(
+            st.session_state.get(
+                "penera_2_select",
+                ""
+            )
+        ).strip()
+    
+        df_penera = st.session_state.get(
+            "data_penera"
+        )
+    
+        if (
+            not selected
+            or df_penera is None
+            or df_penera.empty
+        ):
+            st.session_state["nip_penera_2_pubbm"] = ""
+            st.session_state[
+                "golongan_penera_2_pubbm"
+            ] = ""
+            return
+    
+        row = df_penera[
+            df_penera["Nama"]
+            .astype(str)
+            .str.strip()
+            == selected
+        ]
+    
+        if row.empty:
+            return
+    
+        data_penera = row.iloc[0]
+    
+        nip = str(
+            data_penera.get("NIP", "")
+        ).strip()
+    
+        if nip.endswith(".0"):
+            nip = nip[:-2]
+    
+        st.session_state[
+            "nip_penera_2_pubbm"
+        ] = nip
+    
+        st.session_state[
+            "golongan_penera_2_pubbm"
+        ] = str(
+            data_penera.get("Golongan", "")
+        ).strip()
     # =========================
     # SESSION STATE AWAL
     # =========================

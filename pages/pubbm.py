@@ -1954,6 +1954,28 @@ def run():
             )
         
         if simpan_pubbm:
+            daftar_error = validasi_data_pubbm(
+                pemilik=pemilik,
+                alamat=alamat,
+                penera_1=penera_1,
+                jumlah_penera=jumlah_penera,
+                penera_2=penera_2,
+                alat_standar_df=alat_standar_df,
+                dispenser_df=dispenser_df,
+                jumlah_dispenser=jumlah_dispenser,
+            )
+        
+            if daftar_error:
+                st.error(
+                    "Data belum dapat disimpan. "
+                    "Periksa bagian berikut:"
+                )
+        
+                for pesan in daftar_error:
+                    st.write(f"- {pesan}")
+        
+                st.stop()
+        
             st.session_state.data_pubbm = data_pubbm
         
             st.session_state.saved_data.update(

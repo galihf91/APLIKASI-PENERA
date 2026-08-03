@@ -565,11 +565,8 @@ def run():
 
             tanggal_pengujian = st.date_input(
                 "Tanggal Pengujian",
-                value=st.session_state.saved_data.get(
-                    "tanggal_pengujian",
-                    date.today()
-                ),
-                key="tanggal_pengujian_pubbm"
+                key="tanggal_pengujian_pubbm",
+                on_change=update_nomor_dokumen_pubbm,
             )
 
             tanggal_cetak = st.date_input(

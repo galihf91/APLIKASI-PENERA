@@ -635,15 +635,6 @@ def run():
                 "Tanggal Cetak / Tanggal Tanda Tangan",
                 key="tanggal_cetak_pubbm",
             )
-            tanggal_data = tanggal_pengujian
-
-            default_sertifikat = generate_nomor_sertifikat(
-                tanggal_data
-            )
-
-            default_order = generate_nomor_order(
-                tanggal_data
-            )
 
             nomor_sertifikat = st.text_input(
                 "Nomor Sertifikat",

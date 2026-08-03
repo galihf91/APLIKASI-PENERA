@@ -381,6 +381,8 @@ def run():
         st.session_state.data_media_spbu = load_data_media_spbu()
     if "data_pubbm" not in st.session_state:
         st.session_state.data_pubbm = {}
+    if "generated_files_pubbm" not in st.session_state:
+        st.session_state.generated_files_pubbm = {}
     saved_pubbm = st.session_state.get(
         "saved_data",
         {}

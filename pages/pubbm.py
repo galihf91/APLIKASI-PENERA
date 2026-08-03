@@ -696,6 +696,64 @@ def run():
         st.session_state[
             "mode_pubbm"
         ] = "📝 Input Data Pengujian" 
+    def reset_form_pubbm():
+        key_tetap = {
+            "data_penera",
+            "data_spbu",
+            "data_bejana",
+            "data_media_spbu",
+        }
+    
+        prefix_hapus = (
+            "merk_",
+            "tipe_",
+            "no_seri_",
+            "posisi_",
+            "media_",
+            "media_manual_",
+            "media_restore_",
+            "jumlah_posisi_",
+            "bejana_select_",
+        )
+    
+        key_hapus_langsung = {
+            "saved_data",
+            "data_pubbm",
+            "pubbm_dispenser",
+            "generated_files_pubbm",
+            "nama_perusahaan",
+            "alamat_input_pubbm",
+            "input_manual_spbu",
+            "spbu_select",
+            "jenis_pengujian_pubbm",
+            "tanggal_pengujian_pubbm",
+            "tanggal_cetak_pubbm",
+            "nomor_sertifikat_pubbm",
+            "nomor_order_pubbm",
+            "jumlah_penera",
+            "penera_1_select",
+            "penera_2_select",
+            "nip_penera_1_pubbm",
+            "nip_penera_2_pubbm",
+            "golongan_penera_1_pubbm",
+            "golongan_penera_2_pubbm",
+            "jumlah_alat_standar_pubbm",
+            "jumlah_dispenser_pubbm",
+            "mode_pubbm",
+        }
+    
+        for key in list(st.session_state.keys()):
+            if key in key_tetap:
+                continue
+    
+            if (
+                key in key_hapus_langsung
+                or key.startswith(prefix_hapus)
+            ):
+                st.session_state.pop(
+                    key,
+                    None
+                )
     # =========================
     # SIDEBAR
     # =========================

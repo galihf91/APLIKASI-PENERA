@@ -778,7 +778,160 @@ def run():
                 st.session_state.pop(
                     key,
                     None
+    def validasi_data_pubbm(
+        pemilik,
+        alamat,
+        penera_1,
+        jumlah_penera,
+        penera_2,
+        alat_standar_df,
+        dispenser_df,
+        jumlah_dispenser,
+    ):
+        errors = []
+    
+        if not str(pemilik).strip():
+            errors.append(
+                "Nama SPBU atau perusahaan belum diisi."
+            )
+    
+        if not str(alamat).strip():
+            errors.append(
+                "Alamat SPBU atau perusahaan belum diisi."
+            )
+    
+        if not str(penera_1).strip():
+            errors.append(
+                "Penera 1 belum dipilih."
+            )
+    
+        if (
+            int(jumlah_penera) == 2
+            and not str(penera_2).strip()
+        ):
+            errors.append(
+                "Penera 2 belum dipilih."
+            )
+    
+        if (
+            alat_standar_df is None
+            or not isinstance(
+                alat_standar_df,
+                pd.DataFrame
+            )
+            or alat_standar_df.empty
+        ):
+            errors.append(
+                "Minimal satu Bejana Ukur Standar belum dipilih."
+            )
+    
+        if (
+            dispenser_df is None
+            or not isinstance(
+                dispenser_df,
+                pd.DataFrame
+            )
+            or dispenser_df.empty
+        ):
+            errors.append(
+                "Data pompa ukur BBM belum diisi."
+            )
+    
+            return errors
+    
+        for nomor_dispenser in range(
+            1,
+            int(jumlah_dispenser) + 1
+        ):
+            merk = str(
+                st.session_state.get(
+                    f"merk_{nomor_dispenser}",
+                    ""
                 )
+            ).strip()
+    
+            tipe = str(
+                st.session_state.get(
+                    f"tipe_{nomor_dispenser}",
+                    ""
+                )
+            ).strip()
+    
+            no_seri = str(
+                st.session_state.get(
+                    f"no_seri_{nomor_dispenser}",
+                    ""
+                )
+            ).strip()
+    
+            if not merk:
+                errors.append(
+                    f"Dispenser {nomor_dispenser}: merk belum diisi."
+                )
+    
+            if not tipe:
+                errors.append(
+                    f"Dispenser {nomor_dispenser}: tipe belum diisi."
+                )
+    
+            if not no_seri:
+                errors.append(
+                    f"Dispenser {nomor_dispenser}: nomor seri belum diisi."
+                )
+    
+            jumlah_posisi = int(
+                st.session_state.get(
+                    f"jumlah_posisi_{nomor_dispenser}",
+                    1
+                )
+            )
+    
+            for posisi_index in range(
+                1,
+                jumlah_posisi + 1
+            ):
+                posisi = str(
+                    st.session_state.get(
+                        f"posisi_{nomor_dispenser}_{posisi_index}",
+                        ""
+                    )
+                ).strip()
+    
+                pilihan_media = str(
+                    st.session_state.get(
+                        f"media_{nomor_dispenser}_{posisi_index}",
+                        ""
+                    )
+                ).strip()
+    
+                if not posisi:
+                    errors.append(
+                        f"Dispenser {nomor_dispenser}, "
+                        f"posisi {posisi_index}: posisi/nozzle belum diisi."
+                    )
+    
+                if not pilihan_media:
+                    errors.append(
+                        f"Dispenser {nomor_dispenser}, "
+                        f"posisi {posisi_index}: media belum dipilih."
+                    )
+    
+                if pilihan_media == OPSI_MEDIA_MANUAL:
+                    media_manual = str(
+                        st.session_state.get(
+                            f"media_manual_{nomor_dispenser}_{posisi_index}",
+                            ""
+                        )
+                    ).strip()
+    
+                    if not media_manual:
+                        errors.append(
+                            f"Dispenser {nomor_dispenser}, "
+                            f"posisi {posisi_index}: "
+                            "nama media manual belum diisi."
+                        )
+    
+        return errors            )
     # =========================
     # SIDEBAR
     # =========================

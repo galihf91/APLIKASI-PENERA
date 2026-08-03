@@ -235,7 +235,28 @@ def run():
             t = tanggal
     
         return f"0000/SCD/{bulan_ke_romawi(t.month)}/{t.year}"
+    def update_nomor_dokumen_pubbm():
+        tanggal = st.session_state.get(
+            "tanggal_pengujian_pubbm",
+            date.today()
+        )
     
+        if isinstance(tanggal, str):
+            try:
+                tanggal = datetime.strptime(
+                    tanggal,
+                    "%Y-%m-%d"
+                ).date()
+            except ValueError:
+                tanggal = date.today()
+    
+        st.session_state[
+            "nomor_sertifikat_pubbm"
+        ] = generate_nomor_sertifikat(tanggal)
+    
+        st.session_state[
+            "nomor_order_pubbm"
+        ] = generate_nomor_order(tanggal)
     # =========================
     # SESSION STATE AWAL
     # =========================

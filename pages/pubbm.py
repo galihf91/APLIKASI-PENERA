@@ -1308,7 +1308,7 @@ def run():
                                 pilihan_bejana == selected_bejana
                             ].index[0]
         
-                            row_bejana = df_bejana.loc[idx]
+                            row_bejana = df_bejana_tampil.loc[idx]
         
                             merk_bus_item = str(
                                 row_bejana.get("Merk", "")

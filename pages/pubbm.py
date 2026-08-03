@@ -502,7 +502,33 @@ def run():
         st.session_state[
             "tanggal_cetak_pubbm"
         ] = tanggal_cetak_restore
-    
+        st.session_state[
+            "nip_penera_1_pubbm"
+        ] = data.get(
+            "nip_penera_1",
+            ""
+        )
+        
+        st.session_state[
+            "golongan_penera_1_pubbm"
+        ] = data.get(
+            "golongan_penera_1",
+            ""
+        )
+        
+        st.session_state[
+            "nip_penera_2_pubbm"
+        ] = data.get(
+            "nip_penera_2",
+            ""
+        )
+        
+        st.session_state[
+            "golongan_penera_2_pubbm"
+        ] = data.get(
+            "golongan_penera_2",
+            ""
+        )
         st.session_state["nomor_sertifikat_pubbm"] = data.get(
             "nomor_sertifikat",
             ""

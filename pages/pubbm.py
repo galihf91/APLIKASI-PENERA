@@ -790,36 +790,46 @@ def run():
         # PENERA 1
         # =========================
         with col4:
-    
             nama_penera_1 = st.selectbox(
                 "Penera 1",
-                options=[""] + df_penera["Nama"].tolist(),
-                key="penera_1_select"
+                options=(
+                    [""]
+                    + df_penera["Nama"]
+                    .dropna()
+                    .astype(str)
+                    .tolist()
+                ),
+                key="penera_1_select",
+                on_change=update_penera_1_pubbm,
             )
-    
-            if nama_penera_1:
-                row1 = df_penera[df_penera["Nama"] == nama_penera_1].iloc[0]
-                penera_1 = row1["Nama"]
-                nip_penera_1 = str(row1["NIP"])
-                golongan_penera_1 = row1["Golongan"]
-            else:
-                penera_1 = ""
-                nip_penera_1 = ""
-                golongan_penera_1 = ""
-    
+        
+            penera_1 = nama_penera_1
+        
+            nip_penera_1 = str(
+                st.session_state.get(
+                    "nip_penera_1_pubbm",
+                    ""
+                )
+            ).strip()
+        
+            golongan_penera_1 = str(
+                st.session_state.get(
+                    "golongan_penera_1_pubbm",
+                    ""
+                )
+            ).strip()
+        
             st.text_input(
                 "NIP Penera 1",
-                value=nip_penera_1,
-                disabled=True
+                key="nip_penera_1_pubbm",
+                disabled=True,
             )
-    
+        
             st.text_input(
                 "Golongan Penera 1",
-                value=golongan_penera_1,
-                disabled=True
+                key="golongan_penera_1_pubbm",
+                disabled=True,
             )
-    
-    
         # =========================
         # PENERA 2
         # =========================

@@ -1241,10 +1241,32 @@ def run():
 
         if df_bejana is not None and not df_bejana.empty:
 
+            df_bejana_tampil = df_bejana.copy()
+
+            df_bejana_tampil["Merk"] = (
+                df_bejana_tampil["Merk"]
+                .fillna("")
+                .astype(str)
+                .str.strip()
+            )
+            
+            df_bejana_tampil["Nomor Seri"] = (
+                df_bejana_tampil["Nomor Seri"]
+                .fillna("")
+                .apply(
+                    lambda nilai: (
+                        str(int(nilai))
+                        if isinstance(nilai, float)
+                        and nilai.is_integer()
+                        else str(nilai).strip()
+                    )
+                )
+            )
+            
             pilihan_bejana = (
-                df_bejana["Merk"].astype(str)
+                df_bejana_tampil["Merk"]
                 + " | No Seri : "
-                + df_bejana["Nomor Seri"].astype(str)
+                + df_bejana_tampil["Nomor Seri"]
             )
         
             jumlah_kolom = 2

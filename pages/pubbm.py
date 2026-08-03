@@ -1846,8 +1846,13 @@ def run():
                     "pemilik": pemilik,
                     "alamat": alamat,
                     "jenis_pengujian": jenis_pengujian,
-                    "tanggal_pengujian": tanggal_pengujian,
-                    "tanggal_cetak": tanggal_cetak,
+                    "tanggal_pengujian": (
+                        tanggal_pengujian.strftime("%Y-%m-%d")
+                    ),
+                    
+                    "tanggal_cetak": (
+                        tanggal_cetak.strftime("%Y-%m-%d")
+                    ),
                     "nomor_sertifikat": nomor_sertifikat,
                     "nomor_order": nomor_order,
                     "jumlah_penera": jumlah_penera,

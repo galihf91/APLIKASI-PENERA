@@ -792,6 +792,9 @@ def run():
                 st.session_state.pop(
                     key,
                     None
+                )
+    
+    
     def validasi_data_pubbm(
         pemilik,
         alamat,
@@ -921,19 +924,25 @@ def run():
                 if not posisi:
                     errors.append(
                         f"Dispenser {nomor_dispenser}, "
-                        f"posisi {posisi_index}: posisi/nozzle belum diisi."
+                        f"posisi {posisi_index}: "
+                        "posisi/nozzle belum diisi."
                     )
     
                 if not pilihan_media:
                     errors.append(
                         f"Dispenser {nomor_dispenser}, "
-                        f"posisi {posisi_index}: media belum dipilih."
+                        f"posisi {posisi_index}: "
+                        "media belum dipilih."
                     )
     
                 if pilihan_media == OPSI_MEDIA_MANUAL:
                     media_manual = str(
                         st.session_state.get(
-                            f"media_manual_{nomor_dispenser}_{posisi_index}",
+                            (
+                                f"media_manual_"
+                                f"{nomor_dispenser}_"
+                                f"{posisi_index}"
+                            ),
                             ""
                         )
                     ).strip()
@@ -945,7 +954,7 @@ def run():
                             "nama media manual belum diisi."
                         )
     
-        return errors            )
+        return errors  
     # =========================
     # SIDEBAR
     # =========================

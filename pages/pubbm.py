@@ -834,37 +834,48 @@ def run():
         # PENERA 2
         # =========================
         if jumlah_penera == 2:
-    
             with col5:
-    
                 nama_penera_2 = st.selectbox(
                     "Penera 2",
-                    options=[""] + df_penera["Nama"].tolist(),
-                    key="penera_2_select"
+                    options=(
+                        [""]
+                        + df_penera["Nama"]
+                        .dropna()
+                        .astype(str)
+                        .tolist()
+                    ),
+                    key="penera_2_select",
+                    on_change=update_penera_2_pubbm,
                 )
-    
-                if nama_penera_2:
-                    row2 = df_penera[df_penera["Nama"] == nama_penera_2].iloc[0]
-                    penera_2 = row2["Nama"]
-                    nip_penera_2 = str(row2["NIP"])
-                    golongan_penera_2 = row2["Golongan"]
-                else:
-                    penera_2 = ""
-                    nip_penera_2 = ""
-                    golongan_penera_2 = ""
-    
+        
+                penera_2 = nama_penera_2
+        
+                nip_penera_2 = str(
+                    st.session_state.get(
+                        "nip_penera_2_pubbm",
+                        ""
+                    )
+                ).strip()
+        
+                golongan_penera_2 = str(
+                    st.session_state.get(
+                        "golongan_penera_2_pubbm",
+                        ""
+                    )
+                ).strip()
+        
                 st.text_input(
                     "NIP Penera 2",
-                    value=nip_penera_2,
-                    disabled=True
+                    key="nip_penera_2_pubbm",
+                    disabled=True,
                 )
-    
+        
                 st.text_input(
                     "Golongan Penera 2",
-                    value=golongan_penera_2,
-                    disabled=True
+                    key="golongan_penera_2_pubbm",
+                    disabled=True,
                 )
-    
+        
         else:
             penera_2 = ""
             nip_penera_2 = ""

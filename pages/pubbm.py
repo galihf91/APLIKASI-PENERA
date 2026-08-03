@@ -1838,3 +1838,32 @@ def run():
                 st.error(f"Gagal membuat sertifikat PU BBM: {e}")
                 import traceback
                 st.code(traceback.format_exc())
+
+        sertifikat_path = (
+            st.session_state.generated_files_pubbm.get(
+                "sertifikat"
+            )
+        )
+        
+        if (
+            sertifikat_path
+            and Path(sertifikat_path).exists()
+        ):
+            with open(
+                sertifikat_path,
+                "rb"
+            ) as pdf:
+                st.download_button(
+                    label="⬇️ Download Sertifikat PU BBM",
+                    data=pdf.read(),
+                    file_name=Path(
+                        sertifikat_path
+                    ).name,
+                    mime="application/pdf",
+                    use_container_width=True,
+                    key="download_sertifikat_pubbm",
+                )
+        else:
+            st.caption(
+                "Sertifikat belum digenerate."
+            )

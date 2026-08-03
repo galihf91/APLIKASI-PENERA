@@ -467,10 +467,23 @@ def run():
             "Tera Ulang"
         )
     
-        st.session_state["tanggal_pengujian_pubbm"] = data.get(
+        tanggal_pengujian_restore = data.get(
             "tanggal_pengujian",
             date.today()
         )
+        
+        if isinstance(tanggal_pengujian_restore, str):
+            try:
+                tanggal_pengujian_restore = datetime.strptime(
+                    tanggal_pengujian_restore,
+                    "%Y-%m-%d"
+                ).date()
+            except ValueError:
+                tanggal_pengujian_restore = date.today()
+        
+        st.session_state[
+            "tanggal_pengujian_pubbm"
+        ] = tanggal_pengujian_restore
     
         st.session_state["tanggal_cetak_pubbm"] = data.get(
             "tanggal_cetak",

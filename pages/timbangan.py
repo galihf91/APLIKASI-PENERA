@@ -2494,15 +2494,12 @@ def run():
                         label_visibility="collapsed"
                     )
 
-                # Kesalahan tetap dihitung untuk data pengujian
-                kesalahan_eks = I - muatan_eks_kg
+               kesalahan_eks = I - muatan_eks_kg
 
-                # Kolom Cek Eksentrisitas selalu checklist
-                kesalahan_eks = I - muatan_eks_kg
-
-                # Kolom Cek Eksentrisitas selalu checklist
-                cek_sah = True
-
+                cek_sah = (
+                    abs(kesalahan_eks)
+                    <= bkd_kg
+                )
                 # --- Hasil ---
                 with cols_eksen[4]:
                     hasil = st.text_input(

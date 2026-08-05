@@ -2261,10 +2261,23 @@ def run():
 
             # --- Hasil ---
             with cols[5]:
+                hasil_otomatis = (
+                    "SAH"
+                    if cek_sah
+                    else "TIDAK SAH"
+                )
+                
                 hasil_val = st.text_input(
                     f"Hasil {nomor_baris}",
-                    value="SAH",
+                    value=hasil_otomatis,
                     disabled=True,
+                    key=(
+                        f"tb_hasil_kebenaran_{nama_alat}_{i}_"
+                        f"{e}_{muatan_uji}_{penunjukan_val}_"
+                        f"{cek_sah}"
+                    ),
+                    label_visibility="collapsed"
+                )
                     key=(
                         f"tb_hasil_kebenaran_{nama_alat}_{i}_"
                         f"{e}_{muatan_uji}_{penunjukan_val}"

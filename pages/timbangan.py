@@ -1243,7 +1243,10 @@ def run():
                     "Satuan",
                     options=["g", "kg"],
                     key="tb_satuan_kapasitas_max",
-                    on_change=update_class,
+                    st.caption(
+                        "💡 Kelas ditentukan otomatis berdasarkan kapasitas "
+                        "maksimum, interval skala verifikasi, dan jumlah skala."
+                    )
                 )
 
                 st.text_input(

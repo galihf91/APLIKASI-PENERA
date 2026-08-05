@@ -2498,6 +2498,9 @@ def run():
                 kesalahan_eks = I - muatan_eks_kg
 
                 # Kolom Cek Eksentrisitas selalu checklist
+                kesalahan_eks = I - muatan_eks_kg
+
+                # Kolom Cek Eksentrisitas selalu checklist
                 cek_sah = True
 
                 # --- Hasil ---

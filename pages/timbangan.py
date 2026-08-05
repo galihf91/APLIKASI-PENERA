@@ -2559,8 +2559,8 @@ def run():
                     "kesalahan": kesalahan_eks,
 
                     # Selalu checklist
-                    "cek_otomatis": True,
-                    "cek_icon": "✅",
+                    "cek_otomatis": cek_sah,
+                    "cek_icon": cek_icon,
 
                     "hasil_text": hasil,
                     "hasil": hasil == "SAH",

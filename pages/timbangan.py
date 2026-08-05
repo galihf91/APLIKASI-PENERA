@@ -2287,7 +2287,11 @@ def run():
 
             # --- Cek ---
             with cols[6]:
-                cek_icon = "✅" if cek_sah else "❌"
+                cek_icon = (
+                    "✅"
+                    if cek_sah
+                    else "❌"
+                )
 
                 st.text_input(
                     f"Cek {nomor_baris}",

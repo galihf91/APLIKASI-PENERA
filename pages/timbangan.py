@@ -1976,14 +1976,23 @@ def run():
             )
 
             if kapasitas_min_kg <= 0:
-                faktor_min = {
-                    "I": 100,
-                    "II": 50,
-                    "III": 20,
-                    "IIII": 10,
-                }
+                if cls == "II":
+                    batas_01_gram_kg = 0.0001
+            
+                    faktor_minimum = (
+                        50
+                        if e >= batas_01_gram_kg
+                        else 20
+                    )
+                else:
+                    faktor_minimum = {
+                        "I": 100,
+                        "III": 20,
+                        "IIII": 10,
+                    }.get(cls, 20)
+            
                 kapasitas_min_kg = (
-                    faktor_min.get(cls, 20) * e
+                    faktor_minimum * e
                 )
 
             default_muatan_list = get_default_muatan_uji(

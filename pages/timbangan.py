@@ -2502,9 +2502,22 @@ def run():
                 )
                 # --- Hasil ---
                 with cols_eksen[4]:
+                    hasil_otomatis_eks = (
+                        "SAH"
+                        if cek_sah
+                        else "TIDAK SAH"
+                    )
+                    
                     hasil = st.text_input(
                         f"Hasil Eksentrisitas {i}",
-                        value="SAH",
+                        value=hasil_otomatis_eks,
+                        disabled=True,
+                        key=(
+                            f"tb_eksen_hasil_{i}_{I}_"
+                            f"{bkd_kg}_{cek_sah}"
+                        ),
+                        label_visibility="collapsed"
+                    )
                         disabled=True,
                         key=f"tb_eksen_hasil_{i}_{I}",
                         label_visibility="collapsed"

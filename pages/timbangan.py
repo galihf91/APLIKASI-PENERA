@@ -1537,10 +1537,15 @@ def run():
                     st.session_state.tb_kelas = "III"
 
                 kelas = st.selectbox(
-                    "Pilih Kelas",
+                    "Kelas",
                     options=options,
                     key="tb_kelas",
-                    on_change=update_class,
+                    disabled=True,
+                    help=(
+                        "Kelas dihitung otomatis berdasarkan kapasitas maksimum "
+                        "dan interval skala verifikasi."
+                    ),
+                )
                     help=(
                         "Kelas diupdate otomatis saat Kapasitas "
                         "Maksimum atau Interval Skala berubah, "

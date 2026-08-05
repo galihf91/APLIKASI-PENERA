@@ -2029,7 +2029,7 @@ def run():
                 else "e ≠ d"
             )
 
-        num_results = 1 if is_neraca else 5
+        num_results = 5
         test_results = []
 
         st.write("**Masukkan Hasil Pengujian**")

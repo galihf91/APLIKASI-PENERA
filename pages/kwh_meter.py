@@ -681,8 +681,11 @@ def run():
 
         if st.button("📄 Generate Sertifikat kWh Meter", type="primary"):
             try:
-                output_dir = Path("output/kwh_meter/sertifikat")
-                output_dir.mkdir(parents=True, exist_ok=True)
+                output_dir = OUTPUT_DIR
+                output_dir.mkdir(
+                    parents=True,
+                    exist_ok=True
+                )
 
                 nama_file = format_nama_file_sertifikat(data_kwh)
                 output_file = output_dir / f"{nama_file}.pdf"

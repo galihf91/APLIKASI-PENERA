@@ -2291,13 +2291,6 @@ def run():
                     ),
                     label_visibility="collapsed"
                 )
-                    key=(
-                        f"tb_hasil_kebenaran_{nama_alat}_{i}_"
-                        f"{e}_{muatan_uji}_{penunjukan_val}"
-                    ),
-                    label_visibility="collapsed"
-                )
-
             # --- Cek ---
             with cols[6]:
                 cek_icon = (

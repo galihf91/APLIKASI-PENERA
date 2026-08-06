@@ -2284,13 +2284,7 @@ def run():
                     f"Hasil {nomor_baris}",
                     value=hasil_otomatis,
                     disabled=True,
-                    key=(
-                        f"tb_hasil_kebenaran_{nama_alat}_{i}_"
-                        f"{e}_{muatan_uji}_{penunjukan_val}_"
-                        f"{cek_sah}"
-                    ),
-                    label_visibility="collapsed"
-                )
+                    )
             # --- Cek ---
             with cols[6]:
                 cek_icon = (

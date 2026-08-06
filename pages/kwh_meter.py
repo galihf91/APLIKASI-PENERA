@@ -237,8 +237,7 @@ def run():
             jenis_pengujian = st.selectbox(
                 "Jenis Pengujian",
                 ["Tera", "Tera Ulang"],
-                index=1,
-                key="jenis_pengujian_kwh",
+                index=0,
             )
 
             tanggal_pengujian = st.date_input(

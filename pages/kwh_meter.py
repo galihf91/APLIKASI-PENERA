@@ -527,11 +527,51 @@ def run():
             "konstanta": konstanta,
         }
 
-        if st.button("💾 Simpan Data", type="primary"):
-            st.session_state.data_kwh = data_kwh
-            st.session_state.saved_data_kwh = data_kwh
-            st.success("Data kWh Meter berhasil disimpan. Silakan buka menu Preview & Generate Data.")
-
+        if st.button(
+            "💾 Simpan Data",
+            type="primary"
+        ):
+            error_list = []
+        
+            if not str(model_tipe).strip():
+                error_list.append(
+                    "Model / Tipe belum diisi."
+                )
+        
+            if not str(nomor_sertifikat).strip():
+                error_list.append(
+                    "Nomor Sertifikat belum diisi."
+                )
+        
+            if not str(nomor_order).strip():
+                error_list.append(
+                    "Nomor Order belum diisi."
+                )
+        
+            if not str(penera_1).strip():
+                error_list.append(
+                    "Penera 1 belum dipilih."
+                )
+        
+            if error_list:
+                for pesan in error_list:
+                    st.error(pesan)
+        
+            else:
+                st.session_state.data_kwh = data_kwh
+                st.session_state.saved_data_kwh = (
+                    data_kwh
+                )
+        
+                # Hapus sertifikat lama setelah data berubah
+                st.session_state.generated_kwh_file = ""
+        
+                st.success(
+                    "Data kWh Meter berhasil disimpan. "
+                    "Silakan buka menu Preview & "
+                    "Generate Data."
+                )
+        
 
     # =========================
     # MODE PREVIEW

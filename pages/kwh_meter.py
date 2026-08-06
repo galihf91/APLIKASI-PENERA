@@ -137,6 +137,7 @@ def init_state():
         "data_penera": load_data_penera(),
         "saved_data_kwh": {},
         "data_kwh": {},
+        "generated_kwh_file": "",
     }
 
     for key, value in defaults.items():

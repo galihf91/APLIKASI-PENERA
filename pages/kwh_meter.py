@@ -539,7 +539,15 @@ def run():
     elif mode == "📄 Preview & Generate Data":
 
         st.header("Preview Data kWh Meter")
-
+        if st.button(
+            "✏️ Kembali dan Edit Data",
+            use_container_width=True,
+            key="kwh_kembali_edit"
+        ):
+            st.session_state["menu_kwh"] = (
+                "📝 Input Data Pengujian"
+            )
+            st.rerun()
         data_kwh = st.session_state.get("data_kwh", {})
 
         if not data_kwh:
@@ -547,7 +555,7 @@ def run():
             st.stop()
 
         st.subheader("Data Umum Alat")
-
+        
         col_a1, col_a2, col_a3 = st.columns(3)
 
         with col_a1:

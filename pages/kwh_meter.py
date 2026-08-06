@@ -3,7 +3,30 @@ import pandas as pd
 from datetime import date, datetime
 from pathlib import Path
 
-DATA_DIR = Path("data")
+
+def find_project_root():
+    current = Path(__file__).resolve()
+
+    for parent in [current.parent] + list(current.parents):
+        if (
+            (parent / "app.py").exists()
+            or (parent / "modules").exists()
+        ):
+            return parent
+
+    return current.parent
+
+
+PROJECT_ROOT = find_project_root()
+
+DATA_DIR = PROJECT_ROOT / "data"
+
+OUTPUT_DIR = (
+    PROJECT_ROOT
+    / "output"
+    / "kwh_meter"
+    / "sertifikat"
+)
 try:
     from modules.kwh_meter.sertifikat_kwh_generator import generate_sertifikat_kwh
 except ModuleNotFoundError:

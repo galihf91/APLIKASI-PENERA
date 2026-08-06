@@ -2498,12 +2498,15 @@ def run():
                         label_visibility="collapsed"
                     )
 
-               kesalahan_eks = I - muatan_eks_kg
+                kesalahan_eks = (
+                    I - muatan_eks_kg
+                )
 
                 cek_sah = (
                     abs(kesalahan_eks)
                     <= bkd_kg
                 )
+
                 # --- Hasil ---
                 with cols_eksen[4]:
                     hasil_otomatis_eks = (
@@ -2511,7 +2514,7 @@ def run():
                         if cek_sah
                         else "TIDAK SAH"
                     )
-                    
+
                     hasil = st.text_input(
                         f"Hasil Eksentrisitas {i}",
                         value=hasil_otomatis_eks,
@@ -2522,14 +2525,14 @@ def run():
                         ),
                         label_visibility="collapsed"
                     )
-                        disabled=True,
-                        key=f"tb_eksen_hasil_{i}_{I}",
-                        label_visibility="collapsed"
-                    )
 
                 # --- Cek ---
                 with cols_eksen[5]:
-                    cek_icon = "✅"
+                    cek_icon = (
+                        "✅"
+                        if cek_sah
+                        else "❌"
+                    )
 
                     st.text_input(
                         f"Cek Eksentrisitas {i}",
@@ -2537,11 +2540,11 @@ def run():
                         disabled=True,
                         key=(
                             f"tb_eksen_cek_{i}_{I}_{bkd_kg}_"
-                            f"{interval_skala}_{keterangan}"
+                            f"{interval_skala}_{keterangan}_"
+                            f"{cek_sah}"
                         ),
                         label_visibility="collapsed"
                     )
-
                 eksen_data.append({
                     "posisi": i,
                     "penunjukan": I,

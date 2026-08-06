@@ -2612,7 +2612,7 @@ def run():
         # ============================================================
         if repet_sederhana:
             st.markdown("---")
-            st.subheader("Repetability")
+            st.subheader("Repeatability")
 
             # Neraca Obat tidak menampilkan keterangan e dan d.
             if not is_neraca and keterangan_ed:

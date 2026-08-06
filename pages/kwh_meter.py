@@ -622,7 +622,7 @@ def run():
                 with open(output_file, "rb") as pdf:
                     st.download_button(
                         label="⬇️ Download Sertifikat kWh Meter",
-                        data=pdf,
+                        data=pdf.read(),
                         file_name=output_file.name,
                         mime="application/pdf",
                     )

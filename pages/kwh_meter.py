@@ -92,7 +92,14 @@ def init_state():
         if key not in st.session_state:
             st.session_state[key] = value
 
+def normalize_nip(value):
+    if pd.isna(value):
+        return ""
 
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+
+    return str(value).strip()
 # =========================
 # KONFIGURASI HALAMAN
 def run():

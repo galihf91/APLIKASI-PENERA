@@ -38,11 +38,62 @@ def format_nama_file_sertifikat(data):
 @st.cache_data
 def load_data_penera():
     try:
-        df = pd.read_excel("data/data_penera.xlsx")
+        df = pd.read_excel(
+            "data/data_penera.xlsx",
+            engine="openpyxl"
+        )
+
         df.columns = df.columns.str.strip()
+
+        required_columns = [
+            "Nama",
+            "NIP",
+            "Golongan"
+        ]
+
+        if not all(
+            col in df.columns
+            for col in required_columns
+        ):
+            return pd.DataFrame(
+                columns=required_columns
+            )
+
+        df = df.dropna(
+            subset=["Nama"]
+        ).copy()
+
+        df["Nama"] = (
+            df["Nama"]
+            .astype(str)
+            .str.strip()
+        )
+
+        df["NIP"] = df["NIP"].apply(
+            normalize_nip
+        )
+
+        df["Golongan"] = (
+            df["Golongan"]
+            .fillna("")
+            .astype(str)
+            .str.strip()
+        )
+
         return df
-    except FileNotFoundError:
-        return pd.DataFrame(columns=["Nama", "NIP", "Golongan"])
+
+    except Exception as exc:
+        st.warning(
+            f"Data penera tidak dapat dibaca: {exc}"
+        )
+
+        return pd.DataFrame(
+            columns=[
+                "Nama",
+                "NIP",
+                "Golongan"
+            ]
+        )
 
 def bulan_ke_romawi(bulan):
     romawi = {

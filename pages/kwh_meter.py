@@ -679,30 +679,79 @@ def run():
 
         st.subheader("Generate Sertifikat")
 
-        if st.button("📄 Generate Sertifikat kWh Meter", type="primary"):
+        if st.button(
+            "📄 Generate Sertifikat kWh Meter",
+            type="primary"
+        ):
             try:
                 output_dir = OUTPUT_DIR
+        
                 output_dir.mkdir(
                     parents=True,
                     exist_ok=True
                 )
-
-                nama_file = format_nama_file_sertifikat(data_kwh)
-                output_file = output_dir / f"{nama_file}.pdf"
-
-                generate_sertifikat_kwh(data_kwh, str(output_file))
-
-                with open(output_file, "rb") as pdf:
-                    st.download_button(
-                        label="⬇️ Download Sertifikat kWh Meter",
-                        data=pdf.read(),
-                        file_name=output_file.name,
-                        mime="application/pdf",
-                    )
-
-                st.success(f"Sertifikat berhasil dibuat: {output_file}")
-
+        
+                nama_file = format_nama_file_sertifikat(
+                    data_kwh
+                )
+        
+                output_file = output_dir / (
+                    f"{nama_file}.pdf"
+                )
+        
+                generate_sertifikat_kwh(
+                    data_kwh,
+                    str(output_file)
+                )
+        
+                # Simpan lokasi file ke session state
+                st.session_state.generated_kwh_file = str(
+                    output_file
+                )
+        
+                st.success(
+                    "Sertifikat kWh Meter berhasil dibuat."
+                )
+        
             except Exception as e:
-                st.error(f"Gagal membuat sertifikat: {e}")
+                st.error(
+                    f"Gagal membuat sertifikat: {e}"
+                )
+        
                 import traceback
-                st.code(traceback.format_exc())
+        
+                st.code(
+                    traceback.format_exc()
+                )
+        
+        
+        # ==========================================
+        # TOMBOL DOWNLOAD TETAP TAMPIL SETELAH RERUN
+        # ==========================================
+        generated_file = st.session_state.get(
+            "generated_kwh_file",
+            ""
+        )
+        
+        if (
+            generated_file
+            and Path(generated_file).exists()
+        ):
+            with open(generated_file, "rb") as pdf:
+                st.download_button(
+                    label=(
+                        "⬇️ Download Sertifikat "
+                        "kWh Meter"
+                    ),
+                    data=pdf.read(),
+                    file_name=Path(
+                        generated_file
+                    ).name,
+                    mime="application/pdf",
+                    use_container_width=True,
+                    key="download_sertifikat_kwh"
+                )
+        else:
+            st.caption(
+                "Sertifikat belum dibuat."
+            )

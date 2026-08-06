@@ -2190,7 +2190,7 @@ def run():
                         value=float(default_penunjukan_tampil),
                         step=float(step_penunjukan_tampil),
                         format=format_penunjukan,
-                        disabled=True,
+                        disabled=is_neraca,
                         key=(
                             f"tb_penunjukan_kebenaran_{i}_{nama_alat}_"
                             f"{e}_{daya_baca_kg}_{muatan_uji}_"

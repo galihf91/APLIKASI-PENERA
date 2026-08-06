@@ -158,7 +158,6 @@ def run():
     init_state()
 
     st.title("⚡ Pengujian kWh Meter")
-    import inspect
 
     col_nav1, col_nav2, col_nav3, col_nav4 = st.columns(4)
 

@@ -311,7 +311,9 @@ def run():
                 if nama_penera_1:
                     row1 = df_penera[df_penera["Nama"].astype(str) == nama_penera_1].iloc[0]
                     penera_1 = str(row1.get("Nama", ""))
-                    nip_penera_1 = str(row1.get("NIP", ""))
+                    nip_penera_1 = normalize_nip(
+                        row1.get("NIP", "")
+                    )
                     golongan_penera_1 = str(row1.get("Golongan", ""))
                 else:
                     penera_1 = nip_penera_1 = golongan_penera_1 = ""

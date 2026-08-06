@@ -1551,12 +1551,6 @@ def run():
                         "dan interval skala verifikasi."
                     ),
                 )
-                    help=(
-                        "Kelas diupdate otomatis saat Kapasitas "
-                        "Maksimum atau Interval Skala berubah, "
-                        "namun bisa diubah manual."
-                    ),
-                )
 
                 status = st.session_state.get(
                     "tb_kelas_status",

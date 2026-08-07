@@ -609,21 +609,29 @@ def run():
                 )
                 
                 if selected_nama:
-                    row = df_penera[df_penera['Nama'] == selected_nama].iloc[0]
-                    # Simpan ke session state
+                    row = df_penera[
+                        df_penera["Nama"] == selected_nama
+                    ].iloc[0]
+                
                     st.session_state.nama_penera = selected_nama
-                    nip_value = row.get("NIP", "")
-                    if isinstance(nip_value, float) and nip_value.is_integer():
-                        nip_value = str(int(nip_value))
-                    else:
-                        nip_value = str(nip_value).strip()
-                    
-                    st.session_state.nip_penera = nip_value
-                    st.session_state.golongan_penera = row.get('Golongan', '')
-                    
-                    # Tampilkan info
-                    st.caption(f"**NIP:** {row['NIP']}")
-                    st.caption(f"**Golongan:** {row.get('Golongan', '')}")
+                
+                    st.session_state.nip_penera = normalize_nip(
+                        row.get("NIP", "")
+                    )
+                
+                    st.session_state.golongan_penera = str(
+                        row.get("Golongan", "")
+                    ).strip()
+                
+                    st.caption(
+                        f"**NIP:** "
+                        f"{st.session_state.nip_penera}"
+                    )
+                
+                    st.caption(
+                        f"**Golongan:** "
+                        f"{st.session_state.golongan_penera}"
+                    )
                 else:
                     # Jika belum memilih, tetap gunakan nilai session state (jika ada)
                     st.session_state.nama_penera = st.session_state.get('nama_penera', '')

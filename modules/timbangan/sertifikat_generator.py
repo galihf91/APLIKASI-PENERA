@@ -442,18 +442,25 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         else 1
     )
     
-    tinggi_tambahan_merek = (
-        max(
-            0,
-            jumlah_baris_merek - 1
-        )
+    # Kedalaman teks nilai Merek jika turun beberapa baris
+    kedalaman_nilai_merek = (
+        max(0, jumlah_baris_merek - 1)
         * 0.45 * cm
     )
     
+    # Tulisan Inggris "Manufactured by"
+    # sudah turun sampai sekitar 0.9 cm dari y_row.
+    # Maka gunakan yang paling rendah sebagai batas.
+    kedalaman_baris_merek = max(
+        0.9 * cm,
+        kedalaman_nilai_merek
+    )
+    
+    # Jarak aman menuju Model / Tipe
     y = (
         y_row
-        - 1.0 * cm
-        - tinggi_tambahan_merek
+        - kedalaman_baris_merek
+        - 0.45 * cm
     )
 
    # ============================================================

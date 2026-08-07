@@ -241,14 +241,30 @@ def run():
         st.session_state.test_results = []
     
     # Nilai default untuk input utama (diambil dari saved_data jika ada)
-    if 'kapasitas_max_input' not in st.session_state:
-        st.session_state.kapasitas_max_input = st.session_state.saved_data.get('kapasitas_max', 60000)
+    saved_kapasitas = st.session_state.saved_data.get(
+        "kapasitas_max",
+        60000
+    )
     
-    if 'daya_baca_input' not in st.session_state:
-        st.session_state.daya_baca_input = st.session_state.saved_data.get('daya_baca', 10)
+    saved_daya_baca = st.session_state.saved_data.get(
+        "daya_baca",
+        10
+    )
     
-    if 'interval_skala_input' not in st.session_state:
-        st.session_state.interval_skala_input = st.session_state.daya_baca_input
+    if "kapasitas_max_input" not in st.session_state:
+        st.session_state.kapasitas_max_input = (
+            saved_kapasitas
+        )
+    
+    if "daya_baca_input" not in st.session_state:
+        st.session_state.daya_baca_input = (
+            saved_daya_baca
+        )
+    
+    if "interval_skala_input" not in st.session_state:
+        st.session_state.interval_skala_input = (
+            saved_daya_baca
+        )
     
     if 'kelas' not in st.session_state:
         st.session_state.kelas = st.session_state.saved_data.get('kelas', 'III')

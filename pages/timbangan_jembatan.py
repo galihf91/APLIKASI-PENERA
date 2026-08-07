@@ -471,15 +471,28 @@ def run():
             st.session_state.kelas = "III"
     
         with col_extra2:
-            default_keterangan = st.session_state.saved_data.get("keterangan", "Tera Ulang")
-    
+            jenis_options = [
+                "Tera",
+                "Tera Ulang"
+            ]
+            
+            saved_keterangan = st.session_state.saved_data.get(
+                "keterangan",
+                "Tera Ulang"
+            )
+            
+            if "keterangan" not in st.session_state:
+                st.session_state.keterangan = (
+                    saved_keterangan
+                    if saved_keterangan in jenis_options
+                    else "Tera Ulang"
+                )
+            
             keterangan = st.selectbox(
                 "Jenis Pengujian",
-                ["Tera", "Tera Ulang"],
-                index=0 if default_keterangan == "Tera" else 1
+                options=jenis_options,
+                key="keterangan"
             )
-    
-            st.session_state.keterangan = keterangan
     
         with col_extra3:
             # kosong atau bisa untuk informasi tambahan

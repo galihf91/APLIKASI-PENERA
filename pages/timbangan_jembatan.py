@@ -532,7 +532,13 @@ def run():
                     row = df_penera[df_penera['Nama'] == selected_nama].iloc[0]
                     # Simpan ke session state
                     st.session_state.nama_penera = selected_nama
-                    st.session_state.nip_penera = str(row['NIP'])
+                    nip_value = row.get("NIP", "")
+                    if isinstance(nip_value, float) and nip_value.is_integer():
+                        nip_value = str(int(nip_value))
+                    else:
+                        nip_value = str(nip_value).strip()
+                    
+                    st.session_state.nip_penera = nip_value
                     st.session_state.golongan_penera = row.get('Golongan', '')
                     
                     # Tampilkan info

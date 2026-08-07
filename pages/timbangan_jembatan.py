@@ -1245,8 +1245,9 @@ def run():
                 'tanggal_sertifikat': tanggal_sertifikat.strftime('%Y-%m-%d'),
                 'tanggal_tanda_tangan': tanggal_sertifikat.strftime('%Y-%m-%d'),
                 'keterangan': keterangan_final,
-                'berlaku_sampai': (datetime.strptime(tanggal.strftime('%Y-%m-%d'), '%Y-%m-%d').replace(
-                    year=datetime.now().year + 1)).strftime('%Y-%m-%d'),
+                'berlaku_sampai': berlaku_sampai.strftime(
+                    '%Y-%m-%d'
+                ),
                 'repetability': repet_data,      # dari bagian repetability
                 'eksentrisitas': eksen_data,     # dari bagian eksentrisitas
                 'penyetelan_nol': nol_data,      # dari bagian penyetelan nol

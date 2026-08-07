@@ -1229,7 +1229,7 @@ def run():
                 'hasil_pengujian': test_results,
                 'tanggal': tanggal.strftime('%Y-%m-%d'),
                 'tanggal_penera': format_tanggal_indonesia(tanggal.strftime('%Y-%m-%d')),
-                'tanggal_sertifikat': datetime.now().strftime('%Y-%m-%d'),
+                'tanggal_sertifikat': tanggal_sertifikat.strftime('%Y-%m-%d'),
                 'keterangan': keterangan_final,
                 'berlaku_sampai': (datetime.strptime(tanggal.strftime('%Y-%m-%d'), '%Y-%m-%d').replace(
                     year=datetime.now().year + 1)).strftime('%Y-%m-%d'),

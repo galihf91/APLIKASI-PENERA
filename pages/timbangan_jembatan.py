@@ -85,6 +85,14 @@ def tambah_satu_tahun(tanggal_obj):
             month=2,
             day=28
         )
+def normalize_nip(value):
+    if pd.isna(value):
+        return ""
+
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+
+    return str(value).strip()
 def run():
     st.title("Pengujian Timbangan Jembatan")
 

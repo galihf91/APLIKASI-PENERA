@@ -452,7 +452,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     
     y = (
         y_row
-        - 1.5 * cm
+        - 1.2 * cm
         - tinggi_tambahan_merek
     )
 

@@ -459,7 +459,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     y = (
         y_row
         - kedalaman_terendah_merek
-        - 0.7 * cm
+        - 0.3 * cm
     )
    # ============================================================
     # BARIS 4

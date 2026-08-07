@@ -1165,6 +1165,7 @@ def run():
                 'nip_penera': nip_penera,
                 'golongan_penera': st.session_state.get('golongan_penera', ''),
                 'hasil_pengujian': test_results,
+                'tanggal': tanggal.strftime('%Y-%m-%d'),
                 'tanggal_penera': format_tanggal_indonesia(tanggal.strftime('%Y-%m-%d')),
                 'tanggal_sertifikat': datetime.now().strftime('%Y-%m-%d'),
                 'keterangan': keterangan_final,

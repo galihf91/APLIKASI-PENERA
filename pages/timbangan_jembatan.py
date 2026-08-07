@@ -527,7 +527,27 @@ def run():
                 value=default_tanggal,
                 key="tanggal_pengujian_tj"
             )
+            saved_tanggal_sertifikat = st.session_state.saved_data.get(
+                "tanggal_sertifikat",
+                ""
+            )
             
+            if saved_tanggal_sertifikat:
+                try:
+                    default_tanggal_sertifikat = datetime.strptime(
+                        saved_tanggal_sertifikat,
+                        "%Y-%m-%d"
+                    ).date()
+                except ValueError:
+                    default_tanggal_sertifikat = date.today()
+            else:
+                default_tanggal_sertifikat = date.today()
+            
+            tanggal_sertifikat = st.date_input(
+                "Tanggal Sertifikat",
+                value=default_tanggal_sertifikat,
+                key="tanggal_sertifikat_tj"
+            )
             # Lokasi Pengujian selalu "Perusahaan" (tidak bisa diubah)
             lokasi = st.text_input(
                 "Lokasi Pengujian",

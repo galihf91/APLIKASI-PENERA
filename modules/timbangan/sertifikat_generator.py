@@ -605,17 +605,17 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         )
         if wrapped_seri:
             c.drawString(
-                colon_x_fixed + 0.3 * cm,
+                start_x_seri,
                 y_row,
                 wrapped_seri[0]
             )
-
+        
             for i, line in enumerate(
                 wrapped_seri[1:],
                 start=1
             ):
                 c.drawString(
-                    colon_x_fixed + 0.3 * cm,
+                    start_x_seri,
                     y_row - i * 0.45 * cm,
                     line
                 )

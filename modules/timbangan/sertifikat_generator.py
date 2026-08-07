@@ -442,25 +442,29 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         else 1
     )
     
-    # Posisi paling bawah dari nilai merek
-    kedalaman_nilai_merek = (
-        max(0, jumlah_baris_merek - 1)
-        * 0.45 * cm
-    )
+    # ============================================================
+    # POSISI BARIS MODEL / TIPE
+    #
+    # Posisi normal tetap seperti desain awal.
+    # Merek baru mendorong baris berikutnya jika lebih dari 3 baris.
+    # ============================================================
     
-    # Tulisan "Manufactured by" berada 0.9 cm
-    # di bawah baris utama Merek
-    kedalaman_terendah_merek = max(
-        0.9 * cm,
-        kedalaman_nilai_merek
-    )
+    if jumlah_baris_merek <= 3:
+        # Posisi normal seperti desain awal
+        y = y_row - 1.0 * cm
     
-    # Turunkan Model/Tipe dengan jarak aman
-    y = (
-        y_row
-        - kedalaman_terendah_merek
-        - 1.4 * cm
-    )
+    else:
+        # Setiap baris merek setelah baris ke-3
+        # menambah tinggi 0.45 cm
+        tambahan_merek = (
+            jumlah_baris_merek - 3
+        ) * 0.45 * cm
+    
+        y = (
+            y_row
+            - 1.0 * cm
+            - tambahan_merek
+        )
    # ============================================================
     # BARIS 4
     # Timbangan Elektronik : Model/Tipe + Interval Skala

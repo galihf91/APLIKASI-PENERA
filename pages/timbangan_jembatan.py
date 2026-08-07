@@ -501,10 +501,29 @@ def run():
             
             if df_penera is not None and not df_penera.empty:
                 # Pilihan nama dari dropdown
+                saved_penera = st.session_state.saved_data.get(
+                    "nama_penera",
+                    ""
+                )
+                
+                options_penera = (
+                    df_penera["Nama"]
+                    .dropna()
+                    .astype(str)
+                    .tolist()
+                )
+                
+                if saved_penera in options_penera:
+                    default_index_penera = options_penera.index(
+                        saved_penera
+                    )
+                else:
+                    default_index_penera = None
+                
                 selected_nama = st.selectbox(
                     "Pilih Nama Penera",
-                    options=df_penera['Nama'].tolist(),
-                    index=None,
+                    options=options_penera,
+                    index=default_index_penera,
                     placeholder="Ketik atau pilih nama...",
                     key="penera_select"
                 )

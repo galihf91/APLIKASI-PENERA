@@ -460,7 +460,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     y = (
         y_row
         - kedalaman_baris_merek
-        - 0.45 * cm
+        - 0.65 * cm
     )
 
    # ============================================================

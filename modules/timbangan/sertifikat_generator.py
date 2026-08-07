@@ -662,7 +662,23 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         str(data.get("kelas", ""))
     )
 
-    y = y_row - 1.3 * cm
+    jumlah_baris_seri = (
+        len(wrapped_seri)
+        if is_timbangan_elektronik
+        and wrapped_seri
+        else 1
+    )
+    
+    tinggi_tambahan_seri = (
+        max(0, jumlah_baris_seri - 1)
+        * 0.45 * cm
+    )
+    
+    y = (
+        y_row
+        - 1.3 * cm
+        - tinggi_tambahan_seri
+    )
 
         # ======================== PEMILIK, ALAMAT, PENERA, DLL ========================
     # Semua menggunakan margin kiri content

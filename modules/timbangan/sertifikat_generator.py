@@ -442,27 +442,25 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         else 1
     )
     
-    # Kedalaman teks nilai Merek jika turun beberapa baris
+    # Posisi paling bawah dari nilai merek
     kedalaman_nilai_merek = (
         max(0, jumlah_baris_merek - 1)
         * 0.45 * cm
     )
     
-    # Tulisan Inggris "Manufactured by"
-    # sudah turun sampai sekitar 0.9 cm dari y_row.
-    # Maka gunakan yang paling rendah sebagai batas.
-    kedalaman_baris_merek = max(
+    # Tulisan "Manufactured by" berada 0.9 cm
+    # di bawah baris utama Merek
+    kedalaman_terendah_merek = max(
         0.9 * cm,
         kedalaman_nilai_merek
     )
     
-    # Jarak aman menuju Model / Tipe
+    # Turunkan Model/Tipe dengan jarak aman
     y = (
         y_row
-        - kedalaman_baris_merek
-        - 0.65 * cm
+        - kedalaman_terendah_merek
+        - 0.7 * cm
     )
-
    # ============================================================
     # BARIS 4
     # Timbangan Elektronik : Model/Tipe + Interval Skala

@@ -436,7 +436,25 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         nilai_kapasitas
     )
 
-    y = y_row - 1.5 * cm
+    jumlah_baris_merek = (
+        len(wrapped_merek)
+        if wrapped_merek
+        else 1
+    )
+    
+    tinggi_tambahan_merek = (
+        max(
+            0,
+            jumlah_baris_merek - 1
+        )
+        * 0.45 * cm
+    )
+    
+    y = (
+        y_row
+        - 1.5 * cm
+        - tinggi_tambahan_merek
+    )
 
    # ============================================================
     # BARIS 4

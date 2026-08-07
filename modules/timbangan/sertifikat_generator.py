@@ -511,6 +511,28 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
 
     start_x_val = colon_x_fixed + 0.3 * cm
 
+    # Batasi nilai kiri agar tidak masuk ke kolom Interval Skala
+    max_width_val = (
+        right_col_x
+        - start_x_val
+        - 0.1 * cm
+    )
+    
+    char_width_val = c.stringWidth(
+        "a",
+        "Helvetica",
+        12
+    )
+    
+    chars_per_line_val = (
+        max(
+            1,
+            int(max_width_val / char_width_val)
+        )
+        if char_width_val > 0
+        else 20
+    )
+    
     wrapped_nilai_kiri = textwrap.wrap(
         str(nilai_kiri),
         width=chars_per_line_val
@@ -584,8 +606,25 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         f"{interval_skala_text} {satuan_tampilan}"
     )
 
-    y = y_row - 1.0 * cm
-
+    jumlah_baris_nilai_kiri = (
+        len(wrapped_nilai_kiri)
+        if wrapped_nilai_kiri
+        else 1
+    )
+    
+    tinggi_tambahan_nilai_kiri = (
+        max(
+            0,
+            jumlah_baris_nilai_kiri - 1
+        )
+        * 0.45 * cm
+    )
+    
+    y = (
+        y_row
+        - 1.0 * cm
+        - tinggi_tambahan_nilai_kiri
+    )
 
     # ============================================================
     # BARIS 5

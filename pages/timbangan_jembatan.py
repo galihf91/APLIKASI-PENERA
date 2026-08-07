@@ -309,10 +309,24 @@ def run():
             
             if df_perusahaan is not None and not df_perusahaan.empty:
                 all_names = df_perusahaan['Nama Perusahaan'].tolist()
+                saved_company = st.session_state.saved_data.get(
+                    "pemilik",
+                    ""
+                )
+                
+                options_perusahaan = [""] + all_names
+                
+                if saved_company in options_perusahaan:
+                    default_index_perusahaan = options_perusahaan.index(
+                        saved_company
+                    )
+                else:
+                    default_index_perusahaan = 0
+                
                 selected = st.selectbox(
                     "Cari & Pilih Nama Perusahaan",
-                    options=[""] + all_names,
-                    index=0,
+                    options=options_perusahaan,
+                    index=default_index_perusahaan,
                     placeholder="Ketik nama perusahaan...",
                     key="perusahaan_select"
                 )

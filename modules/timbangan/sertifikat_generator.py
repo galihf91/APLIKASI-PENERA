@@ -571,12 +571,38 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         no_seri = str(
             data.get("no_seri", "")
         )
-
+        
+        # ============================================================
+        # BATASI NOMOR SERI AGAR TIDAK MASUK KE KOLOM KELAS
+        # ============================================================
+        start_x_seri = colon_x_fixed + 0.3 * cm
+        
+        # Sisakan jarak sebelum kolom kanan
+        max_width_seri = (
+            right_col_x
+            - start_x_seri
+            - 0.3 * cm
+        )
+        
+        char_width_seri = c.stringWidth(
+            "a",
+            "Helvetica",
+            12
+        )
+        
+        chars_per_line_seri = (
+            max(
+                1,
+                int(max_width_seri / char_width_seri)
+            )
+            if char_width_seri > 0
+            else 20
+        )
+        
         wrapped_seri = textwrap.wrap(
             no_seri,
-            width=chars_per_line_val
+            width=chars_per_line_seri
         )
-
         if wrapped_seri:
             c.drawString(
                 colon_x_fixed + 0.3 * cm,

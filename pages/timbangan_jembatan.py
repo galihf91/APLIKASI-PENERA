@@ -428,7 +428,6 @@ def run():
             # Daya Baca
             st.number_input(
                 "Daya Baca (kg)",
-                value=st.session_state.daya_baca_input,
                 min_value=1,
                 step=1,
                 key="daya_baca_input"

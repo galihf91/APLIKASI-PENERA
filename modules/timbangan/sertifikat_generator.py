@@ -290,12 +290,38 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     # Titik dua dan nilai (wrap)
     c.setFont("Helvetica", 12)
     c.drawString(colon_x_fixed, y_row, ":")
-    start_x_val = colon_x_fixed + 0.3*cm
-    max_val_width = right_limit_content - start_x_val - 0.2*cm
-    char_width_val = c.stringWidth("a", "Helvetica", 12)
-    chars_per_line_val = int(max_val_width / char_width_val) if char_width_val > 0 else 30
-    merek = data.get('merek', '')
-    wrapped_merek = textwrap.wrap(merek, width=chars_per_line_val)
+    start_x_merek = colon_x_fixed + 0.3 * cm
+
+    # Batasi Merek hanya sampai sebelum kolom Kapasitas / Daya Baca
+    max_width_merek = (
+        right_col_x
+        - start_x_merek
+        - 0.1 * cm
+    )
+    
+    char_width_merek = c.stringWidth(
+        "a",
+        "Helvetica",
+        12
+    )
+    
+    chars_per_line_merek = (
+        max(
+            1,
+            int(max_width_merek / char_width_merek)
+        )
+        if char_width_merek > 0
+        else 20
+    )
+    
+    merek = str(
+        data.get("merek", "")
+    )
+    
+    wrapped_merek = textwrap.wrap(
+        merek,
+        width=chars_per_line_merek
+    )
     if wrapped_merek:
         c.drawString(start_x_val, y_row, wrapped_merek[0])
         for i, line in enumerate(wrapped_merek[1:], start=1):

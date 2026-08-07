@@ -420,7 +420,6 @@ def run():
             # Kapasitas Maksimum
             st.number_input(
                 "Kapasitas Maksimum (kg)",
-                value=st.session_state.kapasitas_max_input,
                 min_value=100,
                 step=100,
                 key="kapasitas_max_input"

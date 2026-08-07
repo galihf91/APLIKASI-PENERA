@@ -74,7 +74,17 @@ def format_nama_file_dokumen(data, jenis_dokumen="Sertifikat"):
 
     nama_file = f"{nama_perusahaan}_TJ_{jenis_dokumen}_{nama_penera}_{tanggal_file}"
     return slug_filename(nama_file)
-
+def tambah_satu_tahun(tanggal_obj):
+    try:
+        return tanggal_obj.replace(
+            year=tanggal_obj.year + 1
+        )
+    except ValueError:
+        return tanggal_obj.replace(
+            year=tanggal_obj.year + 1,
+            month=2,
+            day=28
+        )
 def run():
     st.title("Pengujian Timbangan Jembatan")
 

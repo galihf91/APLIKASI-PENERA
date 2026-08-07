@@ -581,7 +581,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         max_width_seri = (
             right_col_x
             - start_x_seri
-            - 0.05 * cm
+            - 0.1 * cm
         )
         
         char_width_seri = c.stringWidth(

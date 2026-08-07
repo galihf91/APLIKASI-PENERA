@@ -479,11 +479,26 @@ def run():
         with col4:
             st.subheader("Data Pengujian")
             
+            saved_tanggal = st.session_state.saved_data.get(
+                "tanggal",
+                ""
+            )
+            
+            if saved_tanggal:
+                try:
+                    default_tanggal = datetime.strptime(
+                        saved_tanggal,
+                        "%Y-%m-%d"
+                    ).date()
+                except ValueError:
+                    default_tanggal = date.today()
+            else:
+                default_tanggal = date.today()
+            
             tanggal = st.date_input(
                 "Tanggal Pengujian",
-                value=datetime.strptime(st.session_state.saved_data.get('tanggal', ''),
-                                        '%Y-%m-%d').date()
-                if 'tanggal' in st.session_state.saved_data else datetime.now().date()
+                value=default_tanggal,
+                key="tanggal_pengujian_tj"
             )
             
             # Lokasi Pengujian selalu "Perusahaan" (tidak bisa diubah)

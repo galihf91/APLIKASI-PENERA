@@ -1209,6 +1209,9 @@ def run():
             kapasitas_max_final = st.session_state.get('kapasitas_max_input', 60000)
             daya_baca_final = st.session_state.get('daya_baca_input', 10)
             interval_skala_final = st.session_state.get('interval_skala_input', 10)
+            berlaku_sampai = tambah_satu_tahun(
+                tanggal
+            )
             kapasitas_min_final = st.session_state.get('kapasitas_min_input', 20 * interval_skala_final)
             kelas_final = st.session_state.get('kelas', 'III')
             keterangan_final = st.session_state.get('keterangan', 'Tera')

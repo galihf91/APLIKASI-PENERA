@@ -323,10 +323,29 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         width=chars_per_line_merek
     )
     if wrapped_merek:
-        c.drawString(start_x_val, y_row, wrapped_merek[0])
-        for i, line in enumerate(wrapped_merek[1:], start=1):
-            c.drawString(start_x_val, y_row - i*0.45*cm, line)
-        y_row_kiri = y_row - (0.45*cm * (len(wrapped_merek)-1))
+        c.drawString(
+            start_x_merek,
+            y_row,
+            wrapped_merek[0]
+        )
+    
+        for i, line in enumerate(
+            wrapped_merek[1:],
+            start=1
+        ):
+            c.drawString(
+                start_x_merek,
+                y_row - i * 0.45 * cm,
+                line
+            )
+    
+        y_row_kiri = (
+            y_row
+            - (
+                0.45 * cm
+                * (len(wrapped_merek) - 1)
+            )
+        )
     else:
         y_row_kiri = y_row
     

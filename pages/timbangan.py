@@ -1400,6 +1400,110 @@ def run():
                         "Minimum menimbang tidak boleh lebih besar "
                         "dari maksimum menimbang."
                     )
+                elif is_timbangan_meja:
+
+                    st.info(
+                        "Timbangan Meja hanya Kelas III atau IIII. "
+                        "Interval skala verifikasi dihitung otomatis: "
+                        "e = Maksimum / 1000."
+                    )
+            
+                    # ---------------- SATUAN ----------------
+                    st.selectbox(
+                        "Satuan",
+                        options=["kg", "g"],
+                        key="tb_satuan_kapasitas_max",
+                        on_change=update_class
+                    )
+            
+                    satuan = st.session_state.get(
+                        "tb_satuan_kapasitas_max",
+                        "kg"
+                    )
+            
+                    # ---------------- MAKSIMUM ----------------
+                    st.text_input(
+                        "Maksimum Menimbang",
+                        placeholder="Masukkan maksimum menimbang",
+                        key="tb_kapasitas_max_input",
+                        on_change=update_class
+                    )
+            
+                    kapasitas_max_kg = convert_to_kg(
+                        st.session_state.get(
+                            "tb_kapasitas_max_input",
+                            ""
+                        ),
+                        satuan
+                    )
+            
+                    # ---------------- e OTOMATIS ----------------
+                    interval_skala_kg = (
+                        kapasitas_max_kg / 1000.0
+                        if kapasitas_max_kg > 0
+                        else 0.0
+                    )
+            
+                    # tampilkan sesuai satuan pilihan
+                    if satuan == "g":
+                        e_tampil = interval_skala_kg * 1000
+                    else:
+                        e_tampil = interval_skala_kg
+            
+                    st.number_input(
+                        "Interval Skala Verifikasi (e)",
+                        value=float(e_tampil),
+                        disabled=True,
+                        key="tb_e_meja_display"
+                    )
+            
+                    # ---------------- KELAS ----------------
+                    kelas_final = st.selectbox(
+                        "Kelas",
+                        options=["III", "IIII"],
+                        key="tb_kelas_meja",
+                        on_change=update_class
+                    )
+            
+                    # ---------------- MINIMUM ----------------
+                    if kelas_final == "III":
+                        kapasitas_min_final = (
+                            20 * interval_skala_kg
+                        )
+                    else:
+                        kapasitas_min_final = (
+                            10 * interval_skala_kg
+                        )
+            
+                    if satuan == "g":
+                        min_tampil = (
+                            kapasitas_min_final * 1000
+                        )
+                    else:
+                        min_tampil = kapasitas_min_final
+            
+                    st.number_input(
+                        "Minimum Menimbang",
+                        value=float(min_tampil),
+                        disabled=True,
+                        key="tb_min_meja_display"
+                    )
+            
+                    # Timbangan Meja tidak menggunakan Daya Baca
+                    daya_baca_kg = 0.0
+            
+                    # Sinkronkan session state
+                    st.session_state[
+                        "tb_interval_skala_input"
+                    ] = interval_skala_kg
+            
+                    st.session_state[
+                        "tb_kapasitas_min_kg"
+                    ] = kapasitas_min_final
+            
+                    st.session_state[
+                        "tb_kelas"
+                    ] = kelas_final
             else:
                 # === Kapasitas Maksimum ===
                 col_val, col_unit = st.columns([3, 1])

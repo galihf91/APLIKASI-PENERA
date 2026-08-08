@@ -287,44 +287,56 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     line_spacing2 = 0.45*cm
     c.drawString(left_col_x, y_row - line_spacing1 - line_spacing2, "Manufactured by")
 
-    # Titik dua dan nilai (wrap)
+    # Titik dua dan nilai Merek
     c.setFont("Helvetica", 12)
-    c.drawString(colon_x_fixed, y_row, ":")
-    start_x_merek = colon_x_fixed + 0.3 * cm
-
-    # Batasi Merek hanya sampai sebelum kolom Kapasitas / Daya Baca
-    max_width_merek = (
-        right_col_x
-        - start_x_merek
-        - 0.1 * cm
+    c.drawString(
+        colon_x_fixed,
+        y_row,
+        ":"
     )
     
-    char_width_merek = c.stringWidth(
-        "a",
+    start_x_val = colon_x_fixed + 0.3 * cm
+    
+    # ============================================================
+    # BATAS AMAN KOLOM KIRI
+    # Nilai tidak boleh masuk ke kolom Kapasitas
+    # ============================================================
+    safe_right = right_col_x - 0.5 * cm
+    
+    max_val_width = (
+        safe_right
+        - start_x_val
+    )
+    
+    char_width_val = c.stringWidth(
+        "A",
         "Helvetica",
         12
     )
     
-    chars_per_line_merek = (
-        max(
-            1,
-            int(max_width_merek / char_width_merek)
+    chars_per_line_val = max(
+        10,
+        int(
+            max_val_width
+            / char_width_val
         )
-        if char_width_merek > 0
-        else 20
     )
     
+    # ============================================================
+    # MEREK / BUATAN
+    # ============================================================
     merek = str(
         data.get("merek", "")
     )
     
     wrapped_merek = textwrap.wrap(
         merek,
-        width=chars_per_line_merek
+        width=chars_per_line_val
     )
+    
     if wrapped_merek:
         c.drawString(
-            start_x_merek,
+            start_x_val,
             y_row,
             wrapped_merek[0]
         )
@@ -334,11 +346,12 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
             start=1
         ):
             c.drawString(
-                start_x_merek,
+                start_x_val,
                 y_row - i * 0.45 * cm,
                 line
             )
     
+        # Posisi baris terakhir nilai Merek
         y_row_kiri = (
             y_row
             - (
@@ -346,8 +359,10 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
                 * (len(wrapped_merek) - 1)
             )
         )
+    
     else:
         y_row_kiri = y_row
+    
     
     # ---------- KOLOM KANAN: KAPASITAS / DAYA BACA ----------
     satuan_tampilan = str(

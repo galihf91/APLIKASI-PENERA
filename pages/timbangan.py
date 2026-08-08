@@ -2945,7 +2945,10 @@ def run():
             str(nama_alat_repet).strip().lower()
             == "timbangan elektronik"
         )
-
+        is_timbangan_meja_repet = (
+            str(nama_alat_repet).strip().lower()
+            == "timbangan meja"
+        )
         repet_sederhana = (
             is_neraca_repet
             or (

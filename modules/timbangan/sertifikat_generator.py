@@ -1511,7 +1511,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     c.setFont("Helvetica", 12)
 
     # Neraca Obat hanya memiliki satu baris pengujian aktif
-    if is_neraca_obat:
+    if is_neraca_obat or is_timbangan_meja:
         indeks_yang_ditampilkan = [0]
     else:
         indeks_yang_ditampilkan = [0, 1, 2, 3, 4]

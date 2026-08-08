@@ -1254,7 +1254,8 @@ def run():
                 "Timbangan Pegas",
                 "Timbangan Meja",
             ]
-
+            st.write("DEBUG OPTIONS:", nama_alat_options)
+            st.write("DEBUG FILE:", __file__)
             nama_alat_tersimpan = st.session_state.tb_saved_data.get(
                 "nama_alat",
                 "Timbangan Elektronik"

@@ -1159,6 +1159,7 @@ def run():
                 "Timbangan Neraca Obat",
                 "Timbangan Sentisimal",
                 "Timbangan Pegas"
+                "Timbangan Meja",
             ]
 
             nama_alat_tersimpan = st.session_state.tb_saved_data.get(

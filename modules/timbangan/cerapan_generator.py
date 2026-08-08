@@ -348,12 +348,22 @@ def generate_cerapan_pdf(data: dict[str, Any], filename: str) -> str:
     margin = 1.2 * cm
     available_width = width - (2 * margin)
     satuan = safe_str(data.get("satuan", "kg")) or "kg"
-    nama_alat = safe_str(data.get("nama_alat", "")).strip().lower()
+    nama_alat = safe_str(
+        data.get("nama_alat", "")
+    ).strip().lower()
+    
     is_neraca_obat = nama_alat in {
         "neraca obat",
         "timbangan neraca obat",
     }
-    is_timbangan_elektronik = nama_alat == "timbangan elektronik"
+    
+    is_timbangan_elektronik = (
+        nama_alat == "timbangan elektronik"
+    )
+    
+    is_timbangan_meja = (
+        nama_alat == "timbangan meja"
+    )
 
     daya_baca_kg = to_float(data.get("daya_baca", 0.0))
     interval_skala_kg = to_float(data.get("interval_skala", 0.0))

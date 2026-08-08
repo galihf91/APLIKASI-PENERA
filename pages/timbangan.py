@@ -73,6 +73,7 @@ def format_nama_file_dokumen(data, jenis_dokumen):
         "Timbangan Sentisimal": "CS",
         "Timbangan Neraca": "TN",
         "Timbangan Neraca Obat": "TN",
+        "Timbangan Meja": "TM",
     }
     nama_alat_asli = str(
         data.get("nama_alat", "Timbangan")

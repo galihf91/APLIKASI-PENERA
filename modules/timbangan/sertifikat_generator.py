@@ -476,7 +476,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     )
     
     
-    if is_neraca_obat:
+    if is_neraca_obat or is_timbangan_meja:
     
         nilai_kapasitas = (
             f"{kapasitas_text} "

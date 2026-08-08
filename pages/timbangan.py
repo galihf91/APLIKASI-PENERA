@@ -356,7 +356,13 @@ def is_neraca_name(value):
         "timbangan neraca obat",
     }
 
-
+def is_timbangan_meja_name(value):
+    return (
+        str(value or "")
+        .strip()
+        .lower()
+        == "timbangan meja"
+    )
 def nilai_berbeda(a, b, toleransi=1e-12):
     """Membandingkan dua nilai float dengan toleransi kecil."""
     try:
@@ -410,6 +416,64 @@ def update_class():
     max_raw = str(
         st.session_state.get("tb_kapasitas_max_input", "")
     ).strip()
+    # ============================================================
+    # KHUSUS TIMBANGAN MEJA
+    # ============================================================
+    if is_timbangan_meja_name(nama_alat_aktif):
+    
+        satuan = st.session_state.get(
+            "tb_satuan_kapasitas_max",
+            "kg"
+        )
+    
+        max_raw = str(
+            st.session_state.get(
+                "tb_kapasitas_max_input",
+                ""
+            )
+        ).strip()
+    
+        max_kg = convert_to_kg(
+            max_raw,
+            satuan
+        )
+    
+        # e = Maksimum / 1000
+        e_kg = (
+            max_kg / 1000.0
+            if max_kg > 0
+            else 0.0
+        )
+    
+        kelas = st.session_state.get(
+            "tb_kelas_meja",
+            "III"
+        )
+    
+        if kelas not in ["III", "IIII"]:
+            kelas = "III"
+    
+        # Minimum menimbang
+        if kelas == "III":
+            min_kg = 20 * e_kg
+        else:
+            min_kg = 10 * e_kg
+    
+        st.session_state["tb_kelas"] = kelas
+        st.session_state["tb_interval_skala_input"] = e_kg
+        st.session_state["tb_kapasitas_min_kg"] = min_kg
+    
+        st.session_state["tb_metode_pengujian"] = (
+            "Perbandingan Langsung"
+        )
+    
+        st.session_state["tb_at_standar"] = "M2"
+    
+        st.session_state["tb_kelas_status"] = (
+            f"Timbangan Meja Kelas {kelas}"
+        )
+    
+        return
     e_raw = str(
         st.session_state.get("tb_interval_skala_input", "")
     ).strip()
@@ -1183,7 +1247,9 @@ def run():
             is_neraca = is_neraca_name(
                 nama_alat
             )
-
+            is_timbangan_meja = is_timbangan_meja_name(
+                nama_alat
+            )
             is_timbangan_elektronik = (
                 str(nama_alat).strip().lower()
                 == "timbangan elektronik"
@@ -1334,7 +1400,6 @@ def run():
                         "Minimum menimbang tidak boleh lebih besar "
                         "dari maksimum menimbang."
                     )
-
             else:
                 # === Kapasitas Maksimum ===
                 col_val, col_unit = st.columns([3, 1])

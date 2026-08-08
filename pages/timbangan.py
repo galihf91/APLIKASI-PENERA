@@ -1859,8 +1859,21 @@ def run():
                 )
         
             # ===== AT STANDAR (kelas ketelitian anak timbangan) =====
+            if is_timbangan_meja:
+            
+                st.session_state[
+                    "tb_at_standar"
+                ] = "M2"
+            
+                at_standar = st.selectbox(
+                    "AT Standar",
+                    options=["M2"],
+                    key="tb_at_standar",
+                    disabled=True
+                )
+            
+            else:
             kelas_saat_ini = st.session_state.get("tb_kelas", "III")
-
             if kelas_saat_ini in ["III", "IIII"]:
                 at_options = ["M2"]
             elif kelas_saat_ini == "II":

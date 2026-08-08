@@ -511,15 +511,8 @@ def generate_cerapan_pdf(data: dict[str, Any], filename: str) -> str:
             if item[0] != "Model / Tipe"
         ]
 
-    # Neraca Obat tidak memiliki Daya Baca
-    if is_neraca_obat:
-        spesifikasi = [
-            item for item in spesifikasi
-            if item[0] != "Daya Baca"
-        ]
-
     # Neraca Obat tidak memiliki Daya Baca terpisah.
-    if is_neraca_obat:
+    if is_neraca_obat or is_timbangan_meja:
         spesifikasi = [
             item for item in spesifikasi
             if item[0] != "Daya Baca"

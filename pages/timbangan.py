@@ -934,7 +934,14 @@ def init_timbangan_state():
     saved = st.session_state.tb_saved_data
     saved_unit = saved.get("satuan", "kg")
     saved_name = saved.get("nama_alat", "Timbangan Elektronik")
-    saved_is_neraca = is_neraca_name(saved_name)
+    
+    saved_is_neraca = is_neraca_name(
+        saved_name
+    )
+    
+    saved_is_timbangan_meja = is_timbangan_meja_name(
+        saved_name
+    )
 
     defaults = {
         "tb_test_results": [],
@@ -996,13 +1003,21 @@ def init_timbangan_state():
     if "tb_daya_baca_input" not in st.session_state:
         st.session_state.tb_daya_baca_input = (
             ""
-            if saved_is_neraca
+            if (
+                saved_is_neraca
+                or saved_is_timbangan_meja
+            )
             else _format_input_from_kg(
                 saved.get("daya_baca", 0),
                 saved_unit,
             )
         )
-
+    if "tb_kelas_meja" not in st.session_state:
+        st.session_state.tb_kelas_meja = (
+            saved.get("kelas", "III")
+            if saved_is_timbangan_meja
+            else "III"
+        )
     if "tb_interval_skala_input" not in st.session_state:
         st.session_state.tb_interval_skala_input = (
             ""

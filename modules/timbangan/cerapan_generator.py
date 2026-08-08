@@ -784,7 +784,14 @@ def generate_cerapan_pdf(data: dict[str, Any], filename: str) -> str:
             ),
         ])
 
-    jumlah_baris_benar = 1 if is_neraca_obat else 5
+    jumlah_baris_benar = (
+        1
+        if (
+            is_neraca_obat
+            or is_timbangan_meja
+        )
+        else 5
+    )
 
     while len(benar_rows) < jumlah_baris_benar + 1:
         benar_rows.append([p("", P_CENTER) for _ in range(7)])

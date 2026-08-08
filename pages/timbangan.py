@@ -2951,6 +2951,7 @@ def run():
         )
         repet_sederhana = (
             is_neraca_repet
+            or is_timbangan_meja_repet
             or (
                 is_timbangan_elektronik_repet
                 and nilai_berbeda(

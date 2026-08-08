@@ -388,7 +388,11 @@ def generate_cerapan_pdf(data: dict[str, Any], filename: str) -> str:
     repetability_sederhana = bool(
         data.get(
             "repetability_sederhana",
-            is_neraca_obat or d_tidak_sama_e,
+            (
+                is_neraca_obat
+                or is_timbangan_meja
+                or d_tidak_sama_e
+            ),
         )
     )
     c = canvas.Canvas(str(output), pagesize=A4)

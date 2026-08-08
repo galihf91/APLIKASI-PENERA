@@ -218,7 +218,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     # ======================== TABEL INFO UTAMA ========================
     # Gunakan margin kiri content (3 cm) untuk semua isi
     left_col_x = margin_left_content
-    right_col_x = margin_left_content + 7.5*cm   # posisi kolom kanan (relatif)
+    right_col_x = margin_left_content + 7.0*cm   # posisi kolom kanan (relatif)
     colon_x = margin_left_content + 3.2*cm
     colon_right_x = right_col_x + 0.5*cm
 
@@ -340,7 +340,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     
     start_x_val = colon_x_fixed + 0.3 * cm
     
-    safe_right = right_col_x - 0.5 * cm
+    safe_right = right_col_x - 0.2 * cm
     
     max_val_width = (
         safe_right

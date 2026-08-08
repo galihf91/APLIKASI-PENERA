@@ -3178,7 +3178,10 @@ def run():
         # ============================================================
         else:
             st.markdown("---")
-            st.subheader("Repetability (50% Maks)")
+            if is_timbangan_meja:
+                st.subheader("Repetability (Maksimum)")
+            else:
+                st.subheader("Repetability (50% Maks)")
 
             if keterangan_ed:
                 st.caption(keterangan_ed)
@@ -3352,7 +3355,7 @@ def run():
                         penunjukan_tampil = st.number_input(
                             f"Penunjukan Repetability {i}",
                             min_value=0.0,
-                            value=float(half_max_tampil),
+                            value=float(muatan_repet_tampil),
                             step=float(step_penunjukan_tampil),
                             format=format_penunjukan,
                             key=(

@@ -2478,7 +2478,10 @@ def run():
                         value=float(default_muatan_tampil),
                         step=float(step_muatan_tampil),
                         format="%g",
-                        disabled=is_neraca,
+                        disabled=(
+                            is_neraca
+                            or is_timbangan_meja
+                        ),
                         key=(
                             f"tb_muatan_uji_{i}_{nama_alat}_"
                             f"{kapasitas_max_kg}_{e}_"

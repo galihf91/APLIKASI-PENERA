@@ -1775,9 +1775,65 @@ def run():
                 help="Nilai tetap Ambient sesuai standar pengujian.",
                 key="tb_kelembaban",
             )
-        
-            # ===== METODE PENGUJIAN (pilihan) =====
-            kelas_saat_ini = st.session_state.get("tb_kelas", "III")
+            # ===== METODE PENGUJIAN =====
+            if is_timbangan_meja:
+            
+                st.session_state[
+                    "tb_metode_pengujian"
+                ] = "Perbandingan Langsung"
+            
+                metode = st.selectbox(
+                    "Metode Pengujian",
+                    options=[
+                        "Perbandingan Langsung"
+                    ],
+                    key="tb_metode_pengujian",
+                    disabled=True
+                )
+            
+            else:
+            
+                kelas_saat_ini = st.session_state.get(
+                    "tb_kelas",
+                    "III"
+                )
+            
+                if kelas_saat_ini in ["I", "II"]:
+            
+                    st.session_state[
+                        "tb_metode_pengujian"
+                    ] = "Perbandingan Langsung"
+            
+                    metode = st.selectbox(
+                        "Metode Pengujian",
+                        options=[
+                            "Perbandingan Langsung"
+                        ],
+                        key="tb_metode_pengujian"
+                    )
+            
+                else:
+            
+                    metode_options = [
+                        "Beban Substitusi Tunggal",
+                        "Perbandingan Langsung"
+                    ]
+            
+                    if (
+                        st.session_state.get(
+                            "tb_metode_pengujian"
+                        )
+                        not in metode_options
+                    ):
+                        st.session_state[
+                            "tb_metode_pengujian"
+                        ] = metode_options[0]
+            
+                    metode = st.selectbox(
+                        "Metode Pengujian",
+                        options=metode_options,
+                        key="tb_metode_pengujian"
+                    )
 
             if kelas_saat_ini in ["I", "II"]:
                 # Kelas I dan II wajib menggunakan Perbandingan Langsung

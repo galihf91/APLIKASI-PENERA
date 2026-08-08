@@ -1993,26 +1993,49 @@ def run():
                 )
             
             else:
-            kelas_saat_ini = st.session_state.get("tb_kelas", "III")
-            if kelas_saat_ini in ["III", "IIII"]:
-                at_options = ["M2"]
-            elif kelas_saat_ini == "II":
-                at_options = ["M1", "F2", "F1"]
-            elif kelas_saat_ini == "I":
-                at_options = ["F2", "F1"]
-            else:
-                at_options = ["M2"]
-
-            # Reset nilai AT jika pilihan lama tidak sesuai dengan kelas terbaru
-            if st.session_state.get("tb_at_standar") not in at_options:
-                st.session_state["tb_at_standar"] = at_options[0]
-
-            at_standar = st.selectbox(
-                "AT Standar",
-                options=at_options,
-                key="tb_at_standar",
-                help="Kelas ketelitian anak timbangan standar yang digunakan sesuai kelas timbangan.",
-            )
+            
+                kelas_saat_ini = st.session_state.get(
+                    "tb_kelas",
+                    "III"
+                )
+            
+                if kelas_saat_ini in ["III", "IIII"]:
+                    at_options = ["M2"]
+            
+                elif kelas_saat_ini == "II":
+                    at_options = [
+                        "M1",
+                        "F2",
+                        "F1"
+                    ]
+            
+                elif kelas_saat_ini == "I":
+                    at_options = [
+                        "F2",
+                        "F1"
+                    ]
+            
+                else:
+                    at_options = ["M2"]
+            
+                # Reset nilai lama jika tidak sesuai kelas
+                if (
+                    st.session_state.get("tb_at_standar")
+                    not in at_options
+                ):
+                    st.session_state[
+                        "tb_at_standar"
+                    ] = at_options[0]
+            
+                at_standar = st.selectbox(
+                    "AT Standar",
+                    options=at_options,
+                    key="tb_at_standar",
+                    help=(
+                        "Kelas ketelitian anak timbangan standar "
+                        "yang digunakan sesuai kelas timbangan."
+                    ),
+                )
     
         # ======================== PEMERIKSAAN VISUAL ========================
         st.markdown("---")

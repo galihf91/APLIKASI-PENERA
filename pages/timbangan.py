@@ -1953,31 +1953,7 @@ def run():
                         "Metode Pengujian",
                         options=metode_options,
                         key="tb_metode_pengujian"
-                    )
-
-            if kelas_saat_ini in ["I", "II"]:
-                # Kelas I dan II wajib menggunakan Perbandingan Langsung
-                st.session_state["tb_metode_pengujian"] = "Perbandingan Langsung"
-
-                metode = st.selectbox(
-                    "Metode Pengujian",
-                    options=["Perbandingan Langsung"],
-                    key="tb_metode_pengujian",
-                    help="Kelas I dan II wajib menggunakan metode Perbandingan Langsung.",
-                )
-            else:
-                metode_options = ["Beban Substitusi Tunggal", "Perbandingan Langsung"]
-
-                if st.session_state.get("tb_metode_pengujian") not in metode_options:
-                    st.session_state["tb_metode_pengujian"] = metode_options[0]
-
-                metode = st.selectbox(
-                    "Metode Pengujian",
-                    options=metode_options,
-                    key="tb_metode_pengujian",
-                    help="Pilih metode pengujian yang digunakan.",
-                )
-        
+                    )        
             # ===== AT STANDAR (kelas ketelitian anak timbangan) =====
             if is_timbangan_meja:
             

@@ -2702,7 +2702,15 @@ def run():
 
             kapasitas_max = get_input_kg('kapasitas_max_input', 0.0)
             interval_skala = get_input_kg('interval_skala_input', 0.0)
-            daya_baca_kg = get_input_kg("daya_baca_input", interval_skala)
+            if is_timbangan_meja:
+                # Timbangan Meja tidak memiliki input Daya Baca.
+                # Untuk format penunjukan gunakan e.
+                daya_baca_kg = interval_skala
+            else:
+                daya_baca_kg = get_input_kg(
+                    "daya_baca_input",
+                    interval_skala
+                )
 
             kelas = st.session_state.get('tb_kelas', 'III')
             keterangan = st.session_state.get('tb_keterangan', 'Tera Ulang')

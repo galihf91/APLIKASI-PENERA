@@ -461,7 +461,15 @@ def update_class():
             min_kg = 10 * e_kg
     
         st.session_state["tb_kelas"] = kelas
-        st.session_state["tb_interval_skala_input"] = e_kg
+        # tb_interval_skala_input disimpan mengikuti satuan input user
+        if satuan == "g":
+            e_input = e_kg * 1000.0
+        else:
+            e_input = e_kg
+        
+        st.session_state[
+            "tb_interval_skala_input"
+        ] = e_input
         st.session_state["tb_kapasitas_min_kg"] = min_kg
     
         st.session_state["tb_metode_pengujian"] = (

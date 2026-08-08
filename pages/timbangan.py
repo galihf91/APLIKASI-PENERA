@@ -3183,10 +3183,15 @@ def run():
                 0.0
             )
 
-            daya_baca_kg = get_input_kg(
-                "daya_baca_input",
-                interval_skala
-            )
+            if is_timbangan_meja:
+                # Timbangan Meja tidak memiliki input Daya Baca.
+                # Gunakan e hanya sebagai acuan format angka.
+                daya_baca_kg = interval_skala
+            else:
+                daya_baca_kg = get_input_kg(
+                    "daya_baca_input",
+                    interval_skala
+                )
 
             kelas = st.session_state.get(
                 "tb_kelas",

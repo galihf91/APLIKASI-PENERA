@@ -2376,7 +2376,10 @@ def run():
             )
 
             nomor_baris = i + 1
-            baris_neraca_disabled = is_neraca and i > 0
+            baris_kebenaran_disabled = (
+                (is_neraca or is_timbangan_meja)
+                and i > 0
+            )
 
             with cols[0]:
                 st.write(str(nomor_baris))

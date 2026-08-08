@@ -3254,11 +3254,18 @@ def run():
                     satuan_tampilan
                 )
 
-            # Beban Repetability = 50% maksimum.
-            half_max_kg = kapasitas_max * 0.5
-
-            half_max_tampil = kg_to_satuan(
-                half_max_kg,
+            # ============================================================
+            # BEBAN REPETABILITY
+            # Timbangan Meja = 100% Maksimum
+            # Alat lainnya   = 50% Maksimum
+            # ============================================================
+            if is_timbangan_meja:
+                muatan_repet_kg = kapasitas_max
+            else:
+                muatan_repet_kg = kapasitas_max * 0.5
+            
+            muatan_repet_tampil = kg_to_satuan(
+                muatan_repet_kg,
                 satuan_tampilan
             )
 

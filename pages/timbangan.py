@@ -2097,8 +2097,11 @@ def run():
         )
 
         if is_neraca:
-            # Neraca Obat: e dihitung otomatis dari Maksimum / 10.000.
+            # ============================================================
+            # NERACA OBAT
+            # ============================================================
             daya_baca_kg = 0.0
+        
             kapasitas_max_kg = convert_to_kg(
                 st.session_state.get(
                     "tb_kapasitas_max_neraca_input",
@@ -2106,6 +2109,7 @@ def run():
                 ),
                 satuan_tampilan
             )
+        
             kapasitas_min_kg = convert_to_kg(
                 st.session_state.get(
                     "tb_kapasitas_min_neraca_input",
@@ -2113,42 +2117,46 @@ def run():
                 ),
                 satuan_tampilan
             )
-            e = kapasitas_max_kg / 10000.0 if kapasitas_max_kg > 0 else 0.0
-
+        
+            e = (
+                kapasitas_max_kg / 10000.0
+                if kapasitas_max_kg > 0
+                else 0.0
+            )
+        
             if kapasitas_max_kg <= 0:
                 st.warning(
                     "⚠️ Isi Maksimum Menimbang Neraca terlebih dahulu."
                 )
                 st.stop()
-
+        
             if kapasitas_min_kg <= 0:
                 st.warning(
                     "⚠️ Isi Minimum Menimbang Neraca terlebih dahulu."
                 )
                 st.stop()
-
-            if kapasitas_min_kg > kapasitas_max_kg:
-                st.warning(
-                    "⚠️ Minimum menimbang tidak boleh lebih besar "
-                    "dari maksimum menimbang."
-                )
-                st.stop()
-
+        
             max_tampil = kg_to_satuan(
                 kapasitas_max_kg,
                 satuan_tampilan
             )
-            e_tampil = kg_to_satuan(e, satuan_tampilan)
-
-            # Neraca Obat: penunjukan ditampilkan tanpa angka desimal
-            # dan nilainya selalu sama dengan muatan uji.
+        
+            e_tampil = kg_to_satuan(
+                e,
+                satuan_tampilan
+            )
+        
             decimal_penunjukan = 0
             format_penunjukan = "%.0f"
-
-            step_muatan_tampil = e_tampil if e_tampil > 0 else 0.001
+        
+            step_muatan_tampil = (
+                e_tampil
+                if e_tampil > 0
+                else 0.001
+            )
+        
             step_penunjukan_tampil = 1.0
-
-            # Baris 1 adalah maksimum menimbang; baris 2–5 kosong.
+        
             default_muatan_list = [
                 kapasitas_max_kg,
                 0.0,
@@ -2156,21 +2164,96 @@ def run():
                 0.0,
                 0.0,
             ]
-
-        else:
+        
+        
+        elif is_timbangan_meja:
+            # ============================================================
+            # TIMBANGAN MEJA
+            # Pengujian Kebenaran hanya pada Maksimum
+            # ============================================================
+        
+            kapasitas_max_kg = get_input_kg(
+                "kapasitas_max_input",
+                0.0
+            )
+        
             e = get_input_kg(
                 "interval_skala_input",
                 0.0
             )
+        
+            # Timbangan Meja tidak menggunakan daya baca.
+            # Untuk keperluan format tampilan, gunakan e.
+            daya_baca_kg = e
+        
+            if kapasitas_max_kg <= 0:
+                st.warning(
+                    "⚠️ Isi Maksimum Menimbang Timbangan Meja terlebih dahulu."
+                )
+                st.stop()
+        
+            if e <= 0:
+                st.warning(
+                    "⚠️ Interval Skala Verifikasi (e) belum terbentuk."
+                )
+                st.stop()
+        
+            e_tampil = kg_to_satuan(
+                e,
+                satuan_tampilan
+            )
+        
+            daya_baca_tampil = e_tampil
+        
+            decimal_penunjukan = (
+                get_decimal_places_from_number(
+                    daya_baca_tampil
+                )
+            )
+        
+            format_penunjukan = (
+                f"%.{decimal_penunjukan}f"
+            )
+        
+            step_muatan_tampil = (
+                e_tampil
+                if e_tampil > 0
+                else 0.001
+            )
+        
+            step_penunjukan_tampil = step_muatan_tampil
+        
+            # Hanya baris pertama aktif = Maksimum
+            default_muatan_list = [
+                kapasitas_max_kg,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+            ]
+        
+        
+        else:
+            # ============================================================
+            # TIMBANGAN ELEKTRONIK / ALAT LAIN
+            # ============================================================
+        
+            e = get_input_kg(
+                "interval_skala_input",
+                0.0
+            )
+        
             daya_baca_kg = get_input_kg(
                 "daya_baca_input",
                 e
             )
+        
             kapasitas_max_kg = get_input_kg(
                 "kapasitas_max_input",
                 0.0
             )
 
+    # LANJUTKAN KODE LAMA DI SINI
             if e <= 0:
                 st.warning(
                     "⚠️ Isi Interval Skala Verifikasi (e) "

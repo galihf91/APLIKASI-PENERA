@@ -1519,7 +1519,7 @@ def run():
                 # Sinkronkan session state
                 st.session_state[
                     "tb_interval_skala_input"
-                ] = interval_skala_kg
+                ] = e_tampil
         
                 st.session_state[
                     "tb_kapasitas_min_kg"

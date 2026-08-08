@@ -2385,7 +2385,7 @@ def run():
                 st.write(str(nomor_baris))
 
             # Neraca Obat: hanya baris 1 aktif; baris 2–5 kosong dan disabled.
-            if baris_neraca_disabled:
+            if baris_kebenaran_disabled:
                 with cols[1]:
                     st.text_input(
                         f"Muatan Uji Neraca {nomor_baris}",

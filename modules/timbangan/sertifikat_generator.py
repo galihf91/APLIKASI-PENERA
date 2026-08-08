@@ -274,33 +274,72 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     )
     y -= 1.0*cm
 
-    # --------------------- BARIS 3: MERK / BUATAN (KIRI) & KAPASITAS (KANAN) ---------------------
+    # ============================================================
+    # BARIS 3
+    # MERK / BUATAN + KAPASITAS / DAYA BACA
+    # ============================================================
+    
     y_row = y
-    # --- KIRI ---
+    
+    # ---------------- KOLOM KIRI: MERK / BUATAN ----------------
     c.setFont("Helvetica", 12)
-    c.drawString(left_col_x, y_row, "Merk / Buatan")
-    bold_width_left = c.stringWidth("Merk / Buatan", "Helvetica", 12)
-    c.line(left_col_x, y_row - 0.08*cm, left_col_x + bold_width_left, y_row - 0.08*cm)
-    line_spacing1 = 0.45*cm
+    c.drawString(
+        left_col_x,
+        y_row,
+        "Merk / Buatan"
+    )
+    
+    lebar_label_merek = c.stringWidth(
+        "Merk / Buatan",
+        "Helvetica",
+        12
+    )
+    
+    c.line(
+        left_col_x,
+        y_row - 0.08 * cm,
+        left_col_x + lebar_label_merek,
+        y_row - 0.08 * cm
+    )
+    
+    line_spacing1 = 0.45 * cm
+    line_spacing2 = 0.45 * cm
+    
     c.setFont("Helvetica-Oblique", 12)
-    c.drawString(left_col_x, y_row - line_spacing1, "Trade Mark /")
-    line_spacing2 = 0.45*cm
-    c.drawString(left_col_x, y_row - line_spacing1 - line_spacing2, "Manufactured by")
-
-    # Titik dua dan nilai Merek
+    
+    c.drawString(
+        left_col_x,
+        y_row - line_spacing1,
+        "Trade Mark /"
+    )
+    
+    c.drawString(
+        left_col_x,
+        y_row - line_spacing1 - line_spacing2,
+        "Manufactured by"
+    )
+    
     c.setFont("Helvetica", 12)
+    
     c.drawString(
         colon_x_fixed,
         y_row,
         ":"
     )
     
+    # ============================================================
+    # BATAS AMAN NILAI KOLOM KIRI
+    #
+    # Dipakai bersama oleh:
+    # - Merek
+    # - Model/Tipe
+    # - Nomor Seri
+    #
+    # Supaya tidak masuk ke kolom kanan.
+    # ============================================================
+    
     start_x_val = colon_x_fixed + 0.3 * cm
     
-    # ============================================================
-    # BATAS AMAN KOLOM KIRI
-    # Nilai tidak boleh masuk ke kolom Kapasitas
-    # ============================================================
     safe_right = right_col_x - 0.5 * cm
     
     max_val_width = (
@@ -322,9 +361,8 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         )
     )
     
-    # ============================================================
-    # MEREK / BUATAN
-    # ============================================================
+    # ---------------- NILAI MERK ----------------
+    
     merek = str(
         data.get("merek", "")
     )
@@ -335,6 +373,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     )
     
     if wrapped_merek:
+    
         c.drawString(
             start_x_val,
             y_row,
@@ -351,7 +390,6 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
                 line
             )
     
-        # Posisi baris terakhir nilai Merek
         y_row_kiri = (
             y_row
             - (
@@ -364,446 +402,511 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         y_row_kiri = y_row
     
     
-    # ---------- KOLOM KANAN: KAPASITAS / DAYA BACA ----------
+    # ---------------- KOLOM KANAN: KAPASITAS ----------------
+    
     satuan_tampilan = str(
         data.get("satuan")
         or data.get("satuan_tampilan")
         or "kg"
     ).strip()
-
+    
     if satuan_tampilan not in ["kg", "g"]:
         satuan_tampilan = "kg"
-
-    # Neraca Obat tidak mempunyai Daya Baca
+    
+    
     if is_neraca_obat:
+    
         label_kapasitas = "Kapasitas Maksimum"
         label_kapasitas_en = "Maximum Capacity"
+    
     else:
+    
         label_kapasitas = "Kapasitas / Daya baca"
         label_kapasitas_en = "Capacity / Accuracy"
-
+    
+    
     c.setFont("Helvetica", 12)
+    
     c.drawString(
         right_col_x,
         y_row,
         label_kapasitas
     )
-
+    
     lebar_label_kapasitas = c.stringWidth(
         label_kapasitas,
         "Helvetica",
         12
     )
-
+    
     c.line(
         right_col_x,
         y_row - 0.08 * cm,
         right_col_x + lebar_label_kapasitas,
         y_row - 0.08 * cm
     )
-
+    
     c.setFont("Helvetica-Oblique", 12)
+    
     c.drawString(
         right_col_x,
-        y_row - line_spacing1,
+        y_row - 0.45 * cm,
         label_kapasitas_en
     )
-
+    
     c.setFont("Helvetica", 12)
+    
     c.drawString(
         colon_right_fixed,
         y_row,
         ":"
     )
-
+    
+    
     kapasitas_nilai = kg_ke_satuan_tampilan(
         data.get("kapasitas_max", ""),
         satuan_tampilan
     )
-
+    
     kapasitas_text = format_angka_ringkas(
         kapasitas_nilai
     )
-
+    
+    
     if is_neraca_obat:
-        # Neraca Obat hanya menampilkan kapasitas maksimum
+    
         nilai_kapasitas = (
-            f"{kapasitas_text} {satuan_tampilan}"
+            f"{kapasitas_text} "
+            f"{satuan_tampilan}"
         )
+    
     else:
+    
         daya_baca_nilai = kg_ke_satuan_tampilan(
             data.get("daya_baca", ""),
             satuan_tampilan
         )
-
+    
         daya_baca_text = format_angka_ringkas(
             daya_baca_nilai
         )
-
+    
         nilai_kapasitas = (
             f"{kapasitas_text} {satuan_tampilan} / "
             f"{daya_baca_text} {satuan_tampilan}"
         )
-
+    
+    
     c.drawString(
         colon_right_fixed + 0.3 * cm,
         y_row,
         nilai_kapasitas
     )
-
-    jumlah_baris_merek = (
-        len(wrapped_merek)
-        if wrapped_merek
-        else 1
+    
+    
+    # ============================================================
+    # POSISI BARIS BERIKUTNYA
+    #
+    # Jika Merek pendek:
+    #     tetap menggunakan jarak normal 1.3 cm
+    #
+    # Jika Merek panjang:
+    #     mengikuti posisi baris terakhir Merek
+    # ============================================================
+    
+    y = min(
+        y_row_kiri - 0.5 * cm,
+        y_row - 1.3 * cm
     )
     
+    
     # ============================================================
-    # POSISI BARIS MODEL / TIPE
-    #
-    # Posisi normal tetap seperti desain awal.
-    # Merek baru mendorong baris berikutnya jika lebih dari 3 baris.
-    # ============================================================
-    
-    if jumlah_baris_merek <= 3:
-        # Posisi normal seperti desain awal
-        y = y_row - 1.0 * cm
-    
-    else:
-        # Setiap baris merek setelah baris ke-3
-        # menambah tinggi 0.45 cm
-        tambahan_merek = (
-            jumlah_baris_merek - 3
-        ) * 0.45 * cm
-    
-        y = (
-            y_row
-            - 1.0 * cm
-            - tambahan_merek
-        )
-   # ============================================================
     # BARIS 4
-    # Timbangan Elektronik : Model/Tipe + Interval Skala
-    # Alat lain            : Nomor Seri + Interval Skala
+    #
+    # Timbangan Elektronik:
+    # Model/Tipe + Interval Skala
+    #
+    # Alat selain Timbangan Elektronik:
+    # Nomor Seri + Interval Skala
     # ============================================================
-
+    
     y_row = y
-
+    
+    
     # ---------------- KOLOM KIRI ----------------
+    
     if is_timbangan_elektronik:
+    
         label_kiri = "Model / Tipe"
         label_kiri_en = "Model / Type"
-        nilai_kiri = data.get("model", "")
+    
+        nilai_kiri = str(
+            data.get("model", "")
+        )
+    
     else:
-        # Model/Tipe dihilangkan untuk alat selain elektronik
+    
         label_kiri = "Nomor Seri"
         label_kiri_en = "Serial Number"
-        nilai_kiri = data.get("no_seri", "")
-
+    
+        nilai_kiri = str(
+            data.get("no_seri", "")
+        )
+    
+    
     c.setFont("Helvetica", 12)
+    
     c.drawString(
         left_col_x,
         y_row,
         label_kiri
     )
-
+    
     lebar_label_kiri = c.stringWidth(
         label_kiri,
         "Helvetica",
         12
     )
-
+    
     c.line(
         left_col_x,
         y_row - 0.08 * cm,
         left_col_x + lebar_label_kiri,
         y_row - 0.08 * cm
     )
-
-    c.setFont("Helvetica-Oblique", 12)
+    
+    
+    c.setFont(
+        "Helvetica-Oblique",
+        12
+    )
+    
     c.drawString(
         left_col_x,
         y_row - 0.45 * cm,
         label_kiri_en
     )
-
+    
+    
     c.setFont("Helvetica", 12)
+    
     c.drawString(
         colon_x_fixed,
         y_row,
         ":"
     )
-
-    start_x_val = colon_x_fixed + 0.3 * cm
-
-    # Batasi nilai kiri agar tidak masuk ke kolom Interval Skala
-    max_width_val = (
-        right_col_x
-        - start_x_val
-        - 0.1 * cm
-    )
     
-    char_width_val = c.stringWidth(
-        "a",
-        "Helvetica",
-        12
-    )
     
-    chars_per_line_val = (
-        max(
-            1,
-            int(max_width_val / char_width_val)
-        )
-        if char_width_val > 0
-        else 20
-    )
+    # ---------------- NILAI KIRI ----------------
     
     wrapped_nilai_kiri = textwrap.wrap(
-        str(nilai_kiri),
+        nilai_kiri,
         width=chars_per_line_val
     )
-
+    
+    
     if wrapped_nilai_kiri:
+    
         c.drawString(
             start_x_val,
             y_row,
             wrapped_nilai_kiri[0]
         )
-
+    
         for i, line in enumerate(
             wrapped_nilai_kiri[1:],
             start=1
         ):
+    
             c.drawString(
                 start_x_val,
                 y_row - i * 0.45 * cm,
                 line
             )
-
-
+    
+        y_row_kiri = (
+            y_row
+            - (
+                0.45 * cm
+                * (len(wrapped_nilai_kiri) - 1)
+            )
+        )
+    
+    else:
+    
+        y_row_kiri = y_row
+    
+    
     # ---------------- KOLOM KANAN: INTERVAL SKALA ----------------
-    c.setFont("Helvetica", 12)
+    
+    c.setFont(
+        "Helvetica",
+        12
+    )
+    
     c.drawString(
         right_col_x,
         y_row,
         "Interval Skala Verifikasi"
     )
-
-    bold_width_right = c.stringWidth(
+    
+    lebar_interval = c.stringWidth(
         "Interval Skala Verifikasi",
         "Helvetica",
         12
     )
-
+    
     c.line(
         right_col_x,
         y_row - 0.08 * cm,
-        right_col_x + bold_width_right,
+        right_col_x + lebar_interval,
         y_row - 0.08 * cm
     )
-
-    c.setFont("Helvetica-Oblique", 12)
+    
+    
+    c.setFont(
+        "Helvetica-Oblique",
+        12
+    )
+    
     c.drawString(
         right_col_x,
         y_row - 0.45 * cm,
         "Verification Scale Interval"
     )
-
-    c.setFont("Helvetica", 12)
+    
+    
+    c.setFont(
+        "Helvetica",
+        12
+    )
+    
     c.drawString(
         colon_right_fixed,
         y_row,
         ":"
     )
-
+    
+    
     interval_skala_nilai = kg_ke_satuan_tampilan(
-        data.get("interval_skala", ""),
+        data.get(
+            "interval_skala",
+            ""
+        ),
         satuan_tampilan
     )
-
+    
     interval_skala_text = format_angka_ringkas(
         interval_skala_nilai
     )
-
+    
+    
     c.drawString(
         colon_right_fixed + 0.3 * cm,
         y_row,
         f"{interval_skala_text} {satuan_tampilan}"
     )
-
-    jumlah_baris_nilai_kiri = (
-        len(wrapped_nilai_kiri)
-        if wrapped_nilai_kiri
-        else 1
+    
+    
+    # ============================================================
+    # POSISI BARIS BERIKUTNYA DINAMIS
+    # ============================================================
+    
+    y = min(
+        y_row_kiri - 0.5 * cm,
+        y_row - 1.3 * cm
     )
     
-    tinggi_tambahan_nilai_kiri = (
-        max(
-            0,
-            jumlah_baris_nilai_kiri - 1
-        )
-        * 0.45 * cm
-    )
     
-    y = (
-        y_row
-        - 1.0 * cm
-        - tinggi_tambahan_nilai_kiri
-    )
-
     # ============================================================
     # BARIS 5
-    # Timbangan Elektronik : Nomor Seri + Kelas
-    # Alat lain            : Kelas saja
+    #
+    # Timbangan Elektronik:
+    # Nomor Seri + Kelas
+    #
+    # Alat lainnya:
+    # hanya Kelas
     # ============================================================
-
+    
     y_row = y
-
-    # Nomor Seri belum dicetak pada Timbangan Elektronik
+    
+    
+    # Nilai default posisi kiri
+    y_row_kiri = y_row
+    
+    
+    # ============================================================
+    # NOMOR SERI KHUSUS TIMBANGAN ELEKTRONIK
+    # ============================================================
+    
     if is_timbangan_elektronik:
-        c.setFont("Helvetica", 12)
+    
+        c.setFont(
+            "Helvetica",
+            12
+        )
+    
         c.drawString(
             left_col_x,
             y_row,
             "Nomor Seri"
         )
-
-        bold_width_left = c.stringWidth(
+    
+        lebar_nomor_seri = c.stringWidth(
             "Nomor Seri",
             "Helvetica",
             12
         )
-
+    
         c.line(
             left_col_x,
             y_row - 0.08 * cm,
-            left_col_x + bold_width_left,
+            left_col_x + lebar_nomor_seri,
             y_row - 0.08 * cm
         )
-
-        c.setFont("Helvetica-Oblique", 12)
+    
+    
+        c.setFont(
+            "Helvetica-Oblique",
+            12
+        )
+    
         c.drawString(
             left_col_x,
             y_row - 0.45 * cm,
             "Serial Number"
         )
-
-        c.setFont("Helvetica", 12)
+    
+    
+        c.setFont(
+            "Helvetica",
+            12
+        )
+    
         c.drawString(
             colon_x_fixed,
             y_row,
             ":"
         )
-
+    
+    
         no_seri = str(
-            data.get("no_seri", "")
-        )
-        
-        # ============================================================
-        # BATASI NOMOR SERI AGAR TIDAK MASUK KE KOLOM KELAS
-        # ============================================================
-        start_x_seri = colon_x_fixed + 0.3 * cm
-        
-        # Sisakan jarak sebelum kolom kanan
-        max_width_seri = (
-            right_col_x
-            - start_x_seri
-            - 0.1 * cm
-        )
-        
-        char_width_seri = c.stringWidth(
-            "a",
-            "Helvetica",
-            12
-        )
-        
-        chars_per_line_seri = (
-            max(
-                1,
-                int(max_width_seri / char_width_seri)
+            data.get(
+                "no_seri",
+                ""
             )
-            if char_width_seri > 0
-            else 20
         )
-        
+    
+    
         wrapped_seri = textwrap.wrap(
             no_seri,
-            width=chars_per_line_seri
+            width=chars_per_line_val
         )
+    
+    
         if wrapped_seri:
+    
             c.drawString(
-                start_x_seri,
+                start_x_val,
                 y_row,
                 wrapped_seri[0]
             )
-        
+    
             for i, line in enumerate(
                 wrapped_seri[1:],
                 start=1
             ):
+    
                 c.drawString(
-                    start_x_seri,
+                    start_x_val,
                     y_row - i * 0.45 * cm,
                     line
                 )
-
-
+    
+            y_row_kiri = (
+                y_row
+                - (
+                    0.45 * cm
+                    * (len(wrapped_seri) - 1)
+                )
+            )
+    
+    
     # ---------------- KOLOM KANAN: KELAS ----------------
-    c.setFont("Helvetica", 12)
+    
+    c.setFont(
+        "Helvetica",
+        12
+    )
+    
     c.drawString(
         right_col_x,
         y_row,
         "Kelas"
     )
-
-    bold_width_right = c.stringWidth(
+    
+    lebar_kelas = c.stringWidth(
         "Kelas",
         "Helvetica",
         12
     )
-
+    
     c.line(
         right_col_x,
         y_row - 0.08 * cm,
-        right_col_x + bold_width_right,
+        right_col_x + lebar_kelas,
         y_row - 0.08 * cm
     )
-
-    c.setFont("Helvetica-Oblique", 12)
+    
+    
+    c.setFont(
+        "Helvetica-Oblique",
+        12
+    )
+    
     c.drawString(
         right_col_x,
         y_row - 0.45 * cm,
         "Class"
     )
-
-    c.setFont("Helvetica", 12)
+    
+    
+    c.setFont(
+        "Helvetica",
+        12
+    )
+    
     c.drawString(
         colon_right_fixed,
         y_row,
         ":"
     )
-
+    
     c.drawString(
         colon_right_fixed + 0.3 * cm,
         y_row,
-        str(data.get("kelas", ""))
-    )
-
-    jumlah_baris_seri = (
-        len(wrapped_seri)
-        if is_timbangan_elektronik
-        and wrapped_seri
-        else 1
+        str(
+            data.get(
+                "kelas",
+                ""
+            )
+        )
     )
     
-    tinggi_tambahan_seri = (
-        max(0, jumlah_baris_seri - 1)
-        * 0.45 * cm
-    )
     
-    y = (
-        y_row
-        - 1.3 * cm
-        - tinggi_tambahan_seri
+    # ============================================================
+    # POSISI PEMILIK
+    #
+    # Nomor Seri pendek:
+    # jarak normal 1.3 cm
+    #
+    # Nomor Seri panjang:
+    # Pemilik otomatis ikut turun
+    # ============================================================
+    
+    y = min(
+        y_row_kiri - 0.5 * cm,
+        y_row - 1.3 * cm
     )
 
         # ======================== PEMILIK, ALAMAT, PENERA, DLL ========================

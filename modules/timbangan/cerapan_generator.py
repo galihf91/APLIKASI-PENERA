@@ -715,7 +715,7 @@ def generate_cerapan_pdf(data: dict[str, Any], filename: str) -> str:
 
     # Neraca Obat hanya menampilkan pengujian aktif pada baris pertama.
     # Baris 2–5 yang disabled di aplikasi tidak dicetak pada cerapan.
-    if is_neraca_obat:
+    if is_neraca_obat or is_timbangan_meja:
         hasil_yang_dicetak = hasil_pengujian[:1]
     else:
         hasil_yang_dicetak = hasil_pengujian[:5]

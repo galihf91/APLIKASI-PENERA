@@ -3579,6 +3579,9 @@ def run():
             )
 
             if is_neraca:
+                # ============================================================
+                # NERACA OBAT
+                # ============================================================
                 kapasitas_max_kg = convert_to_kg(
                     st.session_state.get(
                         "tb_kapasitas_max_neraca_input",
@@ -3586,6 +3589,7 @@ def run():
                     ),
                     satuan
                 )
+            
                 kapasitas_min_final = convert_to_kg(
                     st.session_state.get(
                         "tb_kapasitas_min_neraca_input",
@@ -3593,33 +3597,42 @@ def run():
                     ),
                     satuan
                 )
+            
                 daya_baca_kg = 0.0
+            
                 interval_skala_kg = (
                     kapasitas_max_kg / 10000.0
                     if kapasitas_max_kg > 0
                     else 0.0
                 )
+            
                 kelas_final = "III"
-
+            
                 if kapasitas_max_kg <= 0:
                     st.error(
                         "Maksimum Menimbang Neraca belum diisi."
                     )
                     st.stop()
-
+            
                 if kapasitas_min_final <= 0:
                     st.error(
                         "Minimum Menimbang Neraca belum diisi."
                     )
                     st.stop()
-
+            
                 if kapasitas_min_final > kapasitas_max_kg:
                     st.error(
                         "Minimum menimbang tidak boleh lebih besar "
                         "dari maksimum menimbang."
                     )
                     st.stop()
-            else:
+            
+            
+            elif is_timbangan_meja:
+                # ============================================================
+                # TIMBANGAN MEJA
+                # ============================================================
+            
                 kapasitas_max_kg = convert_to_kg(
                     st.session_state.get(
                         "tb_kapasitas_max_input",
@@ -3627,7 +3640,68 @@ def run():
                     ),
                     satuan
                 )
-
+            
+                # Tidak mempunyai daya baca
+                daya_baca_kg = 0.0
+            
+                # e = Maksimum / 1000
+                interval_skala_kg = (
+                    kapasitas_max_kg / 1000.0
+                    if kapasitas_max_kg > 0
+                    else 0.0
+                )
+            
+                kelas_final = st.session_state.get(
+                    "tb_kelas",
+                    "III"
+                )
+            
+                # Minimum otomatis sudah dihitung sebelumnya:
+                # III  = 20e
+                # IIII = 10e
+                kapasitas_min_final = st.session_state.get(
+                    "tb_kapasitas_min_kg",
+                    0.0
+                )
+            
+                if kapasitas_max_kg <= 0:
+                    st.error(
+                        "Maksimum Menimbang Timbangan Meja belum diisi."
+                    )
+                    st.stop()
+            
+                if kelas_final not in ["III", "IIII"]:
+                    st.error(
+                        "Kelas Timbangan Meja harus III atau IIII."
+                    )
+                    st.stop()
+            
+                if interval_skala_kg <= 0:
+                    st.error(
+                        "Interval Skala Verifikasi Timbangan Meja belum terbentuk."
+                    )
+                    st.stop()
+            
+                if kapasitas_min_final <= 0:
+                    st.error(
+                        "Minimum Menimbang Timbangan Meja belum terbentuk."
+                    )
+                    st.stop()
+            
+            
+            else:
+                # ============================================================
+                # TIMBANGAN ELEKTRONIK / ALAT LAIN
+                # ============================================================
+            
+                kapasitas_max_kg = convert_to_kg(
+                    st.session_state.get(
+                        "tb_kapasitas_max_input",
+                        ""
+                    ),
+                    satuan
+                )
+            
                 daya_baca_kg = convert_to_kg(
                     st.session_state.get(
                         "tb_daya_baca_input",
@@ -3635,7 +3709,7 @@ def run():
                     ),
                     satuan
                 )
-
+            
                 if is_timbangan_elektronik:
                     interval_skala_kg = convert_to_kg(
                         st.session_state.get(
@@ -3646,6 +3720,41 @@ def run():
                     )
                 else:
                     interval_skala_kg = daya_baca_kg
+            
+                kelas_final = st.session_state.get(
+                    "tb_kelas",
+                    "III"
+                )
+            
+                kapasitas_min_final = st.session_state.get(
+                    "tb_kapasitas_min_kg",
+                    0.0
+                )
+            
+                if kapasitas_max_kg <= 0:
+                    st.error(
+                        "Kapasitas maksimum belum diisi."
+                    )
+                    st.stop()
+            
+                if daya_baca_kg <= 0:
+                    st.error(
+                        "Daya baca belum diisi."
+                    )
+                    st.stop()
+            
+                if interval_skala_kg <= 0:
+                    st.error(
+                        "Interval skala verifikasi belum diisi."
+                    )
+                    st.stop()
+            
+                if kapasitas_min_final > kapasitas_max_kg:
+                    st.error(
+                        "Kapasitas minimum tidak boleh lebih besar "
+                        "dari kapasitas maksimum."
+                    )
+                    st.stop()
 
                 kelas_final = st.session_state.get(
                     "tb_kelas",

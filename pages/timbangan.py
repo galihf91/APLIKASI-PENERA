@@ -3934,29 +3934,163 @@ def run():
                 st.subheader("📋 Preview Data")
                 preview_cols = st.columns(2)
             
+                nama_alat_preview = str(
+                    data.get("nama_alat", "")
+                ).strip()
+                
+                nama_alat_preview_lower = (
+                    nama_alat_preview.lower()
+                )
+                
+                is_neraca_preview = (
+                    nama_alat_preview_lower
+                    in {
+                        "neraca obat",
+                        "timbangan neraca obat",
+                    }
+                )
+                
+                is_meja_preview = (
+                    nama_alat_preview_lower
+                    == "timbangan meja"
+                )
+                
+                is_elektronik_preview = (
+                    nama_alat_preview_lower
+                    == "timbangan elektronik"
+                )
+                
+                satuan_preview = data.get(
+                    "satuan",
+                    "kg"
+                )
+                
+                kapasitas_max_preview = kg_to_satuan(
+                    data.get(
+                        "kapasitas_max",
+                        0.0
+                    ),
+                    satuan_preview
+                )
+                
+                kapasitas_min_preview = kg_to_satuan(
+                    data.get(
+                        "kapasitas_min",
+                        0.0
+                    ),
+                    satuan_preview
+                )
+                
+                interval_preview = kg_to_satuan(
+                    data.get(
+                        "interval_skala",
+                        0.0
+                    ),
+                    satuan_preview
+                )
+                
+                daya_baca_preview = kg_to_satuan(
+                    data.get(
+                        "daya_baca",
+                        0.0
+                    ),
+                    satuan_preview
+                )
+                
+                
                 with preview_cols[0]:
-                    st.write(f"**Pemilik:** {data.get('pemilik', '-')}")
-                    st.write(f"**Nama Alat:** {data.get('nama_alat', '-')}")
-                    st.write(f"**Merek:** {data.get('merek', '-')}")
-                    if (
-                        str(data.get("nama_alat", "")).strip().lower()
-                        == "timbangan elektronik"
-                    ):
+                    st.write(
+                        f"**Pemilik:** "
+                        f"{data.get('pemilik', '-')}"
+                    )
+                
+                    st.write(
+                        f"**Nama Alat:** "
+                        f"{nama_alat_preview or '-'}"
+                    )
+                
+                    st.write(
+                        f"**Merek / Buatan:** "
+                        f"{data.get('merek', '-')}"
+                    )
+                
+                    # Model / Tipe hanya Timbangan Elektronik
+                    if is_elektronik_preview:
                         st.write(
                             f"**Model / Tipe:** "
                             f"{data.get('model', '-')}"
                         )
-                    st.write(f"**No. Seri:** {data.get('no_seri', '-')}")
-            
+                
+                    st.write(
+                        f"**No. Seri:** "
+                        f"{data.get('no_seri', '-')}"
+                    )
+                
+                    st.write(
+                        f"**Maksimum:** "
+                        f"{format_angka_id(kapasitas_max_preview)} "
+                        f"{satuan_preview}"
+                    )
+                
+                    st.write(
+                        f"**Minimum:** "
+                        f"{format_angka_id(kapasitas_min_preview)} "
+                        f"{satuan_preview}"
+                    )
+                
+                
                 with preview_cols[1]:
-                    st.write(f"**Penera:** {data.get('nama_penera', '-')}")
-                    st.write(f"**Tanggal:** {data.get('tanggal_penera', '-')}")
+                    # Daya Baca hanya alat yang memang menggunakan d
+                    if (
+                        not is_neraca_preview
+                        and not is_meja_preview
+                    ):
+                        st.write(
+                            f"**Daya Baca:** "
+                            f"{format_angka_id(daya_baca_preview)} "
+                            f"{satuan_preview}"
+                        )
+                
+                    st.write(
+                        f"**Interval Skala Verifikasi (e):** "
+                        f"{format_angka_id(interval_preview)} "
+                        f"{satuan_preview}"
+                    )
+                
+                    st.write(
+                        f"**Kelas:** "
+                        f"{data.get('kelas', '-')}"
+                    )
+                
+                    st.write(
+                        f"**Metode:** "
+                        f"{data.get('metode', '-')}"
+                    )
+                
+                    st.write(
+                        f"**AT Standar:** "
+                        f"{data.get('at_standar', '-')}"
+                    )
+                
+                    st.write(
+                        f"**Penera:** "
+                        f"{data.get('nama_penera', '-')}"
+                    )
+                
+                    st.write(
+                        f"**Tanggal Pengujian:** "
+                        f"{data.get('tanggal_penera', '-')}"
+                    )
+                
                     st.write(
                         f"**Tanggal Sertifikat:** "
-                        f"{format_tanggal_indonesia(data.get('tanggal_tanda_tangan', ''))}"
+                        f"{format_tanggal_indonesia(
+                            data.get(
+                                'tanggal_tanda_tangan',
+                                ''
+                            )
+                        )}"
                     )
-                    st.write(f"**Kelas:** {data.get('kelas', '-')}")
-                    st.write(f"**Hasil Pengujian:** {len(data.get('hasil_pengujian', []))} data")
         
             with col2:
                 st.subheader("📊 Nomor Dokumen")

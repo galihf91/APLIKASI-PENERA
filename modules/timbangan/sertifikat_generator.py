@@ -115,7 +115,9 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     is_timbangan_elektronik = (
         nama_alat_normal == "timbangan elektronik"
     )
-
+    is_timbangan_meja = (
+        nama_alat_normal == "timbangan meja"
+    )
     is_neraca_obat = nama_alat_normal in {
         "neraca obat",
         "timbangan neraca obat",

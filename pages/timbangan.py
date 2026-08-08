@@ -3810,6 +3810,7 @@ def run():
                 'alamat': alamat,
                 'nama_alat': nama_alat,
                 'is_neraca': is_neraca,
+                'is_timbangan_meja': is_timbangan_meja,
                 'merek': merek,
                 'model': (
                     model

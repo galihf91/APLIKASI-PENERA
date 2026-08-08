@@ -379,7 +379,7 @@ def generate_cerapan_pdf(data: dict[str, Any], filename: str) -> str:
             abs_tol=1e-12,
         )
     )
-    if is_neraca_obat:
+    if is_neraca_obat or is_timbangan_meja:
         keterangan_ed_cerapan = ""
     elif d_tidak_sama_e:
         keterangan_ed_cerapan = "( e ≠ d )"

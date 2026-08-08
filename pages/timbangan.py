@@ -1244,6 +1244,8 @@ def run():
         with col2:
             st.subheader("Spesifikasi Alat")
 
+            st.warning("VERSI TEST TIMBANGAN MEJA")
+
             nama_alat_options = [
                 "Timbangan Elektronik",
                 "Timbangan Bobot Ingsut",

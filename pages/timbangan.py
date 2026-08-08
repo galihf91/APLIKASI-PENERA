@@ -2970,7 +2970,11 @@ def run():
             st.subheader("Repeatability")
 
             # Neraca Obat tidak menampilkan keterangan e dan d.
-            if not is_neraca and keterangan_ed:
+            if (
+                not is_neraca
+                and not is_timbangan_meja_repet
+                and keterangan_ed
+            ):
                 st.caption(keterangan_ed)
 
             satuan_tampilan = st.session_state.get(
@@ -2986,17 +2990,26 @@ def run():
                     ),
                     satuan_tampilan
                 )
-
-                # Neraca Obat menggunakan muatan maksimum.
+            
+                # Neraca Obat menggunakan Maksimum.
                 muatan_repet_kg = kapasitas_max_repet_kg
-
+            
+            elif is_timbangan_meja_repet:
+                kapasitas_max_repet_kg = get_input_kg(
+                    "kapasitas_max_input",
+                    0.0
+                )
+            
+                # Timbangan Meja menggunakan Maksimum.
+                muatan_repet_kg = kapasitas_max_repet_kg
+            
             else:
                 kapasitas_max_repet_kg = get_input_kg(
                     "kapasitas_max_input",
                     0.0
                 )
-
-                # Timbangan Elektronik dengan e != d menggunakan 50% maksimum.
+            
+                # Timbangan Elektronik e != d tetap 50% Maksimum.
                 muatan_repet_kg = kapasitas_max_repet_kg * 0.5
 
             muatan_repet_tampil = kg_to_satuan(

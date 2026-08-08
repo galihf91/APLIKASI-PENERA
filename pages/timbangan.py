@@ -3021,18 +3021,37 @@ def run():
                 decimal_repet = 0
                 format_repet = "%.0f"
                 step_repet = 1.0
+            
+            elif is_timbangan_meja_repet:
+                e_repet_tampil = kg_to_satuan(
+                    interval_skala_kg,
+                    satuan_tampilan
+                )
+            
+                decimal_repet = get_decimal_places_from_number(
+                    e_repet_tampil
+                )
+            
+                format_repet = f"%.{decimal_repet}f"
+            
+                step_repet = (
+                    e_repet_tampil
+                    if e_repet_tampil > 0
+                    else 0.001
+                )
+            
             else:
                 daya_baca_repet_tampil = kg_to_satuan(
                     daya_baca_kg,
                     satuan_tampilan
                 )
-
+            
                 decimal_repet = get_decimal_places_from_number(
                     daya_baca_repet_tampil
                 )
-
+            
                 format_repet = f"%.{decimal_repet}f"
-
+            
                 step_repet = (
                     daya_baca_repet_tampil
                     if daya_baca_repet_tampil > 0

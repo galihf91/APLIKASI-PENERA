@@ -416,7 +416,8 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         satuan_tampilan = "kg"
     
     
-    if is_neraca_obat:
+    if is_neraca_obat or is_timbangan_meja:
+
     
         label_kapasitas = "Kapasitas Maksimum"
         label_kapasitas_en = "Maximum Capacity"

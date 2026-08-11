@@ -1055,15 +1055,7 @@ def init_timbangan_state():
         # Data tersimpan mempertahankan kelas/minimum yang sudah dipilih.
         if not saved:
             update_class()
-
-
-def reset_form_timbangan():
-    """Menghapus state khusus timbangan tanpa mengganggu modul lain."""
-    for key in list(st.session_state.keys()):
-        if key.startswith("tb_"):
-            del st.session_state[key]
-
-
+            
 def run():
     init_timbangan_state()
 

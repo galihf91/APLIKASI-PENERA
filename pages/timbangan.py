@@ -675,17 +675,6 @@ def load_data_penera():
             columns=["Nama", "NIP", "Golongan"]
         )
 
-
-def copy_standar():
-    """Salin nilai standar baris ke-2 (indeks 1) ke baris 4, 6, 8 (indeks 3,5,7)."""
-    e = st.session_state.get('tb_interval_skala_input', 20)
-    key_src = f"tb_standar_1_{e}"
-    if key_src in st.session_state:
-        val = st.session_state[key_src]
-        st.session_state[f"tb_standar_3_{e}"] = val
-        st.session_state[f"tb_standar_5_{e}"] = val
-        st.session_state[f"tb_standar_7_{e}"] = val
-
 def sync_balas(prev_key, next_key):
     """Salin nilai dari prev_key ke next_key di session state."""
     if prev_key in st.session_state:

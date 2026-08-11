@@ -371,10 +371,6 @@ def nilai_berbeda(a, b, toleransi=1e-12):
     except (TypeError, ValueError):
         return False
 
-def reset_form_timbangan():
-    for key in list(st.session_state.keys()):
-        if key.startswith("tb_"):
-            del st.session_state[key]
 def update_class():
     """
     Memperbarui kelas dan minimum menimbang.
@@ -1055,7 +1051,10 @@ def init_timbangan_state():
         # Data tersimpan mempertahankan kelas/minimum yang sudah dipilih.
         if not saved:
             update_class()
-            
+def reset_form_timbangan():
+    for key in list(st.session_state.keys()):
+        if key.startswith("tb_"):
+            del st.session_state[key]            
 def run():
     init_timbangan_state()
 

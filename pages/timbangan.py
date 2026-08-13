@@ -1,6 +1,7 @@
 import math
 import re
 import traceback
+from decimal import Decimal, InvalidOperation
 from datetime import datetime
 from pathlib import Path
 
@@ -206,7 +207,6 @@ def determine_class(max_kg, e):
 
     return "", 0, f"Tidak terdefinisi (n = {n:.0f}, kombinasi tidak valid)"
 
-from decimal import Decimal, InvalidOperation
 def convert_to_kg(value_str, satuan):
     """Konversi nilai string/angka dengan satuan ke kg."""
     if value_str is None:

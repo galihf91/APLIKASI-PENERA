@@ -606,7 +606,9 @@ def tinggi_baris_by_font(jumlah_baris, font_size):
         10: 0.35 * cm,
         9: 0.32 * cm,
         8: 0.28 * cm,
-    }.get(font_size, 0.28 * cm)
+        7: 0.25 * cm,
+        6: 0.22 * cm,
+    }.get(font_size, 0.22 * cm)
 
     top_padding = 0.22 * cm
     bottom_padding = 0.22 * cm
@@ -621,13 +623,15 @@ def leading_by_font(font_size):
         10: 0.46,
         9: 0.42,
         8: 0.38,
+        7: 0.34,
+        6: 0.30,
     }
 
-    return leading_cm.get(font_size, 0.38) * cm
+    return leading_cm.get(font_size, 0.30) * cm
 
 
 def pilih_font_tabel(rows, available_table_height, header_total):
-    for font_size in [11, 10, 9, 8]:
+    for font_size in [11, 10, 9, 8, 7, 6]:
         total_rows_height = sum(
             tinggi_baris_by_font(row.get("jumlah_baris", 1), font_size)
             for row in rows
@@ -638,7 +642,7 @@ def pilih_font_tabel(rows, available_table_height, header_total):
         if total_table_height <= available_table_height:
             return font_size
 
-    return 8
+    return 6
 
 def generate_sertifikat_pubbm(data, output_path="sertifikat_pubbm.pdf"):
     c = canvas.Canvas(output_path, pagesize=A4)

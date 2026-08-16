@@ -1111,7 +1111,7 @@ def generate_sertifikat_pubbm(data, output_path="sertifikat_pubbm.pdf"):
         current_y = row_y
 
     # ======================== TANDA TANGAN PEGAWAI BERHAK ========================
-    y = current_y - 1.3 * cm
+    y = current_y - 0.7 * cm
 
     x_ttd = 11.2 * cm
 

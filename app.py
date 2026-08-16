@@ -98,9 +98,9 @@ def home():
             )
 
     with col_title:
-        st.title("PENERA")
+        st.title("SMART METRO")
         st.markdown(
-            "### Pelayanan Elektronik Tera dan Tera Ulang"
+            "### Smart Metrology Digital Service"
         )
         st.write("Aplikasi Pengujian UTTP")
 

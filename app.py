@@ -102,7 +102,7 @@ def home():
         st.markdown(
             "### Smart Metrology Digital Service"
         )
-        st.write("Aplikasi Pengujian UTTP")
+        st.write("Aplikasi Penera")
 
     st.divider()
 

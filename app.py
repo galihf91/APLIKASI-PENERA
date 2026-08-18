@@ -98,11 +98,11 @@ def home():
             )
 
     with col_title:
-        st.title("SMART METRO")
+        st.title("APP")
         st.markdown(
-            "### Smart Metrology Digital Service"
+            "### Aplikasi Penera"
         )
-        st.write("Aplikasi Penera")
+        st.write("Digitalisasi Pengujian, Dokumentasi, dan Monitoring Metrologi Legal Kabupaten Tangerang")
 
     st.divider()
 

@@ -392,9 +392,27 @@ def run():
             col4, col5 = st.columns(2)
 
             with col4:
+                options_penera_1 = (
+                    [""]
+                    + df_penera["Nama"]
+                    .dropna()
+                    .astype(str)
+                    .tolist()
+                )
+                
+                penera_1_saved = str(
+                    saved.get("penera_1", "")
+                ).strip()
+                
+                if penera_1_saved not in options_penera_1:
+                    penera_1_saved = ""
+                
                 nama_penera_1 = st.selectbox(
                     "Penera 1",
-                    options=[""] + df_penera["Nama"].dropna().astype(str).tolist(),
+                    options=options_penera_1,
+                    index=options_penera_1.index(
+                        penera_1_saved
+                    ),
                     key="penera_1_kwh_select",
                 )
                 if nama_penera_1:

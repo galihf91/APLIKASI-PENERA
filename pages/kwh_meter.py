@@ -352,10 +352,20 @@ def run():
                 placeholder="0000/UAPV/SCD/X/2026",
             )
 
-            berlaku_sampai = st.date_input(
+            # Berlaku sampai selalu dihitung dari tanggal pengujian
+            berlaku_sampai = tambah_tahun(
+                tanggal_pengujian,
+                10
+            )
+            
+            st.date_input(
                 "Berlaku Sampai",
-                value=saved.get("berlaku_sampai", tambah_tahun(tanggal_pengujian, 10)),
+                value=berlaku_sampai,
                 disabled=True,
+                key=(
+                    "berlaku_sampai_kwh_"
+                    f"{tanggal_pengujian.isoformat()}"
+                )
             )
 
         st.markdown("---")

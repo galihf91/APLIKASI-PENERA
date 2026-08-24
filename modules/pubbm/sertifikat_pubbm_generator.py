@@ -949,9 +949,9 @@ def generate_sertifikat_pubbm(data, output_path="sertifikat_pubbm.pdf"):
         1.1 * cm,   # NO
         2.0 * cm,   # POSISI
         3.0 * cm,   # MERK
-        3.4 * cm,   # TYPE
-        2.6 * cm,   # NO. SERI
-        4.6 * cm,   # MEDIA
+        3.0 * cm,   # TYPE
+        3.3 * cm,   # NO. SERI
+        4.3 * cm,   # MEDIA
     ]
 
     total_width = sum(col_widths)

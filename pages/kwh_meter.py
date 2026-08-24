@@ -175,6 +175,11 @@ def normalize_nip(value):
         return str(int(value))
 
     return str(value).strip()
+
+def kembali_edit_kwh():
+    st.session_state["menu_kwh"] = (
+        "📝 Input Data Pengujian"
+    )
 # =========================
 # KONFIGURASI HALAMAN
 def run():
@@ -601,15 +606,12 @@ def run():
     elif mode == "📄 Preview & Generate Data":
 
         st.header("Preview Data kWh Meter")
-        if st.button(
+        st.button(
             "✏️ Kembali dan Edit Data",
             use_container_width=True,
-            key="kwh_kembali_edit"
-        ):
-            st.session_state["menu_kwh"] = (
-                "📝 Input Data Pengujian"
-            )
-            st.rerun()
+            key="kwh_kembali_edit",
+            on_click=kembali_edit_kwh
+        )
         data_kwh = st.session_state.get("data_kwh", {})
 
         if not data_kwh:

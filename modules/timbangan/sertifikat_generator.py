@@ -726,27 +726,16 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     
     c.setFont("Helvetica", 12)
     
-    # Baris 1
+    # Baris 1 - Nomor Seri /
+    c.setFont("Helvetica", 12)
+    
     c.drawString(
         left_col_x,
         y_row,
-        "Nomor Seri"
+        "Nomor Seri /"
     )
     
-    lebar_nomor_seri = c.stringWidth(
-        "Nomor Seri",
-        "Helvetica",
-        12
-    )
-    
-    c.line(
-        left_col_x,
-        y_row - 0.08 * cm,
-        left_col_x + lebar_nomor_seri,
-        y_row - 0.08 * cm
-    )
-    
-    # Baris 2
+    # Baris 2 - Nomor Alat (digarisbawahi)
     c.drawString(
         left_col_x,
         y_row - 0.45 * cm,
@@ -766,21 +755,21 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         y_row - 0.53 * cm
     )
     
-    # Baris 3 dan 4 (English)
+    # Baris 3 - Serial Number /
     c.setFont("Helvetica-Oblique", 12)
     
     c.drawString(
         left_col_x,
         y_row - 0.90 * cm,
-        "Serial Number"
+        "Serial Number /"
     )
     
+    # Baris 4 - Tool Number
     c.drawString(
         left_col_x,
         y_row - 1.35 * cm,
         "Tool Number"
-    )
-    
+    )    
     # Titik dua dan isi
     c.setFont("Helvetica", 12)
     

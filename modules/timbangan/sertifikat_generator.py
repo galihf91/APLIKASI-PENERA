@@ -549,8 +549,8 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     
     else:
     
-        label_kiri = "Nomor Seri"
-        label_kiri_en = "Serial Number"
+        label_kiri = "Nomor Seri / No. Alat"
+        label_kiri_en = "Serial Number / Tool Number"
     
         nilai_kiri = str(
             data.get("no_seri", "")

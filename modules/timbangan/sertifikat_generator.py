@@ -726,16 +726,15 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     
     c.setFont("Helvetica", 12)
     
-    label_seri_id = "Nomor Seri / Nomor Alat"
-    
+    # Baris 1
     c.drawString(
         left_col_x,
         y_row,
-        label_seri_id
+        "Nomor Seri"
     )
     
-    lebar_label_seri_id = c.stringWidth(
-        label_seri_id,
+    lebar_nomor_seri = c.stringWidth(
+        "Nomor Seri",
         "Helvetica",
         12
     )
@@ -743,20 +742,46 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     c.line(
         left_col_x,
         y_row - 0.08 * cm,
-        left_col_x + lebar_label_seri_id,
+        left_col_x + lebar_nomor_seri,
         y_row - 0.08 * cm
     )
     
-    c.setFont("Helvetica-Oblique", 12)
-    
-    label_seri_en = "Serial Number / Tool Number"
-    
+    # Baris 2
     c.drawString(
         left_col_x,
         y_row - 0.45 * cm,
-        label_seri_en
+        "Nomor Alat"
     )
     
+    lebar_nomor_alat = c.stringWidth(
+        "Nomor Alat",
+        "Helvetica",
+        12
+    )
+    
+    c.line(
+        left_col_x,
+        y_row - 0.53 * cm,
+        left_col_x + lebar_nomor_alat,
+        y_row - 0.53 * cm
+    )
+    
+    # Baris 3 dan 4 (English)
+    c.setFont("Helvetica-Oblique", 12)
+    
+    c.drawString(
+        left_col_x,
+        y_row - 0.90 * cm,
+        "Serial Number"
+    )
+    
+    c.drawString(
+        left_col_x,
+        y_row - 1.35 * cm,
+        "Tool Number"
+    )
+    
+    # Titik dua dan isi
     c.setFont("Helvetica", 12)
     
     c.drawString(
@@ -795,6 +820,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
                 line
             )
     
+        # Posisi terendah isi
         y_row_nilai = (
             y_row
             - (
@@ -803,16 +829,17 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
             )
         )
     
-        # label kiri hanya 2 baris
-        y_row_label = y_row - 0.45 * cm
+        # Posisi terendah label kiri (4 baris)
+        y_row_label = y_row - 1.35 * cm
     
+        # Ambil yang paling bawah
         y_row_kiri = min(
             y_row_label,
             y_row_nilai
         )
     
     else:
-        y_row_kiri = y_row - 0.45 * cm
+        y_row_kiri = y_row - 1.35 * cm
     
     
     # ---------------- KOLOM KANAN: KELAS ----------------

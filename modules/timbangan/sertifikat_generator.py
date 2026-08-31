@@ -721,98 +721,98 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     y_row_kiri = y_row
     
     # ============================================================
-# NOMOR SERI / NOMOR ALAT
-# ============================================================
-
-c.setFont("Helvetica", 12)
-
-label_seri_id = "Nomor Seri / Nomor Alat"
-
-c.drawString(
-    left_col_x,
-    y_row,
-    label_seri_id
-)
-
-lebar_label_seri_id = c.stringWidth(
-    label_seri_id,
-    "Helvetica",
-    12
-)
-
-c.line(
-    left_col_x,
-    y_row - 0.08 * cm,
-    left_col_x + lebar_label_seri_id,
-    y_row - 0.08 * cm
-)
-
-c.setFont("Helvetica-Oblique", 12)
-
-label_seri_en = "Serial Number / Tool Number"
-
-c.drawString(
-    left_col_x,
-    y_row - 0.45 * cm,
-    label_seri_en
-)
-
-c.setFont("Helvetica", 12)
-
-c.drawString(
-    colon_x_fixed,
-    y_row,
-    ":"
-)
-
-no_seri = str(
-    data.get(
-        "no_seri",
-        ""
-    )
-)
-
-wrapped_seri = textwrap.wrap(
-    no_seri,
-    width=chars_per_line_val
-)
-
-if wrapped_seri:
-
+    # NOMOR SERI / NOMOR ALAT
+    # ============================================================
+    
+    c.setFont("Helvetica", 12)
+    
+    label_seri_id = "Nomor Seri / Nomor Alat"
+    
     c.drawString(
-        start_x_val,
+        left_col_x,
         y_row,
-        wrapped_seri[0]
+        label_seri_id
     )
-
-    for i, line in enumerate(
-        wrapped_seri[1:],
-        start=1
-    ):
+    
+    lebar_label_seri_id = c.stringWidth(
+        label_seri_id,
+        "Helvetica",
+        12
+    )
+    
+    c.line(
+        left_col_x,
+        y_row - 0.08 * cm,
+        left_col_x + lebar_label_seri_id,
+        y_row - 0.08 * cm
+    )
+    
+    c.setFont("Helvetica-Oblique", 12)
+    
+    label_seri_en = "Serial Number / Tool Number"
+    
+    c.drawString(
+        left_col_x,
+        y_row - 0.45 * cm,
+        label_seri_en
+    )
+    
+    c.setFont("Helvetica", 12)
+    
+    c.drawString(
+        colon_x_fixed,
+        y_row,
+        ":"
+    )
+    
+    no_seri = str(
+        data.get(
+            "no_seri",
+            ""
+        )
+    )
+    
+    wrapped_seri = textwrap.wrap(
+        no_seri,
+        width=chars_per_line_val
+    )
+    
+    if wrapped_seri:
+    
         c.drawString(
             start_x_val,
-            y_row - i * 0.45 * cm,
-            line
+            y_row,
+            wrapped_seri[0]
         )
-
-    y_row_nilai = (
-        y_row
-        - (
-            0.45 * cm
-            * (len(wrapped_seri) - 1)
+    
+        for i, line in enumerate(
+            wrapped_seri[1:],
+            start=1
+        ):
+            c.drawString(
+                start_x_val,
+                y_row - i * 0.45 * cm,
+                line
+            )
+    
+        y_row_nilai = (
+            y_row
+            - (
+                0.45 * cm
+                * (len(wrapped_seri) - 1)
+            )
         )
-    )
-
-    # label kiri hanya 2 baris
-    y_row_label = y_row - 0.45 * cm
-
-    y_row_kiri = min(
-        y_row_label,
-        y_row_nilai
-    )
-
-else:
-    y_row_kiri = y_row - 0.45 * cm
+    
+        # label kiri hanya 2 baris
+        y_row_label = y_row - 0.45 * cm
+    
+        y_row_kiri = min(
+            y_row_label,
+            y_row_nilai
+        )
+    
+    else:
+        y_row_kiri = y_row - 0.45 * cm
     
     
     # ---------------- KOLOM KANAN: KELAS ----------------

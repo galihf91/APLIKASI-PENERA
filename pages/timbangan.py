@@ -1270,23 +1270,16 @@ def run():
                 key="tb_merek",
             )
 
-            # Model / Tipe hanya untuk Timbangan Elektronik
-            if is_timbangan_elektronik:
-                model = st.text_input(
-                    "Model / Tipe",
-                    value=st.session_state.tb_saved_data.get(
-                        "model",
-                        ""
-                    ),
-                    key="tb_model"
-                )
-            else:
-                model = ""
-
-                # Bersihkan nilai lama saat user berpindah alat
-                if "tb_model" in st.session_state:
-                    st.session_state["tb_model"] = ""
-
+            # Model / Tipe digunakan untuk semua jenis timbangan
+            model = st.text_input(
+                "Model / Tipe",
+                value=st.session_state.tb_saved_data.get(
+                    "model",
+                    ""
+                ),
+                placeholder="Masukkan model / tipe alat",
+                key="tb_model"
+            )
             no_seri = st.text_input(
                 "No. Seri",
                 value=st.session_state.tb_saved_data.get(

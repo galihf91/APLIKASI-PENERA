@@ -3855,11 +3855,7 @@ def run():
                 'is_neraca': is_neraca,
                 'is_timbangan_meja': is_timbangan_meja,
                 'merek': merek,
-                'model': (
-                    model
-                    if is_timbangan_elektronik
-                    else ""
-                ),
+                'model': model,
                 'no_seri': no_seri,
                 'kapasitas_max': kapasitas_max_kg,
                 'kapasitas_min': kapasitas_min_final,

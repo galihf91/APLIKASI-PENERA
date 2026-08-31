@@ -722,100 +722,94 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     
     
     # ============================================================
-    # NOMOR SERI KHUSUS TIMBANGAN ELEKTRONIK
+    # NOMOR SERI / NO. ALAT
+    # Berlaku untuk semua jenis timbangan
     # ============================================================
     
-    if is_timbangan_elektronik:
+    c.setFont(
+        "Helvetica",
+        12
+    )
     
-        c.setFont(
-            "Helvetica",
-            12
+    c.drawString(
+        left_col_x,
+        y_row,
+        "Nomor Seri / No. Alat"
+    )
+    
+    lebar_nomor_seri = c.stringWidth(
+        "Nomor Seri / No. Alat",
+        "Helvetica",
+        12
+    )
+    
+    c.line(
+        left_col_x,
+        y_row - 0.08 * cm,
+        left_col_x + lebar_nomor_seri,
+        y_row - 0.08 * cm
+    )
+    
+    c.setFont(
+        "Helvetica-Oblique",
+        12
+    )
+    
+    c.drawString(
+        left_col_x,
+        y_row - 0.45 * cm,
+        "Serial Number / Tool Number"
+    )
+    
+    c.setFont(
+        "Helvetica",
+        12
+    )
+    
+    c.drawString(
+        colon_x_fixed,
+        y_row,
+        ":"
+    )
+    
+    no_seri = str(
+        data.get(
+            "no_seri",
+            ""
         )
+    )
+    
+    wrapped_seri = textwrap.wrap(
+        no_seri,
+        width=chars_per_line_val
+    )
+    
+    if wrapped_seri:
     
         c.drawString(
-            left_col_x,
+            start_x_val,
             y_row,
-            "Nomor Seri"
+            wrapped_seri[0]
         )
     
-        lebar_nomor_seri = c.stringWidth(
-            "Nomor Seri",
-            "Helvetica",
-            12
-        )
-    
-        c.line(
-            left_col_x,
-            y_row - 0.08 * cm,
-            left_col_x + lebar_nomor_seri,
-            y_row - 0.08 * cm
-        )
-    
-    
-        c.setFont(
-            "Helvetica-Oblique",
-            12
-        )
-    
-        c.drawString(
-            left_col_x,
-            y_row - 0.45 * cm,
-            "Serial Number"
-        )
-    
-    
-        c.setFont(
-            "Helvetica",
-            12
-        )
-    
-        c.drawString(
-            colon_x_fixed,
-            y_row,
-            ":"
-        )
-    
-    
-        no_seri = str(
-            data.get(
-                "no_seri",
-                ""
-            )
-        )
-    
-    
-        wrapped_seri = textwrap.wrap(
-            no_seri,
-            width=chars_per_line_val
-        )
-    
-    
-        if wrapped_seri:
+        for i, line in enumerate(
+            wrapped_seri[1:],
+            start=1
+        ):
     
             c.drawString(
                 start_x_val,
-                y_row,
-                wrapped_seri[0]
+                y_row - i * 0.45 * cm,
+                line
             )
     
-            for i, line in enumerate(
-                wrapped_seri[1:],
-                start=1
-            ):
-    
-                c.drawString(
-                    start_x_val,
-                    y_row - i * 0.45 * cm,
-                    line
-                )
-    
-            y_row_kiri = (
-                y_row
-                - (
-                    0.45 * cm
-                    * (len(wrapped_seri) - 1)
-                )
+        y_row_kiri = (
+            y_row
+            - (
+                0.45 * cm
+                * (len(wrapped_seri) - 1)
             )
+        )
     
     
     # ---------------- KOLOM KANAN: KELAS ----------------

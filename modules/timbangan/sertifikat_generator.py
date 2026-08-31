@@ -720,25 +720,21 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     # Nilai default posisi kiri
     y_row_kiri = y_row
     
-    
     # ============================================================
     # NOMOR SERI / NO. ALAT
     # Berlaku untuk semua jenis timbangan
     # ============================================================
     
-    c.setFont(
-        "Helvetica",
-        12
-    )
+    c.setFont("Helvetica", 12)
     
     c.drawString(
         left_col_x,
         y_row,
-        "Nomor Seri / No. Alat"
+        "Nomor Seri"
     )
     
     lebar_nomor_seri = c.stringWidth(
-        "Nomor Seri / No. Alat",
+        "Nomor Seri",
         "Helvetica",
         12
     )
@@ -750,21 +746,40 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         y_row - 0.08 * cm
     )
     
-    c.setFont(
-        "Helvetica-Oblique",
+    c.drawString(
+        left_col_x,
+        y_row - 0.45 * cm,
+        "No. Alat"
+    )
+    
+    lebar_no_alat = c.stringWidth(
+        "No. Alat",
+        "Helvetica",
         12
+    )
+    
+    c.line(
+        left_col_x,
+        y_row - 0.53 * cm,
+        left_col_x + lebar_no_alat,
+        y_row - 0.53 * cm
+    )
+    
+    c.setFont("Helvetica-Oblique", 12)
+    
+    c.drawString(
+        left_col_x,
+        y_row - 0.90 * cm,
+        "Serial Number"
     )
     
     c.drawString(
         left_col_x,
-        y_row - 0.45 * cm,
-        "Serial Number / Tool Number"
+        y_row - 1.35 * cm,
+        "Tool Number"
     )
     
-    c.setFont(
-        "Helvetica",
-        12
-    )
+    c.setFont("Helvetica", 12)
     
     c.drawString(
         colon_x_fixed,
@@ -796,20 +811,32 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
             wrapped_seri[1:],
             start=1
         ):
-    
             c.drawString(
                 start_x_val,
                 y_row - i * 0.45 * cm,
                 line
             )
     
-        y_row_kiri = (
+        # posisi terendah dari isi nomor seri
+        y_row_nilai = (
             y_row
             - (
                 0.45 * cm
                 * (len(wrapped_seri) - 1)
             )
         )
+    
+        # posisi terendah dari label kiri
+        y_row_label = y_row - 1.35 * cm
+    
+        # ambil posisi yang paling bawah
+        y_row_kiri = min(
+            y_row_label,
+            y_row_nilai
+        )
+    
+    else:
+        y_row_kiri = y_row - 1.35 * cm
     
     
     # ---------------- KOLOM KANAN: KELAS ----------------

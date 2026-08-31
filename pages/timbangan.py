@@ -3991,12 +3991,10 @@ def run():
                         f"{data.get('merek', '-')}"
                     )
                 
-                    # Model / Tipe hanya Timbangan Elektronik
-                    if is_elektronik_preview:
-                        st.write(
-                            f"**Model / Tipe:** "
-                            f"{data.get('model', '-')}"
-                        )
+                    st.write(
+                        f"**Model / Tipe:** "
+                        f"{data.get('model', '-')}"
+                    )
                 
                     st.write(
                         f"**No. Seri:** "

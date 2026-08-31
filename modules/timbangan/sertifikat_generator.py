@@ -523,39 +523,22 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     )
     
     
-    # ============================================================
+   # ============================================================
     # BARIS 4
-    #
-    # Timbangan Elektronik:
-    # Model/Tipe + Interval Skala
-    #
-    # Alat selain Timbangan Elektronik:
-    # Nomor Seri + Interval Skala
+    # MODEL / TIPE + INTERVAL SKALA
+    # Berlaku untuk semua jenis timbangan
     # ============================================================
     
     y_row = y
     
+    # ---------------- KOLOM KIRI: MODEL / TIPE ----------------
     
-    # ---------------- KOLOM KIRI ----------------
+    label_kiri = "Model / Tipe"
+    label_kiri_en = "Model / Type"
     
-    if is_timbangan_elektronik:
-    
-        label_kiri = "Model / Tipe"
-        label_kiri_en = "Model / Type"
-    
-        nilai_kiri = str(
-            data.get("model", "")
-        )
-    
-    else:
-    
-        label_kiri = "Nomor Seri / No. Alat"
-        label_kiri_en = "Serial Number / Tool Number"
-    
-        nilai_kiri = str(
-            data.get("no_seri", "")
-        )
-    
+    nilai_kiri = str(
+        data.get("model", "")
+    )
     
     c.setFont("Helvetica", 12)
     

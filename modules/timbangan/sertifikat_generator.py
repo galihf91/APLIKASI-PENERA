@@ -349,25 +349,30 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     # ============================================================
     
     start_x_val = colon_x_fixed + 0.3 * cm
+
+    # ============================================================
+    # BATAS LEBAR NILAI KOLOM KIRI
+    # Dipakai untuk Merk, Model, dan Nomor Seri
+    # ============================================================
     
-    safe_right = right_col_x - 0.2 * cm
+    safe_right_left_value = right_col_x + 1.0 * cm
     
-    max_val_width = (
-        safe_right
+    max_left_value_width = (
+        safe_right_left_value
         - start_x_val
     )
     
-    char_width_val = c.stringWidth(
+    char_width_left_value = c.stringWidth(
         "A",
         "Helvetica",
         12
     )
     
-    chars_per_line_val = max(
+    chars_per_line_left = max(
         10,
         int(
-            max_val_width
-            / char_width_val
+            max_left_value_width
+            / char_width_left_value
         )
     )
     
@@ -379,7 +384,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     
     wrapped_merek = textwrap.wrap(
         merek,
-        width=chars_per_line_val
+        width=chars_per_line_left
     )
     
     if wrapped_merek:

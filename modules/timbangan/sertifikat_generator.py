@@ -13,19 +13,6 @@ ASSETS_DIR = BASE_DIR / "assets"
 
 watermark_path = ASSETS_DIR / "logo_metrologi.png"
 logo_path = ASSETS_DIR / "logo.png"
-def find_assets_dir():
-    current_file = Path(__file__).resolve()
-
-    # Cari folder assets dari lokasi file generator
-    for parent in [current_file.parent] + list(current_file.parents):
-        assets_dir = parent / "assets"
-
-        if assets_dir.exists():
-            return assets_dir
-
-    # Fallback apabila dijalankan dari folder utama
-    return Path("assets")
-
 
 def format_tanggal_indonesia(tanggal_str):
     if not tanggal_str:

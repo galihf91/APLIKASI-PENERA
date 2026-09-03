@@ -742,26 +742,47 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     # NOMOR SERI / NOMOR ALAT
     # ============================================================
     
+    # ============================================================
+    # 1. NOMOR SERI /
+    # ============================================================
+    
     c.setFont("Helvetica", 12)
     
-    # Baris 1 - Nomor Seri /
-    c.setFont("Helvetica", 12)
+    teks_nomor_seri = "Nomor Seri"
     
     c.drawString(
         left_col_x,
         y_row,
-        "Nomor Seri /"
+        teks_nomor_seri
     )
     
-    # Baris 2 - Nomor Alat (digarisbawahi)
+    lebar_nomor_seri = c.stringWidth(
+        teks_nomor_seri,
+        "Helvetica",
+        12
+    )
+    
+    c.drawString(
+        left_col_x + lebar_nomor_seri + 0.08 * cm,
+        y_row,
+        "/"
+    )
+    
+    
+    # ============================================================
+    # 2. NOMOR ALAT + GARIS BAWAH
+    # ============================================================
+    
+    teks_nomor_alat = "Nomor Alat"
+    
     c.drawString(
         left_col_x,
         y_row - 0.45 * cm,
-        "Nomor Alat"
+        teks_nomor_alat
     )
     
     lebar_nomor_alat = c.stringWidth(
-        "Nomor Alat",
+        teks_nomor_alat,
         "Helvetica",
         12
     )
@@ -773,16 +794,38 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         y_row - 0.53 * cm
     )
     
-    # Baris 3 - Serial Number /
+    
+    # ============================================================
+    # 3. SERIAL NUMBER /
+    # ============================================================
+    
     c.setFont("Helvetica-Oblique", 12)
+    
+    teks_serial_number = "Serial Number"
     
     c.drawString(
         left_col_x,
         y_row - 0.90 * cm,
-        "Serial Number /"
+        teks_serial_number
     )
     
-    # Baris 4 - Tool Number
+    lebar_serial_number = c.stringWidth(
+        teks_serial_number,
+        "Helvetica-Oblique",
+        12
+    )
+    
+    c.drawString(
+        left_col_x + lebar_serial_number + 0.08 * cm,
+        y_row - 0.90 * cm,
+        "/"
+    )
+    
+    
+    # ============================================================
+    # 4. TOOL NUMBER
+    # ============================================================
+    
     c.drawString(
         left_col_x,
         y_row - 1.35 * cm,

@@ -704,14 +704,27 @@ def generate_cerapan_pdf(data: dict[str, Any], filename: str) -> str:
         p("Cek", P_HEADER),
     ]]
 
-    hasil_pengujian = list(data.get("hasil_pengujian", []) or [])
-
-    # Neraca Obat hanya menampilkan pengujian aktif pada baris pertama.
-    # Baris 2–5 yang disabled di aplikasi tidak dicetak pada cerapan.
+    hasil_pengujian = list(
+        data.get("hasil_pengujian", []) or []
+    )
+    
+    # ============================================================
+    # HANYA CETAK BARIS PENGUJIAN YANG AKTIF
+    # ============================================================
+    hasil_yang_dicetak = [
+        item
+        for item in hasil_pengujian
+        if item.get("aktif", True)
+    ]
+    
+    # Fallback untuk data lama yang belum memiliki field "aktif"
+    if not hasil_yang_dicetak and hasil_pengujian:
+        hasil_yang_dicetak = hasil_pengujian
+    
+    # Neraca Obat dan Timbangan Meja pada aplikasi
+    # hanya memiliki satu baris Pengujian Kebenaran aktif.
     if is_neraca_obat or is_timbangan_meja:
-        hasil_yang_dicetak = hasil_pengujian[:1]
-    else:
-        hasil_yang_dicetak = hasil_pengujian[:5]
+        hasil_yang_dicetak = hasil_yang_dicetak[:1]
 
     for idx, item in enumerate(hasil_yang_dicetak, 1):
         # Prioritas mengikuti nilai yang tampil di aplikasi

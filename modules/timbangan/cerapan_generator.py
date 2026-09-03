@@ -381,10 +381,14 @@ def generate_cerapan_pdf(data: dict[str, Any], filename: str) -> str:
     )
     if is_neraca_obat or is_timbangan_meja:
         keterangan_ed_cerapan = ""
+    
     elif d_tidak_sama_e:
         keterangan_ed_cerapan = "( e ≠ d )"
+    
     else:
         keterangan_ed_cerapan = "( e = d )"
+    
+    
     repetability_sederhana = bool(
         data.get(
             "repetability_sederhana",

@@ -379,7 +379,7 @@ def generate_cerapan_pdf(data: dict[str, Any], filename: str) -> str:
             abs_tol=1e-12,
         )
     )
-    if is_neraca_obat or is_timbangan_meja:
+    if is_neraca_obat:
         keterangan_ed_cerapan = ""
     
     elif d_tidak_sama_e:
@@ -392,11 +392,7 @@ def generate_cerapan_pdf(data: dict[str, Any], filename: str) -> str:
     repetability_sederhana = bool(
         data.get(
             "repetability_sederhana",
-            (
-                is_neraca_obat
-                or is_timbangan_meja
-                or d_tidak_sama_e
-            ),
+            is_neraca_obat or d_tidak_sama_e,
         )
     )
     c = canvas.Canvas(str(output), pagesize=A4)

@@ -1271,7 +1271,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         c.drawString(
             x_catatan,
             y,
-            f'{bullet} Tanda Tera Sah SL6 "26", Tanda Daerah D8 dan'
+            f'{bullet} Tanda Tera Sah SL6 "{tahun_tanda}", Tanda Daerah D8 dan'
         )
 
         y -= line_height
@@ -1330,7 +1330,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         c.drawString(
             x_catatan,
             y,
-            f'{bullet} Tanda Tera SAH SP6 "26" dan JP8 pada Alat Justir'
+            f'{bullet} Tanda Tera SAH SP6 "{tahun_tanda}" dan JP8 pada Alat Justir'
         )
 
         y -= line_height

@@ -600,7 +600,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     
     wrapped_nilai_kiri = textwrap.wrap(
         nilai_kiri,
-        width=chars_per_line_val
+        width=chars_per_line_left
     )
     
     
@@ -801,7 +801,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     
     wrapped_seri = textwrap.wrap(
         no_seri,
-        width=chars_per_line_val
+        width=chars_per_line_left
     )
     
     if wrapped_seri:

@@ -532,7 +532,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     
     y = min(
         y_row_kiri - 0.5 * cm,
-        y_row - 1.3 * cm
+        y_row - 1.5 * cm
     )
     
     

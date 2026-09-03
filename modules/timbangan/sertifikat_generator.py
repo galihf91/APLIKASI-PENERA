@@ -706,16 +706,21 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
         f"{interval_skala_text} {satuan_tampilan}"
     )
     
-    
-    # ============================================================
-    # POSISI BARIS BERIKUTNYA DINAMIS
-    # ============================================================
-    
-    y = min(
-        y_row_kiri - 0.25 * cm,
-        y_row - 0.9 * cm
+    jumlah_baris_kiri = max(
+        1,
+        len(wrapped_nilai_kiri)
     )
     
+    tambahan_turun = (
+        (jumlah_baris_kiri - 1)
+        * 0.25 * cm
+    )
+    
+    y = (
+        y_row
+        - 1.0 * cm
+        - tambahan_turun
+    )
     
     # ============================================================
     # BARIS 5

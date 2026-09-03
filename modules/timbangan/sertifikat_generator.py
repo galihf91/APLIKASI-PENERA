@@ -1146,7 +1146,40 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     penera_text = f"{data.get('nama_penera', '')} / NIP. {data.get('nip_penera', '')}"
     c.drawString(colon_fixed_shifted + 0.3*cm, y, penera_text)
     y -= 1.0*cm
-
+    # ============================================================
+    # JENIS PENGUJIAN DAN TAHUN TANDA
+    # ============================================================
+    
+    jenis_pengujian = str(
+        data.get(
+            "keterangan",
+            "Tera Ulang"
+        )
+    ).strip()
+    
+    tanggal_pengujian_raw = (
+        data.get("tanggal")
+        or data.get("tanggal_penera")
+        or ""
+    )
+    
+    try:
+        if isinstance(tanggal_pengujian_raw, str):
+            tanggal_obj = datetime.strptime(
+                tanggal_pengujian_raw,
+                "%Y-%m-%d"
+            )
+        else:
+            tanggal_obj = tanggal_pengujian_raw
+    
+        tahun_pengujian = tanggal_obj.year
+    
+    except Exception:
+        tahun_pengujian = datetime.now().year
+    
+    tahun_tanda = str(
+        tahun_pengujian
+    )[-2:]
     # Hasil
     c.setFont("Helvetica", 12)
     c.drawString(left_col_x, y, "Hasil")
@@ -1157,7 +1190,11 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     c.setFont("Helvetica", 12)
     c.drawString(colon_fixed_shifted, y, ":")
     start_x = colon_fixed_shifted + 0.3*cm
-    c.drawString(start_x, y, "Disahkan untuk Tera Ulang Tahun 2026")
+    c.drawString(
+        start_x,
+        y,
+        f"Disahkan untuk {jenis_pengujian} Tahun {tahun_pengujian}"
+    )
     y -= 0.45*cm
     # Teks bawah hasil menggunakan posisi start yang sama
     c.drawString(start_x, y, "Berdasarkan Undang - Undang RI No. 2 Tahun 1981")

@@ -853,6 +853,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     )
     
     if wrapped_seri:
+        c.setFont("Helvetica", 12)
     
         c.drawString(
             start_x_val,
@@ -870,26 +871,14 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
                 line
             )
     
-        # Posisi terendah isi
-        y_row_nilai = (
+        # Posisi baris terakhir nomor seri
+        y_row_seri = (
             y_row
-            - (
-                0.45 * cm
-                * (len(wrapped_seri) - 1)
-            )
-        )
-    
-        # Posisi terendah label kiri (4 baris)
-        y_row_label = y_row - 1.35 * cm
-    
-        # Ambil yang paling bawah
-        y_row_kiri = min(
-            y_row_label,
-            y_row_nilai
+            - 0.45 * cm * (len(wrapped_seri) - 1)
         )
     
     else:
-        y_row_kiri = y_row - 1.35 * cm
+        y_row_seri = y_row
     
     
     # ---------------- KOLOM KANAN: KELAS ----------------
@@ -966,7 +955,7 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     
     y = min(
         y_row_kiri - 0.5 * cm,
-        y_row - 1.3 * cm
+        y_row - 1.80 * cm
     )
 
         # ======================== PEMILIK, ALAMAT, PENERA, DLL ========================
@@ -975,6 +964,8 @@ def generate_sertifikat_pdf(data, filename, nomor_sertifikat):
     special_offset = 1.2*cm   # sesuaikan
     colon_fixed_shifted = colon_x_fixed + special_offset
 
+    # Tambahan jarak dari Nomor Seri / Nomor Alat ke Pemilik
+    y -= 0.10 * cm
     # Pemilik
     c.setFont("Helvetica-Bold", 12)
     c.drawString(left_col_x, y, "Pemilik")

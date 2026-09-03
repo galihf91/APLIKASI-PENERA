@@ -461,7 +461,7 @@ def generate_cerapan_pdf(data: dict[str, Any], filename: str) -> str:
             False
         ),
         (
-            "No. Seri",
+            "No. Seri / No. Alat",
             safe_str(data.get("no_seri", "")),
             False
         ),
